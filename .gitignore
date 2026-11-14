@@ -1,0 +1,29 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Env
+.env.local
+.env.*.local
+*.local.json
+
+# Node
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# PHP
+/backend/vendor/
+/backend/var/
+/backend/.phpunit.cache/
+/backend/.php-cs-fixer.cache
+/backend/config/secrets/*/*.decrypt.private.php
+
+# Secrets
+*.pem
+service-account*.json
