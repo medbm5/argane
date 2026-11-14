@@ -14,6 +14,16 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 ---
 
+## ADR-002 — Polices auto-hébergées (@fontsource)
+
+**Choix.** Cormorant Garamond et Instrument Sans sont servies depuis le bundle via `@fontsource`, et non depuis Google Fonts.
+
+**Raison.** Aucune requête vers un tiers (RGPD, pas de dépendance réseau supplémentaire pendant un démarrage à froid), mise en cache avec les assets Vite versionnés.
+
+**Alternatives.** Lien Google Fonts : plus simple, mais requête tierce et texte invisible plus long au premier chargement.
+
+---
+
 ## Questions du challenge
 
 > Réponses complètes rédigées au fil des slices et finalisées en Slice 22.
