@@ -1,0 +1,66 @@
+/*
+ * Typography — Cormorant Garamond for display, Instrument Sans for text and UI.
+ * Self-hosted via @fontsource (no third-party font requests).
+ * Scale: 1.25 ratio, 16px root.
+ */
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/500-italic.css';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/instrument-sans/600.css';
+
+:root {
+  --font-display: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;
+  --font-text: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.815rem;
+  --text-hero: 5.96rem;
+
+  --leading-body: 1.55;
+  --leading-display: 1.05;
+  --tracking-display: -0.01em;
+  --measure: 72ch;
+}
+
+html {
+  font-family: var(--font-text);
+  font-size: 100%;
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+p {
+  max-width: var(--measure);
+}
+
+/* Prices, counts, references */
+.tabular,
+table,
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reserved for row letters on the seat map and the ticket stub */
+.small-caps {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.04em;
+}
