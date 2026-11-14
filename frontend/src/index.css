@@ -3,6 +3,7 @@
 @import './design-system/typography.css';
 @import './design-system/theme.css';
 @import './design-system/motion.css';
+@import './design-system/textures.css';
 
 @layer base {
   body {

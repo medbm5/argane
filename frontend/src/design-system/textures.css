@@ -1,0 +1,37 @@
+/*
+ * Paper grain: inline SVG fractal noise at 4% opacity over paper surfaces.
+ * Applied to the body by default; opt out with .no-grain (night theme opts out).
+ */
+.paper-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.paper-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.17 0 0 0 0 0.1 0 0 0 0 0.06 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+body.paper-grain::before {
+  position: fixed;
+}
+
+[data-theme='night'] .paper-grain::before,
+[data-theme='night'].paper-grain::before {
+  opacity: 0;
+}
+
+/* Sepia duotone for posters and imagery (filter defined in <SvgDefs />). */
+.duotone {
+  filter: url('#argane-duotone');
+}
+
+.duotone-night {
+  filter: url('#argane-duotone-night');
+}
