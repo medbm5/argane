@@ -44,6 +44,7 @@ final class ModuleBoundariesTest extends TestCase
     {
         $source = (string) file_get_contents(self::SRC.'/'.$relative);
         preg_match_all('/^use\s+App\\\\(\w+)\\\\(\w+)\\\\/m', $source, $matches, \PREG_SET_ORDER);
+        $this->addToAssertionCount(1);
 
         foreach ($matches as [, $otherModule, $otherLayer]) {
             if ($otherModule === $module) {
