@@ -31,21 +31,21 @@
   --stage-glow: #e9b96e;
 
   /* Semantic roles (light / "day" theme) */
-  --color-bg: var(--paper-100);
-  --color-surface: var(--paper-50);
-  --color-surface-alt: var(--paper-200);
-  --color-border: var(--paper-300);
-  --color-text: var(--ink-900);
-  --color-text-muted: var(--sepia-800);
-  --color-accent: var(--sepia-600);
-  --color-accent-hover: var(--sepia-800);
-  --color-focus: var(--sepia-600);
-  --color-primary: var(--ink-900);
-  --color-on-primary: var(--paper-50);
-  --color-highlight: var(--bordeaux-700);
-  --color-gilt: var(--gilt-400);
-  --color-success: var(--olive-600);
-  --color-danger: var(--rust-700);
+  --c-bg: var(--paper-100);
+  --c-surface: var(--paper-50);
+  --c-surface-alt: var(--paper-200);
+  --c-border: var(--paper-300);
+  --c-text: var(--ink-900);
+  --c-text-muted: var(--sepia-800);
+  --c-accent: var(--sepia-600);
+  --c-accent-hover: var(--sepia-800);
+  --c-focus: var(--sepia-600);
+  --c-primary: var(--ink-900);
+  --c-on-primary: var(--paper-50);
+  --c-highlight: var(--bordeaux-700);
+  --c-gilt: var(--gilt-400);
+  --c-success: var(--olive-600);
+  --c-danger: var(--rust-700);
 
   /* Seat states (day — used in the studio previews) */
   --seat-available: var(--paper-50);
@@ -55,11 +55,11 @@
   --seat-sold: var(--paper-300);
 
   /* Shape */
-  --radius-sm: 2px;
-  --radius-md: 10px;
-  --radius-pill: 999px;
-  --shadow-float: 0 12px 32px -8px rgba(43, 26, 16, 0.14), 0 2px 6px rgba(43, 26, 16, 0.08);
-  --hairline: 1px solid var(--color-border);
+  --r-sm: 2px;
+  --r-md: 10px;
+  --r-pill: 999px;
+  --sh-float: 0 12px 32px -8px rgba(43, 26, 16, 0.14), 0 2px 6px rgba(43, 26, 16, 0.08);
+  --hairline: 1px solid var(--c-border);
 
   /* Motion */
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -72,17 +72,17 @@
 
 /* Night — "house lights down", applied on the seat selection route. */
 [data-theme='night'] {
-  --color-bg: var(--night-950);
-  --color-surface: var(--night-900);
-  --color-surface-alt: var(--night-800);
-  --color-border: var(--night-600);
-  --color-text: var(--paper-100);
-  --color-text-muted: var(--sepia-400);
-  --color-accent: var(--gilt-400);
-  --color-accent-hover: var(--stage-glow);
-  --color-focus: var(--gilt-400);
-  --color-primary: var(--gilt-400);
-  --color-on-primary: var(--night-950);
+  --c-bg: var(--night-950);
+  --c-surface: var(--night-900);
+  --c-surface-alt: var(--night-800);
+  --c-border: var(--night-600);
+  --c-text: var(--paper-100);
+  --c-text-muted: var(--sepia-400);
+  --c-accent: var(--gilt-400);
+  --c-accent-hover: var(--stage-glow);
+  --c-focus: var(--gilt-400);
+  --c-primary: var(--gilt-400);
+  --c-on-primary: var(--night-950);
 
   --seat-available: var(--night-600);
   --seat-available-stroke: var(--sepia-400);
@@ -90,7 +90,7 @@
   --seat-held: var(--night-800);
   --seat-sold: color-mix(in srgb, var(--night-800) 50%, transparent);
 
-  --shadow-float: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
+  --sh-float: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
 
   color-scheme: dark;
 }

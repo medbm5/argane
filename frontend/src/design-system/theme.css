@@ -1,0 +1,63 @@
+/*
+ * Tailwind v4 theme driven by the CSS variables in tokens.css / typography.css.
+ * Utilities resolve to var(--…) so `data-theme="night"` re-skins everything at runtime.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-paper-50: var(--paper-50);
+  --color-paper-100: var(--paper-100);
+  --color-paper-200: var(--paper-200);
+  --color-paper-300: var(--paper-300);
+  --color-sepia-400: var(--sepia-400);
+  --color-sepia-600: var(--sepia-600);
+  --color-sepia-800: var(--sepia-800);
+  --color-ink-900: var(--ink-900);
+  --color-bordeaux-700: var(--bordeaux-700);
+  --color-gilt-400: var(--gilt-400);
+  --color-olive-600: var(--olive-600);
+  --color-rust-700: var(--rust-700);
+  --color-night-950: var(--night-950);
+  --color-night-900: var(--night-900);
+  --color-night-800: var(--night-800);
+  --color-night-600: var(--night-600);
+  --color-stage-glow: var(--stage-glow);
+
+  /* Semantic, theme-aware */
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-alt: var(--c-surface-alt);
+  --color-line: var(--c-border);
+  --color-fg: var(--c-text);
+  --color-muted: var(--c-text-muted);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-primary: var(--c-primary);
+  --color-on-primary: var(--c-on-primary);
+  --color-highlight: var(--c-highlight);
+  --color-success: var(--c-success);
+  --color-danger: var(--c-danger);
+
+  --font-display: var(--ff-display);
+  --font-sans: var(--ff-text);
+
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
+  --text-4xl: var(--fs-4xl);
+  --text-hero: var(--fs-hero);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-pill: var(--r-pill);
+
+  --shadow-float: var(--sh-float);
+
+  --ease-theatre: var(--ease-out);
+}
