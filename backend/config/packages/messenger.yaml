@@ -12,7 +12,7 @@ framework:
             sync: 'sync://'
 
         routing:
-            # Messages are routed as they appear (refunds, sheet sync, emails).
+            App\Catalog\Application\Message\PerformanceCancelled: async
 
 when@test:
     framework:
