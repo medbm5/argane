@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH}"
 # Production entrypoint (Render). Prepares the environment, then hands over to CMD.
 set -eu
 

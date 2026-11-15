@@ -67,5 +67,5 @@ RUN composer dump-autoload --no-dev --classmap-authoritative \
 
 EXPOSE 8080
 
-ENTRYPOINT ["argane-entrypoint"]
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/argane.conf"]
+ENTRYPOINT ["/usr/local/bin/argane-entrypoint"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/argane.conf"]
