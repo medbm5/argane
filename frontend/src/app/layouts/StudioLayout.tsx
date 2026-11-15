@@ -1,4 +1,4 @@
-import { BarChart3, LayoutGrid, ReceiptText, Tag, Theater } from 'lucide-react'
+import { BarChart3, LayoutGrid, Plug, ReceiptText, Tag, Theater } from 'lucide-react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router'
 import { cn } from '../../design-system/cn'
 import { UserMenu } from '../auth/UserMenu'
@@ -10,6 +10,7 @@ const STUDIO_NAV = [
   { to: '/studio/configurations', label: 'Configurations', icon: LayoutGrid },
   { to: '/studio/tarifs', label: 'Tarifs', icon: Tag },
   { to: '/studio/ventes', label: 'Ventes', icon: ReceiptText },
+  { to: '/studio/integrations', label: 'Intégrations', icon: Plug },
 ]
 
 /** The organiser's back office: dark sidebar, light working area. */
