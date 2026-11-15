@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
 import { routes } from './app/routes'
 
@@ -8,6 +8,18 @@ function renderAt(path: string) {
   const router = createMemoryRouter(routes, { initialEntries: [path] })
   return render(<RouterProvider router={router} />)
 }
+
+// The API answers healthy with an empty catalogue.
+beforeEach(() => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn<typeof fetch>(() => Promise.resolve(Response.json([]))),
+  )
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('App', () => {
   it('renders the landing inside the site shell', async () => {

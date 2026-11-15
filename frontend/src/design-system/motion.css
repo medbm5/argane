@@ -30,6 +30,12 @@
   }
 }
 
+@keyframes curtain {
+  to {
+    transform: scaleX(0.15);
+  }
+}
+
 @keyframes marquee {
   to {
     transform: translateX(-50%);
