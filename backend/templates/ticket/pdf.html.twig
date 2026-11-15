@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Billets {{ order.reference }}</title>
+<style>
+    @page { margin: 28px; }
+    * { box-sizing: border-box; }
+    body { font-family: 'DejaVu Sans', sans-serif; color: #15121e; font-size: 11px; margin: 0; }
+    .page { page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+    .stub { border: 3px solid #15121e; }
+    .bar { background: #15121e; color: #fbf8f1; padding: 10px 16px; }
+    .bar .brand { font-size: 18px; font-weight: bold; letter-spacing: 3px; }
+    .bar .brand span { color: #ffc21a; }
+    .bar .ref { float: right; font-size: 10px; letter-spacing: 2px; padding-top: 5px; }
+    .body { padding: 18px 16px 14px; }
+    .cat { display: inline-block; background: #e8432e; color: #fbf8f1; border: 2px solid #15121e; padding: 2px 6px; font-size: 9px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { font-size: 34px; line-height: 1; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: -0.5px; }
+    .subtitle { color: #4a4556; font-size: 12px; }
+    .rule { height: 6px; width: 90px; background: #ffc21a; border: 2px solid #15121e; margin: 12px 0 14px; }
+    table.grid { width: 100%; border-collapse: collapse; }
+    table.grid td { vertical-align: top; }
+    .facts td { border: 2px solid #15121e; padding: 7px 9px; width: 25%; }
+    .label { font-size: 8px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #4a4556; }
+    .value { font-size: 15px; font-weight: bold; margin-top: 3px; }
+    .seat { font-size: 26px; }
+    .qr { width: 190px; text-align: center; padding-left: 16px; }
+    .qr img { width: 180px; height: 180px; border: 3px solid #15121e; padding: 4px; }
+    .code { font-size: 10px; letter-spacing: 3px; margin-top: 4px; }
+    .proof { margin-top: 12px; background: #ffc21a; border: 2px solid #15121e; padding: 7px 9px; font-weight: bold; }
+    .perforation { border-top: 3px dashed #15121e; margin: 0 16px; }
+    .foot { padding: 10px 16px 12px; color: #4a4556; font-size: 9px; line-height: 1.5; }
+    .pop { height: 10px; }
+    .pop span { display: inline-block; width: 16.66%; height: 10px; }
+</style>
+</head>
+<body>
+{% for page in pages %}
+    {% set ticket = page.ticket %}
+    <div class="page">
+        <div class="stub">
+            <div class="bar">
+                <span class="ref">COMMANDE {{ order.reference }}</span>
+                <span class="brand">THÉÂTRE <span>ARGANE</span></span>
+            </div>
+            <div class="body">
+                <table class="grid">
+                    <tr>
+                        <td>
+                            <span class="cat">{{ event.category.label }}</span>
+                            <h1>{{ event.title }}</h1>
+                            {% if event.subtitle %}<div class="subtitle">{{ event.subtitle }}</div>{% endif %}
+                            <div class="rule"></div>
+                            <table class="grid facts">
+                                <tr>
+                                    <td colspan="2"><div class="label">Date</div><div class="value">{{ date|capitalize }}</div></td>
+                                    <td><div class="label">Heure</div><div class="value">{{ time }}</div></td>
+                                    <td><div class="label">Portes</div><div class="value">{{ doors }}</div></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><div class="label">{{ ticket.zoneLabel }}</div><div class="value seat">{{ ticket.seatLabel ? 'Place ' ~ ticket.seatLabel : 'Placement libre debout' }}</div></td>
+                                    <td><div class="label">Tarif</div><div class="value">{{ ticket.tariffLabel }}</div></td>
+                                    <td><div class="label">Prix</div><div class="value">{{ (ticket.unitPriceCents / 100)|number_format(ticket.unitPriceCents % 100 ? 2 : 0, ',', ' ') }}&nbsp;{{ order.currency }}</div></td>
+                                </tr>
+                            </table>
+                            {% if ticket.requiresProof %}
+                                <div class="proof">Tarif réduit : présentez un justificatif à l’entrée avec ce billet.</div>
+                            {% endif %}
+                        </td>
+                        <td class="qr">
+                            <img src="{{ page.qr }}" alt="QR code du billet">
+                            <div class="code">{{ page.code }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="perforation"></div>
+            <div class="foot">
+                {{ venue.name }} · {{ venue.address }}{% if venue.city not in venue.address %}, {{ venue.city }}{% endif %}<br>
+                Billet nominatif à la commande, valable pour une entrée à cette représentation. Le QR code est contrôlé à l’entrée :
+                toute copie n’est valable qu’une fois. Les portes ferment au début du spectacle. Lieu et billetterie fictifs, projet de démonstration.
+            </div>
+            <div class="pop"><span style="background:#ffc21a"></span><span style="background:#2f4fe0"></span><span style="background:#ff5fae"></span><span style="background:#ff7a1a"></span><span style="background:#18b3c6"></span><span style="background:#e8432e"></span></div>
+        </div>
+    </div>
+{% endfor %}
+</body>
+</html>
