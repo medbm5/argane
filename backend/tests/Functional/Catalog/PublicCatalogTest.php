@@ -9,6 +9,7 @@ use App\Catalog\Domain\Model\Performance;
 use App\Pricing\Domain\Model\PerformancePrice;
 use App\Pricing\Domain\Model\Tariff;
 use App\Shared\Domain\SalesChannel;
+use App\Shared\Domain\VenueTime;
 use App\Tests\Support\CatalogFactory;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -139,10 +140,12 @@ final class PublicCatalogTest extends WebTestCase
 
     public function testFiltersByCategoryAndVenueMonth(): void
     {
-        $december = $this->seedOnSale('December Show', '2026-12-31 23:30:00');
+        // 00:30 on January 1st at the venue: with a positive UTC offset this instant is
+        // still December 31st in UTC, and it must be filed under the venue's month.
+        $newYear = VenueTime::fromVenueLocal('2027-01-01 00:30')->format('Y-m-d H:i:s');
+        $december = $this->seedOnSale('December Show', $newYear);
         $january = $this->seedOnSale('January Show', '2027-01-10 19:00:00');
 
-        // 23:30 UTC on Dec 31 is already January 1st in Casablanca (UTC+1).
         self::assertContains($december->event()->slug(), $this->listedSlugs('?month=2027-01'));
         self::assertContains($january->event()->slug(), $this->listedSlugs('?month=2027-01'));
         self::assertNotContains($january->event()->slug(), $this->listedSlugs('?month=2026-12'));

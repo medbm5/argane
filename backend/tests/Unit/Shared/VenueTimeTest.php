@@ -12,19 +12,21 @@ use Symfony\Component\Clock\MockClock;
 
 final class VenueTimeTest extends TestCase
 {
+    // Morocco moved from UTC+1 to UTC+0 on 2026-09-20 (tzdata 2026e). June 2026 is
+    // UTC+1 in every tzdata version, so these tests hold on old and new PHP builds.
     public function testConvertsUtcToCasablanca(): void
     {
-        $utc = new DateTimeImmutable('2026-12-05 19:30:00', new DateTimeZone('UTC'));
+        $utc = new DateTimeImmutable('2026-06-05 19:30:00', new DateTimeZone('UTC'));
 
-        self::assertSame('2026-12-05T20:30:00+01:00', VenueTime::format($utc));
+        self::assertSame('2026-06-05T20:30:00+01:00', VenueTime::format($utc));
     }
 
     public function testConvertsVenueLocalInputToUtc(): void
     {
-        $utc = VenueTime::fromVenueLocal('2026-12-05 20:30');
+        $utc = VenueTime::fromVenueLocal('2026-06-05 20:30');
 
         self::assertSame('UTC', $utc->getTimezone()->getName());
-        self::assertSame('2026-12-05 19:30', $utc->format('Y-m-d H:i'));
+        self::assertSame('2026-06-05 19:30', $utc->format('Y-m-d H:i'));
     }
 
     public function testMockClockIsUsableForDeterministicTests(): void

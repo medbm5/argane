@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Studio;
 
 use App\Identity\Domain\Model\Role;
 use App\Identity\Domain\Model\User;
+use App\Shared\Domain\VenueTime;
 use App\Tests\Support\ActsAsUser;
 use App\Tests\Support\CatalogFactory;
 use App\Tests\Support\Orders;
@@ -89,7 +90,8 @@ final class StudioTest extends WebTestCase
 
         $public = $this->call('GET', '/api/events/nuit-du-conte');
         self::assertSame(8000, $public['fromPriceCents']);
-        self::assertSame('2026-12-20T19:30:00+00:00', $public['performances'][0]['startsAt'], 'venue-local 20:30 stored in UTC');
+        $expected = VenueTime::fromVenueLocal('2026-12-20 20:30')->format(\DATE_ATOM);
+        self::assertSame($expected, $public['performances'][0]['startsAt'], 'venue-local 20:30 stored in UTC');
 
         $this->call('POST', '/api/studio/performances/'.$performance['id'].'/close-sales');
         self::assertSame('SALES_CLOSED', $this->call('GET', '/api/studio/events/'.$event['id'])['performances'][0]['status']);
