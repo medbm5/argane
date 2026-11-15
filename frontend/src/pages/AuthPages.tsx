@@ -1,5 +1,5 @@
 import { SignIn, SignUp } from '@clerk/react'
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import { usePageTitle } from '../lib/usePageTitle'
 
@@ -37,11 +37,17 @@ function AuthFrame({
   )
 }
 
-/** Where to go after auth: a same-site `redirect` param, or the programme. */
+/**
+ * Where to go after auth: a same-site `redirect` param, or the programme. Captured on
+ * first render, because Clerk's later steps (/connexion/factor-one…) drop the query string.
+ */
 function useRedirectTarget(): string {
   const [params] = useSearchParams()
-  const target = params.get('redirect')
-  return target?.startsWith('/') && !target.startsWith('//') ? target : '/programme'
+  const [target] = useState(() => {
+    const value = params.get('redirect')
+    return value?.startsWith('/') && !value.startsWith('//') ? value : '/programme'
+  })
+  return target
 }
 
 export function SignInPage() {
