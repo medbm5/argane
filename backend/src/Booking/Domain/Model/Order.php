@@ -9,6 +9,8 @@ use App\Shared\Domain\Exception\ConflictException;
 use App\Shared\Domain\Money;
 use App\Shared\Domain\SalesChannel;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -47,6 +49,10 @@ class Order
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $cancelledAt = null;
 
+    /** @var Collection<int, Ticket> */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'order', cascade: ['persist'])]
+    private Collection $tickets;
+
     public function __construct(
         #[ORM\Column(length: 20)]
         private string $reference,
@@ -69,6 +75,7 @@ class Order
     ) {
         $this->id = Uuid::v7();
         $this->currency = strtoupper($currency);
+        $this->tickets = new ArrayCollection();
     }
 
     public function id(): Uuid
@@ -165,6 +172,23 @@ class Order
     public function annotate(?string $note): void
     {
         $this->note = $note;
+    }
+
+    public function addTicket(Ticket $ticket): void
+    {
+        if (OrderStatus::PENDING_PAYMENT !== $this->status) {
+            throw ConflictException::because('ORDER_NOT_EDITABLE', 'Cette commande ne peut plus être modifiée.');
+        }
+        $this->tickets->add($ticket);
+        $this->totalCents += $ticket->unitPriceCents();
+    }
+
+    /**
+     * @return list<Ticket>
+     */
+    public function tickets(): array
+    {
+        return array_values($this->tickets->toArray());
     }
 
     public function markPaid(DateTimeImmutable $now): void
