@@ -22,6 +22,11 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Styleguide' })).toBeVisible()
   })
 
+  it('renders the sign-in page shell', async () => {
+    renderAt('/connexion')
+    expect(await screen.findByRole('heading', { level: 1, name: 'Connexion' })).toBeVisible()
+  })
+
   it('shows a designed not found page', async () => {
     renderAt('/nulle-part')
     expect(

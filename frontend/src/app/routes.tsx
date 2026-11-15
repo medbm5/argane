@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router'
+import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
 import { PublicLayout } from './layouts/layouts'
@@ -25,6 +26,8 @@ export const routes: RouteObject[] = [
         element: <PublicLayout />,
         children: [
           { index: true, element: <HomePage /> },
+          { path: 'connexion/*', element: <SignInPage /> },
+          { path: 'inscription/*', element: <SignUpPage /> },
           ...devRoutes,
           { path: '*', element: <NotFoundPage /> },
         ],
