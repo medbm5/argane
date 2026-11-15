@@ -9,7 +9,9 @@ use App\Catalog\Domain\Model\Performance;
 use App\Catalog\Domain\Model\SeatStatus;
 use DateTimeImmutable;
 use DateTimeZone;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -63,6 +65,101 @@ final readonly class DbalInventoryRepository implements InventoryRepository
             'seats' => (int) $this->connection->fetchOne('SELECT COUNT(*) FROM performance_seat WHERE performance_id = ?', [$id]),
             'standingZones' => (int) $this->connection->fetchOne('SELECT COUNT(*) FROM performance_zone_stock WHERE performance_id = ?', [$id]),
         ];
+    }
+
+    public function holdSeats(Uuid $performanceId, array $seatIds, Uuid $holdId, DateTimeImmutable $expiresAt, DateTimeImmutable $now): array
+    {
+        if ([] === $seatIds) {
+            return [];
+        }
+        $binaryIds = array_map(static fn (Uuid $id): string => $id->toBinary(), $seatIds);
+        $this->connection->executeStatement(
+            "UPDATE performance_seat
+                SET status = 'HELD', hold_id = :hold, hold_expires_at = :expires, updated_at = :now
+              WHERE performance_id = :p
+                AND id IN (:ids)
+                AND (status = 'AVAILABLE' OR (status = 'HELD' AND hold_expires_at <= :now))",
+            ['hold' => $holdId->toBinary(), 'expires' => self::sql($expiresAt), 'now' => self::sql($now), 'p' => $performanceId->toBinary(), 'ids' => $binaryIds],
+            ['hold' => ParameterType::BINARY, 'p' => ParameterType::BINARY, 'ids' => ArrayParameterType::BINARY],
+        );
+
+        // Current read of our own writes: which seats really carry this hold now.
+        $won = $this->connection->fetchFirstColumn(
+            'SELECT id FROM performance_seat WHERE hold_id = :hold AND id IN (:ids)',
+            ['hold' => $holdId->toBinary(), 'ids' => $binaryIds],
+            ['hold' => ParameterType::BINARY, 'ids' => ArrayParameterType::BINARY],
+        );
+        $wonSet = array_flip(array_map(static fn (mixed $id): string => (string) $id, $won));
+
+        return array_values(array_map(
+            static fn (Uuid $id): string => $id->toRfc4122(),
+            array_filter($seatIds, static fn (Uuid $id): bool => !isset($wonSet[$id->toBinary()])),
+        ));
+    }
+
+    public function seatsOfHold(Uuid $holdId): array
+    {
+        $ids = $this->connection->fetchFirstColumn(
+            'SELECT id FROM performance_seat WHERE hold_id = ? ORDER BY id',
+            [$holdId->toBinary()],
+            [ParameterType::BINARY],
+        );
+
+        return array_map(static fn (mixed $id): string => Uuid::fromBinary((string) $id)->toRfc4122(), $ids);
+    }
+
+    public function releaseSeats(Uuid $holdId, DateTimeImmutable $now): int
+    {
+        return (int) $this->connection->executeStatement(
+            "UPDATE performance_seat SET status = 'AVAILABLE', hold_id = NULL, hold_expires_at = NULL, updated_at = :now
+              WHERE hold_id = :hold AND status = 'HELD'",
+            ['hold' => $holdId->toBinary(), 'now' => self::sql($now)],
+            ['hold' => ParameterType::BINARY],
+        );
+    }
+
+    public function releaseExpiredSeats(DateTimeImmutable $now): int
+    {
+        return (int) $this->connection->executeStatement(
+            "UPDATE performance_seat SET status = 'AVAILABLE', hold_id = NULL, hold_expires_at = NULL, updated_at = :now
+              WHERE status = 'HELD' AND hold_expires_at <= :now",
+            ['now' => self::sql($now)],
+        );
+    }
+
+    public function lockStanding(Uuid $performanceId, Uuid $zoneId, DateTimeImmutable $now, ?Uuid $exceptHoldId = null): ?array
+    {
+        $stock = $this->connection->fetchAssociative(
+            'SELECT capacity, sold_count FROM performance_zone_stock WHERE performance_id = :p AND zone_id = :z FOR UPDATE',
+            ['p' => $performanceId->toBinary(), 'z' => $zoneId->toBinary()],
+            ['p' => ParameterType::BINARY, 'z' => ParameterType::BINARY],
+        );
+        if (false === $stock) {
+            return null;
+        }
+
+        // A locking read sees the latest committed holds; a plain read would use the
+        // transaction snapshot and could oversell under REPEATABLE READ.
+        $held = (int) $this->connection->fetchOne(
+            "SELECT COALESCE(SUM(l.quantity), 0)
+               FROM standing_hold_line l
+               JOIN hold h ON h.id = l.hold_id
+              WHERE h.performance_id = :p AND l.zone_id = :z
+                AND h.status = 'ACTIVE' AND h.expires_at > :now
+                AND h.id <> :except
+                FOR SHARE",
+            ['p' => $performanceId->toBinary(), 'z' => $zoneId->toBinary(), 'now' => self::sql($now), 'except' => ($exceptHoldId ?? Uuid::fromString('00000000-0000-0000-0000-000000000000'))->toBinary()],
+            ['p' => ParameterType::BINARY, 'z' => ParameterType::BINARY, 'except' => ParameterType::BINARY],
+        );
+
+        $capacity = (int) $stock['capacity'];
+
+        return ['capacity' => $capacity, 'remaining' => max(0, $capacity - (int) $stock['sold_count'] - $held)];
+    }
+
+    private static function sql(DateTimeImmutable $at): string
+    {
+        return $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
     }
 
     /**

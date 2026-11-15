@@ -1,0 +1,7 @@
+framework:
+    rate_limiter:
+        # Seat holds: a buyer re-picks a few times, a bot hammers.
+        hold_creation:
+            policy: sliding_window
+            limit: 20
+            interval: '1 minute'
