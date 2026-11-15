@@ -1,13 +1,16 @@
+import { useState } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import { routes } from './app/routes'
 import { SvgDefs } from './design-system/SvgDefs'
+import { Toaster } from './design-system/primitives/Toaster'
 
 export function App() {
+  const [router] = useState(() => createBrowserRouter(routes))
   return (
     <>
       <SvgDefs />
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <h1 className="font-display text-4xl text-fg">Théâtre Argane</h1>
-        <p className="mt-4 text-lg text-muted">Chaque place raconte une histoire.</p>
-      </main>
+      <RouterProvider router={router} />
+      <Toaster />
     </>
   )
 }
