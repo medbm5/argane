@@ -14,5 +14,7 @@ security:
             stateless: true
             lazy: true
             provider: app_users
+            custom_authenticators:
+                - App\Identity\Api\ClerkAuthenticator
 
     access_control: []
