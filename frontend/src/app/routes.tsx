@@ -6,8 +6,10 @@ import { EventPage } from '../pages/EventPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
 import { OrderConfirmationPage } from '../pages/OrderConfirmationPage'
+import { OrderDetailPage } from '../pages/OrderDetailPage'
 import { ProgrammePage } from '../pages/ProgrammePage'
 import { SeatSelectionPage } from '../pages/SeatSelectionPage'
+import { WalletPage } from '../pages/WalletPage'
 import { RequireRole } from './auth/RequireRole'
 import { NightLayout, PublicLayout, StaffLayout } from './layouts/layouts'
 import { RootProviders } from './RootProviders'
@@ -40,7 +42,8 @@ export const routes: RouteObject[] = [
           {
             element: <RequireRole requires="ROLE_CUSTOMER" />,
             children: [
-              { path: 'mes-billets', element: <ComingSoonPage title="Mes billets" /> },
+              { path: 'mes-billets', element: <WalletPage /> },
+              { path: 'mes-billets/:orderId', element: <OrderDetailPage /> },
               { path: 'commande/:holdId', element: <CheckoutPage /> },
               { path: 'commandes/:orderId/confirmation', element: <OrderConfirmationPage /> },
             ],
