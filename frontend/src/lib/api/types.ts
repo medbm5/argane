@@ -31,6 +31,8 @@ export interface OrderTicket {
   priceCents: number
   status: 'PENDING' | 'VALID' | 'CHECKED_IN' | 'CANCELLED' | 'REFUNDED'
   requiresProof: boolean
+  /** Signed QR payload, wallet only, live tickets only. */
+  qr?: string | null
 }
 export type Order = Omit<Schemas['OrderView'], 'tickets'> & { tickets: OrderTicket[] }
 export type Checkout = Omit<Schemas['CheckoutView'], 'order'> & { order: Order }

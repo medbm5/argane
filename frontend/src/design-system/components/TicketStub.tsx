@@ -43,32 +43,40 @@ export function TicketStub({
     <article
       aria-label={`Billet ${eventTitle}, ${zoneLabel}${seatLabel ? `, place ${seatLabel}` : ''}`}
       className={cn(
-        'ticket-stub relative flex flex-col overflow-visible text-ink-900 drop-shadow-[0_10px_18px_rgba(43,26,16,0.14)] sm:flex-row',
+        'ticket-stub relative flex flex-col border-2 border-ink-900 bg-paper-50 text-ink-900 shadow-[6px_6px_0_var(--ink-900)] sm:flex-row',
         cancelled && 'opacity-60 grayscale',
         className,
       )}
     >
-      <div className="ticket-body flex-1 rounded-md bg-paper-50 p-6 sm:rounded-r-none">
+      <div className="ticket-body flex-1 p-6">
         <div className="flex items-start justify-between gap-3">
-          <p className="small-caps text-sm text-sepia-600">Théâtre Argane</p>
+          <p className="text-xs font-bold tracking-[0.2em] text-pop-red uppercase">
+            Théâtre Argane
+          </p>
           {status ? <StatusBadge status={status} /> : null}
         </div>
-        <h3 className="mt-2 font-display text-3xl leading-tight">{eventTitle}</h3>
+        <h3 className="mt-2 font-display text-4xl leading-none">{eventTitle}</h3>
         <p className="mt-1 text-sm text-sepia-800">
           <time>{dateLabel}</time> · <time>{timeLabel}</time>
         </p>
 
-        <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-dashed border-paper-300 pt-4">
+        <dl className="mt-5 grid grid-cols-3 gap-4 border-t-2 border-dashed border-ink-900/30 pt-4">
           <div>
-            <dt className="small-caps text-xs text-sepia-600">Zone</dt>
+            <dt className="text-[0.65rem] font-bold tracking-[0.14em] text-sepia-800 uppercase">
+              Zone
+            </dt>
             <dd className="font-display text-xl">{zoneLabel}</dd>
           </div>
           <div>
-            <dt className="small-caps text-xs text-sepia-600">Place</dt>
+            <dt className="text-[0.65rem] font-bold tracking-[0.14em] text-sepia-800 uppercase">
+              Place
+            </dt>
             <dd className="font-display text-xl">{seatLabel ?? 'Debout'}</dd>
           </div>
           <div>
-            <dt className="small-caps text-xs text-sepia-600">Tarif</dt>
+            <dt className="text-[0.65rem] font-bold tracking-[0.14em] text-sepia-800 uppercase">
+              Tarif
+            </dt>
             <dd className="font-display text-xl">{tariffLabel}</dd>
           </div>
         </dl>
@@ -78,7 +86,7 @@ export function TicketStub({
           <span className="tabular font-medium">{priceLabel}</span>
         </div>
         {requiresProof ? (
-          <p className="mt-3 text-xs text-bordeaux-700">
+          <p className="mt-3 inline-block border-2 border-ink-900 bg-pop-yellow px-2 py-1 text-xs font-bold">
             Justificatif à présenter à l’entrée (tarif réduit).
           </p>
         ) : null}
@@ -87,22 +95,27 @@ export function TicketStub({
 
       <div
         aria-hidden
-        className="ticket-perforation relative h-0 border-t-2 border-dashed border-paper-300 sm:h-auto sm:w-0 sm:border-t-0 sm:border-l-2"
+        className="ticket-perforation relative h-0 border-t-2 border-dashed border-ink-900 sm:h-auto sm:w-0 sm:border-t-0 sm:border-l-2"
       />
 
-      <div className="ticket-stub-side flex flex-col items-center justify-center gap-2 rounded-md bg-paper-50 p-5 sm:w-48 sm:rounded-l-none">
-        <div className="relative grid size-32 place-items-center rounded-sm bg-paper-50 p-1">
-          {qr ?? <div className="size-full rounded-sm bg-paper-200" />}
+      <div className="ticket-stub-side flex flex-col items-center justify-center gap-2 p-5 sm:w-52">
+        <div className="relative grid size-40 place-items-center border-2 border-ink-900 bg-paper-50 p-1">
+          {qr ?? <div className="size-full bg-paper-200" />}
           {cancelled ? (
             <span className="absolute inset-0 grid place-items-center bg-paper-50/80 font-display text-lg text-rust-700">
               Annulé
             </span>
           ) : null}
         </div>
-        <p className="small-caps text-center text-xs text-sepia-600">
+        <p className="text-center text-xs font-bold tracking-[0.14em] uppercase">
           {seatLabel ? `Place ${seatLabel}` : zoneLabel}
         </p>
-        <span className="h-1 w-16 rounded-pill bg-gradient-to-r from-gilt-400 via-stage-glow to-gilt-400" />
+        <span aria-hidden className="flex h-2 w-24">
+          <span className="flex-1 bg-pop-yellow" />
+          <span className="flex-1 bg-pop-blue" />
+          <span className="flex-1 bg-pop-pink" />
+          <span className="flex-1 bg-pop-teal" />
+        </span>
       </div>
     </article>
   )

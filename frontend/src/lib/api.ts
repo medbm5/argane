@@ -103,3 +103,13 @@ export async function apiRequest<T>(
   if (response.status === 204) return undefined as T
   return (await response.json()) as T
 }
+
+/** Authenticated binary download (PDF tickets): fetches with the session token. */
+export async function apiBlob(path: string, getToken?: TokenGetter): Promise<Blob> {
+  const token = getToken ? await getToken() : null
+  const response = await fetch(buildUrl(path), {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!response.ok) throw new ApiError(await toProblem(response))
+  return response.blob()
+}
