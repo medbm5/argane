@@ -29,6 +29,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Venue/Domain/Model'
                 prefix: 'App\Venue\Domain\Model'
                 alias: Venue
+            Catalog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Catalog/Domain/Model'
+                prefix: 'App\Catalog\Domain\Model'
+                alias: Catalog
         controller_resolver:
             auto_mapping: false
 
