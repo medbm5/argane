@@ -35,11 +35,16 @@ export function KpiTile({
   return (
     <section
       aria-label={label}
-      className={cn('flex flex-col gap-3 rounded-md border border-line bg-surface p-5', className)}
+      className={cn(
+        'flex flex-col gap-3 border-2 border-ink-900 bg-surface p-5 shadow-[4px_4px_0_var(--ink-900)]',
+        className,
+      )}
     >
-      <h3 className="text-sm text-muted">{label}</h3>
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="tabular font-display text-4xl leading-none text-fg">{value}</p>
+      <h3 className="text-xs font-bold tracking-[0.12em] uppercase">{label}</h3>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <p className="tabular min-w-0 font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-none break-words text-fg">
+          {value}
+        </p>
         {hasDelta ? (
           <p
             className={cn(
