@@ -8,7 +8,7 @@ import {
   SelectMenu,
   type SelectOption,
 } from '../../../design-system/primitives/Select'
-import { formatMonthYear, venueMonth } from '../../../lib/format'
+import { formatMonthYear } from '../../../lib/format'
 import type { EventListItem } from '../../../lib/api/types'
 import { CATEGORIES } from '../api'
 
@@ -62,42 +62,96 @@ function BarSelect({
   )
 }
 
+interface Choice {
+  slug: string
+  month: string
+  category: string
+}
+
+/** The shows that fit a choice, ignoring one of its fields (the one whose options we list). */
+function matching(events: EventListItem[], choice: Choice, ignore: keyof Choice) {
+  return events.filter(
+    (e) =>
+      (ignore === 'slug' || choice.slug === ALL || e.slug === choice.slug) &&
+      (ignore === 'month' || choice.month === ALL || e.months.includes(choice.month)) &&
+      (ignore === 'category' || choice.category === ALL || e.category === choice.category),
+  )
+}
+
+const FITS: Record<keyof Choice, (e: EventListItem, value: string) => boolean> = {
+  slug: (e, value) => e.slug === value,
+  month: (e, value) => e.months.includes(value),
+  category: (e, value) => e.category === value,
+}
+
+/**
+ * Keeps `kept` (what the visitor just chose) and drops any other field that no show fits
+ * any more, so the bar never holds a combination that leads nowhere.
+ */
+function reconcile(events: EventListItem[], choice: Choice, kept: keyof Choice): Choice {
+  const next = { ...choice }
+  for (const field of ['slug', 'month', 'category'] as const) {
+    if (field === kept || next[field] === ALL) continue
+    const value = next[field]
+    if (!matching(events, next, field).some((e) => FITS[field](e, value))) next[field] = ALL
+  }
+  return next
+}
+
 /**
  * The ink-coloured search bar split into cells: Spectacle · Mois · Catégorie · action.
- * Choosing a show goes straight to its page; otherwise filters the programme.
+ * Each cell only offers what fits the others: a show narrows the months to its dates and
+ * the category to its own; a category or a month narrows the shows. A chosen show goes
+ * straight to its page; otherwise the programme opens with the filters.
  */
 export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
   const navigate = useNavigate()
-  const [slug, setSlug] = useState(ALL)
-  const [month, setMonth] = useState(ALL)
-  const [category, setCategory] = useState(ALL)
+  const [choice, setChoice] = useState<Choice>({ slug: ALL, month: ALL, category: ALL })
+  const { slug, month, category } = choice
+
+  function choose(field: keyof Choice, value: string) {
+    const next = { ...choice, [field]: value }
+    if (field === 'slug' && value !== ALL) {
+      // A show has one category: pick it for the visitor.
+      next.category = events.find((e) => e.slug === value)?.category ?? ALL
+    }
+    setChoice(reconcile(events, next, field))
+  }
 
   const showOptions = useMemo<SelectOption[]>(
     () => [
       { value: ALL, label: 'Tous les spectacles' },
-      ...events.map((e) => ({ value: e.slug, label: e.title, description: e.categoryLabel })),
+      ...matching(events, choice, 'slug').map((e) => ({
+        value: e.slug,
+        label: e.title,
+        description: e.categoryLabel,
+      })),
     ],
-    [events],
+    [events, choice],
   )
 
   const monthOptions = useMemo<SelectOption[]>(() => {
-    const seen = new Map<string, string>()
-    for (const event of events) {
-      const startsAt = event.nextPerformance?.startsAt
-      if (startsAt) seen.set(venueMonth(startsAt), formatMonthYear(startsAt))
-    }
+    const months = new Set(matching(events, choice, 'month').flatMap((e) => e.months))
     return [
       { value: ALL, label: 'Toute la saison' },
-      ...[...seen.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([value, label]) => ({ value, label })),
+      ...[...months].sort().map((value) => ({
+        value,
+        label: formatMonthYear(`${value}-15T12:00:00Z`),
+      })),
     ]
-  }, [events])
+  }, [events, choice])
 
-  const categoryOptions: SelectOption[] = [
-    { value: ALL, label: 'Toutes' },
-    ...CATEGORIES.map((c) => ({ value: c.value, label: c.label, swatch: c.color })),
-  ]
+  const categoryOptions = useMemo<SelectOption[]>(() => {
+    const present = new Set(matching(events, choice, 'category').map((e) => e.category))
+    return [
+      { value: ALL, label: 'Toutes' },
+      ...CATEGORIES.filter((c) => present.has(c.value)).map((c) => ({
+        value: c.value,
+        label: c.label,
+        swatch: c.color,
+      })),
+    ]
+  }, [events, choice])
 
   function submit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -123,19 +177,35 @@ export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
         onSubmit={submit}
         className="flex flex-col border-2 border-ink-900 bg-ink-900 text-paper-50 shadow-[6px_6px_0_var(--pop-yellow)] sm:flex-row"
       >
-        <BarSelect label="Spectacle" value={slug} onValueChange={setSlug} options={showOptions} />
-        <BarSelect label="Mois" value={month} onValueChange={setMonth} options={monthOptions} />
+        <BarSelect
+          label="Spectacle"
+          value={slug}
+          onValueChange={(v) => {
+            choose('slug', v)
+          }}
+          options={showOptions}
+        />
+        <BarSelect
+          label="Mois"
+          value={month}
+          onValueChange={(v) => {
+            choose('month', v)
+          }}
+          options={monthOptions}
+        />
         <BarSelect
           label="Catégorie"
           value={category}
-          onValueChange={setCategory}
+          onValueChange={(v) => {
+            choose('category', v)
+          }}
           options={categoryOptions}
         />
         <button
           type="submit"
           className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display tracking-[0.1em] text-ink-900 uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
         >
-          Voir la programmation
+          {slug === ALL ? 'Voir la programmation' : 'Voir le spectacle'}
           <ArrowRight
             aria-hidden
             className="size-5 transition-transform duration-200 ease-theatre group-hover:translate-x-1"

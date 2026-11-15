@@ -20,6 +20,7 @@ const tamra: EventListItem = {
   fromPriceCents: 9000,
   currency: 'MAD',
   nextPerformance: null,
+  months: [],
 }
 
 let fetchMock: ReturnType<typeof vi.fn<typeof fetch>>

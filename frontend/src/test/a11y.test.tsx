@@ -31,6 +31,7 @@ const event: EventListItem = {
   performanceCount: 1,
   fromPriceCents: 11000,
   currency: 'MAD',
+  months: ['2026-12'],
   nextPerformance: {
     id: 'p1',
     startsAt: '2099-12-12T19:00:00+00:00',

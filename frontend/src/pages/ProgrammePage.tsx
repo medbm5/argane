@@ -7,10 +7,8 @@ import { CATEGORIES, useEvents } from '../features/catalog/api'
 import { EventCard } from '../features/catalog/components/EventCard'
 import { SectionTitle } from '../features/catalog/landing/LandingGrid'
 import type { EventCategory } from '../lib/api/types'
-import { upcomingMonths } from '../lib/format'
+import { SEASON_MONTHS, upcomingMonths } from '../lib/format'
 import { usePageTitle } from '../lib/usePageTitle'
-
-const SEASON_MONTHS = 8
 
 /** /programme?categorie=THEATRE&mois=2026-12 — the filters live in the URL so they can be shared. */
 export function ProgrammePage() {

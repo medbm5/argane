@@ -6,6 +6,9 @@ namespace App\Catalog\Application\Query\View;
 
 final readonly class EventListItemView
 {
+    /**
+     * @param list<string> $months venue months (YYYY-MM) of the listed upcoming dates, in order
+     */
     public function __construct(
         public string $id,
         public string $slug,
@@ -20,6 +23,7 @@ final readonly class EventListItemView
         public ?int $fromPriceCents,
         public string $currency,
         public ?PerformanceSummaryView $nextPerformance,
+        public array $months,
     ) {
     }
 }

@@ -87,6 +87,10 @@ final readonly class DbalCatalogQueries implements CatalogQueries
                 self::minPrice($eventSummaries),
                 $this->currency,
                 $eventSummaries[0] ?? null,
+                array_values(array_unique(array_map(
+                    static fn (array $r): string => VenueTime::toVenue(self::utc((string) $r['starts_at']))->format('Y-m'),
+                    $performanceRows,
+                ))),
             );
         }
 

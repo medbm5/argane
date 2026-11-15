@@ -102,6 +102,20 @@ final class PublicCatalogTest extends WebTestCase
         self::assertSame('2026-12-12T19:00:00+00:00', $item['nextPerformance']['startsAt']);
     }
 
+    public function testListsTheVenueMonthsOfEachEventsUpcomingDates(): void
+    {
+        $first = $this->seedOnSale('Two Months', '2026-12-12 19:00:00');
+        $second = CatalogFactory::performance($first->event(), $first->layout(), '2027-02-10 19:00:00');
+        $this->em->persist($second);
+        $this->em->flush();
+        self::getContainer()->get(PerformancePublisher::class)->publish($second, openSales: true);
+
+        $events = $this->getJson('/api/events');
+        $item = array_values(array_filter($events, static fn (array $e): bool => 'Two Months' === $e['title']))[0] ?? self::fail();
+
+        self::assertSame(['2026-12', '2027-02'], $item['months'], 'lets the home search offer only this show’s months');
+    }
+
     public function testHidesDraftEventsAndUnpublishedPerformances(): void
     {
         $venue = CatalogFactory::venue();

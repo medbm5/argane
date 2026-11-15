@@ -74,6 +74,9 @@ export function formatAgeRating(age: number | null | undefined): string {
 }
 
 /** The next `count` season months from `from` (venue time), as { value: "2026-12", label: "décembre 2026" }. */
+/** How many months ahead the programme filters offer (the rest of the season). */
+export const SEASON_MONTHS = 8
+
 export function upcomingMonths(from: Date, count: number): { value: string; label: string }[] {
   const [y, m] = venueMonth(from.toISOString()).split('-').map(Number)
   return Array.from({ length: count }, (_, i) => {
