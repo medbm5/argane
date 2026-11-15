@@ -25,9 +25,6 @@ use Symfony\Component\Uid\Uuid;
 /** Builds the seat map (geometry + prices for the caller) and the compact availability. */
 final readonly class SeatMapService
 {
-    /** Stage rectangle at the top of the 1000 × 700 plan. */
-    private const array STAGE = ['x' => 250, 'y' => 18, 'width' => 500, 'height' => 56];
-
     public function __construct(
         private PerformanceRepository $performances,
         private PriceRepository $prices,
@@ -83,7 +80,7 @@ final readonly class SeatMapService
             $channel->value,
             strtoupper($this->currency),
             ['width' => HallLayout::VIEWBOX_WIDTH, 'height' => HallLayout::VIEWBOX_HEIGHT],
-            self::STAGE,
+            HallLayout::STAGE,
             $this->maxSeatsPerOrder,
             $zones,
             $this->queries->seats($performance->id()),

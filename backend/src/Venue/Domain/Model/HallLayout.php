@@ -24,6 +24,8 @@ class HallLayout
 {
     public const int VIEWBOX_WIDTH = 1000;
     public const int VIEWBOX_HEIGHT = 700;
+    /** The stage, drawn at the top of every plan. */
+    public const array STAGE = ['x' => 250, 'y' => 18, 'width' => 500, 'height' => 56];
 
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
