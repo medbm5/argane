@@ -1,4 +1,9 @@
 security:
+    # ORGANIZER > BOX_OFFICE > CUSTOMER
+    role_hierarchy:
+        ROLE_BOX_OFFICE: ROLE_CUSTOMER
+        ROLE_ORGANIZER: ROLE_BOX_OFFICE
+
     providers:
         app_users:
             entity:
