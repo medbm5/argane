@@ -222,7 +222,7 @@ function SeatSelection({
             lostSeatIds={lost}
           />
           {closed ? (
-            <div className="absolute inset-x-0 bottom-0 z-20 bg-pop-red px-4 py-3 text-center font-display text-xl text-paper-50">
+            <div className="absolute inset-x-0 bottom-0 z-20 bg-pop-red px-4 py-3 text-center font-display text-xl text-ink-900">
               {performance.status === 'CANCELLED'
                 ? 'Représentation annulée'
                 : 'La vente en ligne est fermée pour cette date'}

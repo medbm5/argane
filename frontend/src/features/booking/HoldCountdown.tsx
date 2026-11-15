@@ -44,7 +44,7 @@ export function HoldCountdown({
 
   return (
     <div
-      className={`relative overflow-hidden border-2 border-paper-100 ${urgent ? 'bg-pop-red text-paper-50' : 'bg-pop-yellow text-ink-900'}`}
+      className={`relative overflow-hidden border-2 border-paper-100 ${urgent ? 'bg-pop-red text-ink-900' : 'bg-pop-yellow text-ink-900'}`}
     >
       <div
         aria-hidden

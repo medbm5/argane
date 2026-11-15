@@ -11,7 +11,7 @@ const badgeVariants = cva(
         neutral: 'border-fg bg-surface text-fg',
         accent: 'border-fg bg-pop-teal text-ink-900',
         success: 'border-fg bg-pop-green text-ink-900',
-        danger: 'border-fg bg-pop-red text-paper-50',
+        danger: 'border-fg bg-pop-red text-ink-900',
         highlight: 'border-fg bg-pop-pink text-ink-900',
         gilt: 'border-fg bg-pop-yellow text-ink-900',
         ink: 'border-fg bg-ink-900 text-paper-50',

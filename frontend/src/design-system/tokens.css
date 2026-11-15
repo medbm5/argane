@@ -25,6 +25,8 @@
   --pop-orange: #ff7a1a;
   --pop-teal: #18b3c6;
   --pop-red: #e8432e;
+  /* Same red, darkened for text on cream (5:1, WCAG AA); --pop-red stays for fills. */
+  --red-text: #c22f1c;
   --pop-violet: #7c4dff;
   --pop-green: #2fb36b;
 
@@ -48,15 +50,15 @@
   --c-border: var(--ink-900);
   --c-text: var(--ink-900);
   --c-text-muted: var(--sepia-800);
-  --c-accent: var(--pop-red);
+  --c-accent: var(--red-text);
   --c-accent-hover: var(--ink-900);
   --c-focus: var(--pop-blue);
   --c-primary: var(--ink-900);
   --c-on-primary: var(--paper-100);
-  --c-highlight: var(--pop-red);
+  --c-highlight: var(--red-text);
   --c-gilt: var(--pop-yellow);
   --c-success: var(--pop-green);
-  --c-danger: var(--pop-red);
+  --c-danger: var(--red-text);
 
   /* Seat states */
   --seat-available: var(--paper-50);
@@ -95,6 +97,9 @@
   --c-focus: var(--pop-yellow);
   --c-primary: var(--pop-yellow);
   --c-on-primary: var(--ink-900);
+  /* On dark grounds the bright red reads well (4.8:1); the darkened one would not. */
+  --c-highlight: var(--pop-red);
+  --c-danger: var(--pop-red);
 
   --seat-available: var(--night-600);
   --seat-available-stroke: var(--paper-100);

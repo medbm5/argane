@@ -129,7 +129,7 @@ export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
       />
       <button
         type="submit"
-        className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display tracking-[0.1em] uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
+        className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display tracking-[0.1em] text-ink-900 uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
       >
         Voir la programmation
         <ArrowRight

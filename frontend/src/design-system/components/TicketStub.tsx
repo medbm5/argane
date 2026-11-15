@@ -50,9 +50,7 @@ export function TicketStub({
     >
       <div className="ticket-body flex-1 p-6">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-xs font-bold tracking-[0.2em] text-pop-red uppercase">
-            Théâtre Argane
-          </p>
+          <p className="text-xs font-bold tracking-[0.2em] text-accent uppercase">Théâtre Argane</p>
           {status ? <StatusBadge status={status} /> : null}
         </div>
         <h3 className="mt-2 font-display text-4xl leading-none">{eventTitle}</h3>

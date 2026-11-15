@@ -42,6 +42,14 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Conséquences.** Réponse de quelques centaines d'octets au pire, 304 la plupart du temps. Mercure/SSE reste une option (Slice 20) si la latence de 5 s devient gênante.
 
+## ADR-005 — Contraste : un rouge « texte » distinct du rouge « aplat »
+
+**Contexte.** La direction « mural » utilise un rouge vif (#e8432e). En texte sur le fond crème il ne fait que 3,56:1, et un texte blanc sur ce rouge 3,75:1 : sous le seuil WCAG AA (4,5:1) pour le texte courant.
+
+**Décision.** Deux jetons : `--pop-red` pour les aplats (blocs, barres, sièges), `--red-text` (#c22f1c, 5,06:1 sur crème) pour les rôles texte (`accent`, `highlight`, `danger`). Sur fond sombre (thème nuit, en-têtes), le rouge vif reste le rouge texte (4,8:1). Les libellés posés sur un aplat rouge passent en encre (#15121e). Ratios vérifiés à la main (outil de calcul WCAG) ; axe-core couvre le reste dans les tests (le contraste n'est pas calculable en jsdom).
+
+**Conséquences.** Le rendu reste vif ; seuls les petits textes rouges sont un peu plus sombres.
+
 ---
 
 ## Questions du challenge

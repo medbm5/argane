@@ -100,7 +100,7 @@ export function SelectionSummary({
                 onClick={() => {
                   dispatch({ type: 'toggleSeat', seatId: id })
                 }}
-                className="grid size-8 place-items-center hover:bg-pop-red hover:text-paper-50"
+                className="grid size-8 place-items-center hover:bg-pop-red hover:text-ink-900"
               >
                 <X aria-hidden className="size-4" />
               </button>
