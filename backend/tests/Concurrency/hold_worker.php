@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Worker for ParallelHoldTest: boots the kernel in a separate PHP process and tries to
  * hold each given seat in turn, every attempt starting on a shared beat so the two
- * workers really collide. Prints the JSON list of seat ids it won.
+ * workers really collide. Prints `RESULT:` + the JSON list of seat ids it won.
  *
  *   php tests/Concurrency/hold_worker.php <performanceId> <startAtUnixFloat> <seatId,seatId,...>
  */
@@ -48,4 +48,5 @@ foreach (explode(',', $seatList) as $round => $seatId) {
     }
 }
 
-echo json_encode($won), \PHP_EOL;
+// Tagged so any other output (warnings, cache notices) cannot be mistaken for the result.
+echo 'RESULT:', json_encode($won), \PHP_EOL;

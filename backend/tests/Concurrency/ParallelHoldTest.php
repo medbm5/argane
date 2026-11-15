@@ -100,7 +100,7 @@ final class ParallelHoldTest extends KernelTestCase
         self::assertCount(self::ROUNDS, $seats);
         shuffle($seats);
 
-        $startAt = sprintf('%.6F', microtime(true) + 3.0); // both kernels booted by then
+        $startAt = sprintf('%.6F', microtime(true) + 5.0); // both kernels booted by then, even on a busy machine
         $workers = [];
         foreach ([1, 2] as $_) {
             $process = new Process([\PHP_BINARY, __DIR__.'/hold_worker.php', $performance->id()->toRfc4122(), $startAt, implode(',', $seats)]);
@@ -113,8 +113,10 @@ final class ParallelHoldTest extends KernelTestCase
         foreach ($workers as $process) {
             $process->wait();
             self::assertTrue($process->isSuccessful(), $process->getErrorOutput().$process->getOutput());
-            $lines = array_filter(explode(\PHP_EOL, trim($process->getOutput())));
-            $wins[] = json_decode((string) end($lines), true, flags: \JSON_THROW_ON_ERROR);
+            $output = $process->getOutput();
+            $decoded = preg_match('/^RESULT:(.*)$/m', $output, $match) ? json_decode($match[1], true) : null;
+            self::assertIsArray($decoded, 'worker output: '.$output.$process->getErrorOutput());
+            $wins[] = $decoded;
         }
         [$first, $second] = $wins;
 
