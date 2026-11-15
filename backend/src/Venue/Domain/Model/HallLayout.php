@@ -14,8 +14,8 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * A seating configuration of the hall (thÃ©Ã¢tre, concertâ€¦), drawn in a fixed
- * 1000 Ã— 700 viewBox with the stage at the top.
+ * A seating configuration of the hall (théâtre, concert…), drawn in a fixed
+ * 1000 × 700 viewBox with the stage at the top.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'hall_layout')]
@@ -134,7 +134,7 @@ class HallLayout
     public function assertEditable(): void
     {
         if ($this->isLocked()) {
-            throw ConflictException::because('LAYOUT_LOCKED', sprintf('La configuration Â« %s Â» est utilisÃ©e par des ventes. Dupliquez-la pour la modifier.', $this->name), ['layoutId' => $this->id->toRfc4122()]);
+            throw ConflictException::because('LAYOUT_LOCKED', sprintf('La configuration « %s » est utilisée par des ventes. Dupliquez-la pour la modifier.', $this->name), ['layoutId' => $this->id->toRfc4122()]);
         }
     }
 

@@ -28,7 +28,7 @@ final class LayoutGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->generator = new LayoutGenerator(new MockClock('2026-11-15 10:00:00'));
-        $this->venue = new Venue('ThÃ©Ã¢tre Argane', 'theatre-argane', 'Agadir', 'Boulevard du 20 AoÃ»t');
+        $this->venue = new Venue('Théâtre Argane', 'theatre-argane', 'Agadir', 'Boulevard du 20 Août');
     }
 
     /**
@@ -53,7 +53,7 @@ final class LayoutGeneratorTest extends TestCase
 
     private function theatre(): HallLayout
     {
-        return $this->generator->generate($this->venue, new LayoutSpec('Configuration thÃ©Ã¢tre', [
+        return $this->generator->generate($this->venue, new LayoutSpec('Configuration théâtre', [
             $this->orchestre(),
             new ZoneSpec('CORB', 'Corbeille', ZoneKind::SEATED, new Area(150, 450, 700, 160), rowLabels: LayoutGenerator::rowRange('M', 'R'), seatsPerRow: 20),
             new ZoneSpec('LOGES', 'Loges', ZoneKind::SEATED, new Area(30, 120, 90, 420), rowLabels: LayoutGenerator::rowRange('1', '8'), seatsPerRow: 5, arrangement: SeatArrangement::BOXES),
@@ -221,7 +221,7 @@ final class LayoutGeneratorTest extends TestCase
         $source = $this->theatre();
         $source->lock(new DateTimeImmutable('2026-11-20'));
 
-        $copy = $source->cloneAs('ThÃ©Ã¢tre (copie)', new DateTimeImmutable('2026-11-21'));
+        $copy = $source->cloneAs('Théâtre (copie)', new DateTimeImmutable('2026-11-21'));
 
         self::assertFalse($copy->isLocked());
         self::assertFalse($copy->isDefault());

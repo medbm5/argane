@@ -26,7 +26,7 @@ final class LayoutPersistenceTest extends KernelTestCase
         $generator = new LayoutGenerator($clock);
         $service = new LayoutService($venues, $clock);
 
-        $venue = new Venue('ThÃ©Ã¢tre Argane', 'theatre-argane-test', 'Agadir', 'Boulevard du 20 AoÃ»t');
+        $venue = new Venue('Théâtre Argane', 'theatre-argane-test', 'Agadir', 'Boulevard du 20 Août');
         $venues->save($venue);
         $layout = $generator->generate($venue, new LayoutSpec('Concert', [
             new ZoneSpec('FOSSE', 'Fosse debout', ZoneKind::STANDING, new Area(150, 110, 700, 300), capacity: 300),

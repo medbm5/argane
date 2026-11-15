@@ -1,4 +1,4 @@
-﻿import { frFR } from '@clerk/localizations'
+import { frFR } from '@clerk/localizations'
 import { ClerkProvider, useAuth, useClerk } from '@clerk/react'
 import { useMemo, type ReactNode } from 'react'
 import { useNavigate } from 'react-router'
