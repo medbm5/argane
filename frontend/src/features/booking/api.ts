@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Schemas } from '../../lib/api/types'
+import type { HoldInfo } from '../../lib/api/types'
 import { useApi } from '../../lib/useApi'
 import { seatMapKeys } from '../seatmap/api'
 import type { Selection } from '../seatmap/selection'
 
-export type Hold = Schemas['HoldView']
+export type Hold = HoldInfo
 
 export const holdKeys = {
   hold: (id: string) => ['hold', id] as const,

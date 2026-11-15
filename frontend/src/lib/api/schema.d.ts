@@ -4,6 +4,38 @@
  */
 
 export interface paths {
+    "/api/holds/{id}/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_checkout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_order_show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/performances/{id}/holds": {
         parameters: {
             query?: never;
@@ -132,6 +164,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/webhooks/stripe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_webhook_stripe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -168,6 +216,21 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        CheckoutRequest: {
+            /** @default [] */
+            seats: {
+                [key: string]: string;
+            }[];
+            /** @default [] */
+            standing: {
+                [key: string]: number | string;
+            }[];
+            /**
+             * Required for invitations (box office).
+             * @default null
+             */
+            reason: string | null;
+        };
         HoldRequest: {
             /** @default [] */
             seatIds: string[];
@@ -180,6 +243,31 @@ export interface components {
              * @enum {string}
              */
             channel: "ONLINE" | "BOX_OFFICE";
+        };
+        OrderView: {
+            id: string;
+            reference: string;
+            status: string;
+            channel: string;
+            totalCents: number;
+            currency: string;
+            performanceId: string;
+            eventTitle: string;
+            eventSlug: string;
+            posterUrl?: string | null;
+            startsAt: string;
+            createdAt: string;
+            paidAt?: string | null;
+            holdId?: string | null;
+            tickets: {
+                [key: string]: boolean | number | string | (never | null);
+            }[];
+        };
+        CheckoutView: {
+            order: components["schemas"]["OrderView"];
+            /** Null when nothing is due (all invitations): the order is already paid. */
+            clientSecret?: string | null;
+            holdExpiresAt: string;
         };
         HoldView: {
             id: string;
@@ -365,6 +453,68 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    post_api_checkout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequest"];
+            };
+        };
+        responses: {
+            /** @description Order awaiting payment, with the Stripe client secret */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutView"];
+                };
+            };
+            /** @description HOLD_EXPIRED */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description CHECKOUT_MISMATCH, TARIFF_NOT_PRICED, TARIFF_MIN_QUANTITY, … */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_api_order_show: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's order; reconciles with Stripe while unpaid */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"];
+                };
+            };
+        };
+    };
     post_api_hold_create: {
         parameters: {
             query?: never;
@@ -628,6 +778,31 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["MeResponse"];
                 };
+            };
+        };
+    };
+    post_api_webhook_stripe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Processed, ignored, or already seen */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid signature or payload */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

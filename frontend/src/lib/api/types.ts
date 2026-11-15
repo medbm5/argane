@@ -22,3 +22,18 @@ export type SeatMapSeat = Schemas['SeatMapSeatView']
 export type ZonePrice = Schemas['ZonePriceView']
 export type Availability = Schemas['AvailabilityView']
 export type StandingAvailability = Schemas['StandingAvailabilityView']
+
+export interface OrderTicket {
+  id: string
+  zone: string
+  seat: string | null
+  tariff: string
+  priceCents: number
+  status: 'PENDING' | 'VALID' | 'CHECKED_IN' | 'CANCELLED' | 'REFUNDED'
+  requiresProof: boolean
+}
+export type Order = Omit<Schemas['OrderView'], 'tickets'> & { tickets: OrderTicket[] }
+export type Checkout = Omit<Schemas['CheckoutView'], 'order'> & { order: Order }
+export type HoldInfo = Omit<Schemas['HoldView'], 'standing'> & {
+  standing: { zoneId: string; quantity: number }[]
+}
