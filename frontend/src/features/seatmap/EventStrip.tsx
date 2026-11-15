@@ -39,7 +39,7 @@ export function EventStrip({
           <p className="text-xs font-bold tracking-[0.14em] text-pop-yellow uppercase">
             {performance.categoryLabel}
           </p>
-          <h1 className="truncate font-display text-4xl leading-none group-hover:text-pop-yellow">
+          <h1 className="font-display text-3xl leading-none break-words group-hover:text-pop-yellow sm:text-4xl">
             {performance.eventTitle}
           </h1>
           <p className="mt-1 text-sm text-muted">

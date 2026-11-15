@@ -46,7 +46,7 @@ export function SectionTitle({
 function PosterCard({ event, strip }: { event: EventListItem; strip: string }) {
   const label = `${event.title} ★ `
   return (
-    <li>
+    <li className="min-w-0">
       <Link
         to={`/spectacles/${event.slug}`}
         aria-label={`À l’affiche : ${event.title}`}

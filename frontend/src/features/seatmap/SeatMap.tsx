@@ -29,6 +29,15 @@ import {
 import { seatStates, type SeatState, type Selection } from './selection'
 
 const SEAT_R = 10
+
+/** True on phone-width screens (false where matchMedia is missing, e.g. tests). */
+function isNarrowScreen(): boolean {
+  try {
+    return window.matchMedia('(max-width: 640px)').matches
+  } catch {
+    return false
+  }
+}
 const KEY_DIRECTIONS: Record<string, Direction> = {
   ArrowLeft: 'left',
   ArrowRight: 'right',
@@ -222,7 +231,13 @@ export function SeatMap({
     () => ({ width: map.viewBox.width, height: map.viewBox.height }),
     [map.viewBox.width, map.viewBox.height],
   )
-  const [view, setView] = useState<View>(() => fitView(plan))
+  // Phones: seats would be ~10 px across, too small to tap. Open zoomed on the front
+  // of the hall; zoom out / fit stay one tap away.
+  const [view, setView] = useState<View>(() =>
+    isNarrowScreen()
+      ? zoomAt(fitView(plan), plan, 1.8, plan.width / 2, plan.height * 0.35)
+      : fitView(plan),
+  )
   const svgRef = useRef<SVGSVGElement>(null)
   const drag = useRef<{ x: number; y: number; moved: number; id: number } | null>(null)
 
