@@ -19,6 +19,7 @@ use App\Catalog\Domain\Model\PerformanceSeat;
 use App\Payment\Application\PaymentGateway;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Model\PaymentProvider;
+use App\Payment\Domain\Model\PaymentStatus;
 use App\Payment\Domain\PaymentRepository;
 use App\Pricing\Application\TariffEligibilityPolicy;
 use App\Pricing\Domain\Model\PerformancePrice;
@@ -27,6 +28,7 @@ use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\Exception\NotFoundException;
 use App\Shared\Domain\SalesChannel;
 use DateTimeInterface;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
@@ -211,12 +213,29 @@ final readonly class CheckoutService
             return;
         }
         $order = $payment->order();
-        if (OrderStatus::PAID === $order->status() || OrderStatus::CANCELLED === $order->status()) {
-            return;
-        }
         $now = $this->clock->now();
-        if (!$this->finalizer->finalize($order, $payment, $now)) {
-            $this->finalizer->refundLatePayment($order, $payment, $now);
+
+        // The webhook and the buyer's own order page confirm the same payment at the same
+        // time. Lock the order and re-read it (and its payment) so only one of them settles
+        // it; otherwise the loser finds the seats already sold, takes that for a lost race
+        // with another buyer and refunds a perfectly good sale.
+        $connection = $this->em->getConnection();
+        $connection->beginTransaction();
+        try {
+            $this->em->refresh($order, LockMode::PESSIMISTIC_WRITE);
+            $this->em->refresh($payment);
+            $settled = OrderStatus::PAID === $order->status()
+                || OrderStatus::CANCELLED === $order->status()
+                || PaymentStatus::SUCCEEDED === $payment->status();
+            if (!$settled && !$this->finalizer->finalize($order, $payment, $now)) {
+                $this->finalizer->refundLatePayment($order, $payment, $now);
+            }
+            $connection->commit();
+        } catch (Throwable $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            throw $e;
         }
     }
 

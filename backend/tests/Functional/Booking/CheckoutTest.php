@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Booking;
 
+use App\Booking\Application\CheckoutService;
 use App\Booking\Application\HoldService;
+use App\Booking\Domain\Model\Order;
+use App\Booking\Domain\Model\OrderStatus;
 use App\Catalog\Domain\Model\Performance;
 use App\Identity\Domain\Model\User;
 use App\Payment\Application\PaymentGateway;
@@ -15,6 +18,7 @@ use App\Tests\Support\FakePaymentGateway;
 use App\Tests\Support\SalesFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
@@ -226,6 +230,37 @@ final class CheckoutTest extends WebTestCase
         $this->stripe->markSucceeded($this->intentOf($order['id']));
 
         self::assertSame('PAID', $this->call('GET', '/api/orders/'.$order['id'], as: $this->alice)['status'], 'no webhook needed');
+    }
+
+    /**
+     * The webhook and the buyer's order page confirm the same payment at the same time.
+     * The one that loses the race must see the sale, not mistake it for a lost seat and refund.
+     */
+    public function testAConfirmationRacingTheWebhookNeverRefundsAPaidOrder(): void
+    {
+        $order = $this->checkout($this->hold())['order'];
+        $intent = $this->intentOf($order['id']);
+        $container = self::getContainer();
+        $db = $container->get(Connection::class);
+        $em = $container->get(EntityManagerInterface::class);
+
+        // This request read the order while it was still unpaid…
+        $stale = $em->find(Order::class, Uuid::fromString($order['id']));
+        self::assertNotNull($stale);
+        self::assertSame(OrderStatus::PENDING_PAYMENT, $stale->status());
+
+        // …while the other one sold the places and committed behind its back.
+        $db->executeStatement("UPDATE customer_order SET status = 'PAID' WHERE id = ?", [Uuid::fromString($order['id'])->toBinary()], [ParameterType::BINARY]);
+        $db->executeStatement(
+            "UPDATE performance_seat SET status = 'SOLD', hold_id = NULL, hold_expires_at = NULL WHERE id IN (?, ?)",
+            [Uuid::fromString($this->seats['A-1'])->toBinary(), Uuid::fromString($this->seats['A-2'])->toBinary()],
+            [ParameterType::BINARY, ParameterType::BINARY],
+        );
+
+        $container->get(CheckoutService::class)->paymentSucceeded($intent);
+
+        self::assertSame([], $this->stripe->refunds, 'no refund for a sale that happened');
+        self::assertSame('PAID', $db->fetchOne('SELECT status FROM customer_order WHERE id = ?', [Uuid::fromString($order['id'])->toBinary()], [ParameterType::BINARY]));
     }
 
     public function testCheckingOutAgainReplacesTheUnpaidOrder(): void
