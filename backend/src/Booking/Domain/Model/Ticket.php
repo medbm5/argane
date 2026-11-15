@@ -22,6 +22,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity]
 #[ORM\Table(name: 'ticket')]
 #[ORM\Index(name: 'idx_ticket_perf_status', columns: ['performance_id', 'status'])]
+#[ORM\Index(name: 'idx_ticket_order_status', columns: ['order_id', 'status', 'unit_price_cents'])]
 #[ORM\UniqueConstraint(name: 'uniq_ticket_active_seat', columns: ['active_seat_key'])]
 class Ticket
 {

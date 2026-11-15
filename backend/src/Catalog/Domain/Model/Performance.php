@@ -21,6 +21,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Table(name: 'performance')]
 #[ORM\Index(name: 'idx_performance_starts', columns: ['starts_at'])]
 #[ORM\Index(name: 'idx_performance_event', columns: ['event_id', 'starts_at'])]
+#[ORM\Index(name: 'idx_performance_layout', columns: ['layout_id', 'starts_at'])]
 class Performance
 {
     #[ORM\Id]

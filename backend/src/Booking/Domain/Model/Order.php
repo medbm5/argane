@@ -22,6 +22,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Index(name: 'idx_order_customer', columns: ['customer_id', 'created_at'])]
 #[ORM\Index(name: 'idx_order_perf_status', columns: ['performance_id', 'status'])]
 #[ORM\Index(name: 'idx_order_status_created', columns: ['status', 'created_at'])]
+#[ORM\Index(name: 'idx_order_paid', columns: ['paid_at', 'channel', 'status'])]
+#[ORM\Index(name: 'idx_order_cancelled', columns: ['cancelled_at', 'status'])]
 class Order
 {
     #[ORM\Id]
