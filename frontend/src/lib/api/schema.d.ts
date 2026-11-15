@@ -276,6 +276,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/studio/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_events"];
+        put?: never;
+        post: operations["post_api_studio_event_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_event"];
+        put: operations["put_api_studio_event_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/events/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_event_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/events/{id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_event_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/events/{id}/performances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_performance_schedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["put_api_studio_performance_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_performance_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/open-sales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_performance_open"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/close-sales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_performance_close"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -302,6 +446,118 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["post_api_webhook_stripe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/tariffs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_tariffs"];
+        put?: never;
+        post: operations["post_api_studio_tariff_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/tariffs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["put_api_studio_tariff_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/tariffs/{id}/{state}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_tariff_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/prices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_prices"];
+        put: operations["put_api_studio_prices_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/prices/apply-to-event": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_prices_apply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/sales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_sales"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/sales.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_sales_csv"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -404,6 +660,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/studio/layouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_layouts"];
+        put?: never;
+        post: operations["post_api_studio_layout_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/layouts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_studio_layout"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/layouts/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_layout_preview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/layouts/{id}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_layout_clone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/layouts/{id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_layout_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/venue": {
         parameters: {
             query?: never;
@@ -476,6 +812,75 @@ export interface components {
             buyerName: string | null;
             /** @default null */
             buyerEmail: string | null;
+        };
+        EventInput: {
+            /** @default  */
+            title: string;
+            /** @default null */
+            subtitle: string | null;
+            /**
+             * @default THEATRE
+             * @enum {string}
+             */
+            category: "CONCERT" | "THEATRE" | "CONFERENCE" | "DANCE" | "COMEDY";
+            /** @default  */
+            description: string;
+            /** @default 90 */
+            durationMinutes: number;
+            /** @default null */
+            ageRating: number | null;
+            /** @default null */
+            posterPath: string | null;
+        };
+        PerformanceInput: {
+            /** @default  */
+            startsAt: string;
+            /** @default  */
+            salesOpenAt: string;
+            /**
+             * Default: at curtain time.
+             * @default null
+             */
+            salesCloseAt: string | null;
+            /** @default 30 */
+            doorsMinutesBefore: number;
+            /** @default  */
+            layoutId: string;
+        };
+        TariffInput: {
+            /** @default  */
+            code: string;
+            /** @default  */
+            label: string;
+            /**
+             * @default [
+             *       "ONLINE",
+             *       "BOX_OFFICE"
+             *     ]
+             */
+            channels: string[];
+            /** @default [] */
+            allowedRoles: string[];
+            /** @default 1 */
+            minQuantity: number;
+            /** @default null */
+            maxQuantity: number | null;
+            /** @default false */
+            requiresProofAtEntry: boolean;
+            /** @default false */
+            isFree: boolean;
+            /** @default null */
+            description: string | null;
+            /** @default 0 */
+            sortOrder: number;
+        };
+        LayoutSpecInput: {
+            /** @default  */
+            name: string;
+            /** @default [] */
+            zones: {
+                [key: string]: boolean | number | string[] | string | (never | null);
+            }[];
         };
         OrderView: {
             id: string;
@@ -680,6 +1085,40 @@ export interface components {
             blocked: string[];
             standing: components["schemas"]["StandingAvailabilityView"][];
         };
+        StudioPerformanceView: {
+            id: string;
+            startsAt: string;
+            doorsAt: string;
+            salesOpenAt: string;
+            salesCloseAt: string;
+            /** SCHEDULED, ON_SALE, SALES_CLOSED, CANCELLED, PAST */
+            status: string;
+            published: boolean;
+            cancelReason?: string | null;
+            layoutId: string;
+            layoutName: string;
+            sold: number;
+            capacity: number;
+            revenueCents: number;
+            pricedCells: number;
+        };
+        StudioEventView: {
+            id: string;
+            slug: string;
+            title: string;
+            subtitle?: string | null;
+            category: string;
+            categoryLabel: string;
+            description: string;
+            durationMinutes: number;
+            ageRating?: number | null;
+            posterPath?: string | null;
+            status: string;
+            sold: number;
+            capacity: number;
+            revenueCents: number;
+            performances: components["schemas"]["StudioPerformanceView"][];
+        };
         MeResponse: {
             id: string;
             email: string;
@@ -687,6 +1126,43 @@ export interface components {
             roles: string[];
             isBoxOffice: boolean;
             isOrganizer: boolean;
+        };
+        TariffView: {
+            id: string;
+            code: string;
+            label: string;
+            description?: string | null;
+            channels: string[];
+            allowedRoles: string[];
+            minQuantity: number;
+            maxQuantity?: number | null;
+            requiresProofAtEntry: boolean;
+            isFree: boolean;
+            active: boolean;
+            sortOrder: number;
+        };
+        PriceGridView: {
+            performanceId: string;
+            currency: string;
+            zones: {
+                [key: string]: string;
+            }[];
+            tariffs: components["schemas"]["TariffView"][];
+            cells: {
+                [key: string]: number | string;
+            }[];
+        };
+        SalesPageView: {
+            rows: {
+                [key: string]: number | string | (never | null);
+            }[];
+            page: number;
+            perPage: number;
+            total: number;
+            paidOrders: number;
+            ticketsSold: number;
+            revenueCents: number;
+            currency: string;
         };
         CheckInResult: {
             verdict: string;
@@ -721,6 +1197,28 @@ export interface components {
             admitted: number;
             /** @default 0 */
             expected: number;
+        };
+        LayoutView: {
+            id?: string | null;
+            name: string;
+            isDefault: boolean;
+            locked: boolean;
+            archived: boolean;
+            clonedFromName?: string | null;
+            capacity: number;
+            createdAt?: string | null;
+            viewBox: {
+                [key: string]: number;
+            };
+            stage: {
+                [key: string]: number;
+            };
+            zones: {
+                [key: string]: number | string;
+            }[];
+            seats: {
+                [key: string]: boolean | number | string;
+            }[];
         };
         LayoutSummary: {
             id: string;
@@ -1251,6 +1749,266 @@ export interface operations {
             };
         };
     };
+    get_api_studio_events: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Every event, newest first, with sales totals */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"][];
+                };
+            };
+        };
+    };
+    post_api_studio_event_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventInput"];
+            };
+        };
+        responses: {
+            /** @description Draft event */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    get_api_studio_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event with all its performances */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    put_api_studio_event_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventInput"];
+            };
+        };
+        responses: {
+            /** @description Updated event */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_event_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event visible in the programme */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_event_archive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event archived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_performance_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PerformanceInput"];
+            };
+        };
+        responses: {
+            /** @description Performance scheduled (unpublished) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    put_api_studio_performance_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PerformanceInput"];
+            };
+        };
+        responses: {
+            /** @description Rescheduled (layout changes only before publication) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_performance_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    openSales?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Published, inventory generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_performance_open: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description On sale */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
+    post_api_studio_performance_close: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Online and counter sales closed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudioEventView"];
+                };
+            };
+        };
+    };
     get_api_me: {
         parameters: {
             query?: never;
@@ -1293,6 +2051,229 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    get_api_studio_tariffs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All tariffs, inactive included */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffView"][];
+                };
+            };
+        };
+    };
+    post_api_studio_tariff_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffInput"];
+            };
+        };
+        responses: {
+            /** @description Tariff created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffView"];
+                };
+            };
+        };
+    };
+    put_api_studio_tariff_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffInput"];
+            };
+        };
+        responses: {
+            /** @description Tariff updated (code is permanent) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffView"];
+                };
+            };
+        };
+    };
+    post_api_studio_tariff_activate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                state: "activate" | "deactivate";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active state changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffView"];
+                };
+            };
+        };
+    };
+    get_api_studio_prices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Zones × tariffs grid */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceGridView"];
+                };
+            };
+        };
+    };
+    put_api_studio_prices_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    cells?: {
+                        zoneId?: string;
+                        tariffId?: string;
+                        amountCents?: number | null;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Grid replaced (null cells removed); sold tickets keep their price */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceGridView"];
+                };
+            };
+        };
+    };
+    post_api_studio_prices_apply: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Grid copied to the other performances of the event */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        updated?: number;
+                    };
+                };
+            };
+        };
+    };
+    get_api_studio_sales: {
+        parameters: {
+            query?: {
+                event?: string;
+                performance?: string;
+                channel?: "ONLINE" | "BOX_OFFICE";
+                status?: "PAID" | "CANCELLED" | "REFUNDED" | "PARTIALLY_REFUNDED";
+                /** @description YYYY-MM-DD (venue day) */
+                from?: string;
+                /** @description YYYY-MM-DD inclusive */
+                to?: string;
+                /** @description Reference, name or email */
+                q?: string;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders, newest first, with totals */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SalesPageView"];
+                };
+            };
+        };
+    };
+    get_api_studio_sales_csv: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One line per ticket (same filters), semicolon-separated UTF-8 with BOM for Excel */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": unknown;
+                };
             };
         };
     };
@@ -1427,6 +2408,138 @@ export interface operations {
                 content: {
                     "application/pdf": unknown;
                 };
+            };
+        };
+    };
+    get_api_studio_layouts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All configurations (archived included), without seats */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutView"][];
+                };
+            };
+        };
+    };
+    post_api_studio_layout_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LayoutSpecInput"];
+            };
+        };
+        responses: {
+            /** @description Saved configuration */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutView"];
+                };
+            };
+        };
+    };
+    get_api_studio_layout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One configuration with its seats */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutView"];
+                };
+            };
+        };
+    };
+    post_api_studio_layout_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LayoutSpecInput"];
+            };
+        };
+        responses: {
+            /** @description The generated plan, not saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutView"];
+                };
+            };
+        };
+    };
+    post_api_studio_layout_clone: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description An editable copy (locked layouts are cloned to be changed) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutView"];
+                };
+            };
+        };
+    };
+    post_api_studio_layout_archive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Hidden from scheduling */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

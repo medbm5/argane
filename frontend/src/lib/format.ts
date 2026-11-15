@@ -90,3 +90,15 @@ export const formatWeekday = (iso: string) => capitalize(weekday.format(new Date
 export function venueDay(iso: string): string {
   return `${venueMonth(iso)}-${dateTile(iso).day.padStart(2, '0')}`
 }
+
+const localInput = new Intl.DateTimeFormat('sv-SE', {
+  timeZone: VENUE_TIME_ZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+/** "2026-12-12T20:00": a UTC instant as a venue-local datetime-local input value. */
+export const toVenueLocalInput = (iso: string) => localInput.format(new Date(iso)).replace(' ', 'T')
