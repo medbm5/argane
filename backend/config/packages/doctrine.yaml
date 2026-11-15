@@ -41,6 +41,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Pricing/Domain/Model'
                 prefix: 'App\Pricing\Domain\Model'
                 alias: Pricing
+            Booking:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Booking/Domain/Model'
+                prefix: 'App\Booking\Domain\Model'
+                alias: Booking
+            Payment:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Payment/Domain/Model'
+                prefix: 'App\Payment\Domain\Model'
+                alias: Payment
         controller_resolver:
             auto_mapping: false
 
