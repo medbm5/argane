@@ -30,17 +30,11 @@ class Ticket
      * performance seat while the ticket is live, NULL otherwise. The unique index
      * allows many NULLs but only one live ticket per performance seat, even if
      * application code were wrong.
+     *
+     * The generated expression lives in the migration only: MySQL introspection
+     * reports it as a plain BINARY(16), so mapping it that way keeps diffs empty.
      */
-    #[ORM\Column(
-        name: 'active_seat_key',
-        type: Types::BINARY,
-        length: 16,
-        nullable: true,
-        insertable: false,
-        updatable: false,
-        columnDefinition: "BINARY(16) GENERATED ALWAYS AS (IF(status IN ('VALID','CHECKED_IN'), performance_seat_id, NULL)) STORED",
-        generated: 'ALWAYS',
-    )]
+    #[ORM\Column(name: 'active_seat_key', type: Types::BINARY, length: 16, nullable: true, insertable: false, updatable: false, options: ['fixed' => true])]
     private mixed $activeSeatKey = null;
 
     #[ORM\Id]
