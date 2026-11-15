@@ -1,9 +1,11 @@
 import type { RouteObject } from 'react-router'
 import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
+import { CheckoutPage } from '../pages/CheckoutPage'
 import { EventPage } from '../pages/EventPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
+import { OrderConfirmationPage } from '../pages/OrderConfirmationPage'
 import { ProgrammePage } from '../pages/ProgrammePage'
 import { SeatSelectionPage } from '../pages/SeatSelectionPage'
 import { RequireRole } from './auth/RequireRole'
@@ -37,7 +39,11 @@ export const routes: RouteObject[] = [
           { path: 'inscription/*', element: <SignUpPage /> },
           {
             element: <RequireRole requires="ROLE_CUSTOMER" />,
-            children: [{ path: 'mes-billets', element: <ComingSoonPage title="Mes billets" /> }],
+            children: [
+              { path: 'mes-billets', element: <ComingSoonPage title="Mes billets" /> },
+              { path: 'commande/:holdId', element: <CheckoutPage /> },
+              { path: 'commandes/:orderId/confirmation', element: <OrderConfirmationPage /> },
+            ],
           },
           ...devRoutes,
           { path: '*', element: <NotFoundPage /> },
