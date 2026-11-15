@@ -1,6 +1,18 @@
-import { useEffect, useMemo, useReducer, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
+import { useAuthState } from '../app/auth/AuthContext'
+import { Button } from '../design-system/primitives/Button'
+import { Dialog } from '../design-system/primitives/Dialog'
 import { toast } from '../design-system/toast-store'
+import {
+  clearSavedSelection,
+  readSavedSelection,
+  saveSelection,
+  useCreateHold,
+  useReleaseHold,
+  type Hold,
+} from '../features/booking/api'
+import { HoldCountdown } from '../features/booking/HoldCountdown'
 import { useEvent, usePerformance } from '../features/catalog/api'
 import { useAvailability, useSeatMap } from '../features/seatmap/api'
 import { CurtainReveal } from '../features/seatmap/CurtainReveal'
@@ -8,7 +20,6 @@ import { EventStrip } from '../features/seatmap/EventStrip'
 import { SeatMap } from '../features/seatmap/SeatMap'
 import {
   EMPTY_SELECTION,
-  selectedCount,
   selectionReducer,
   type SelectionAction,
 } from '../features/seatmap/selection'
@@ -73,9 +84,63 @@ function SeatSelection({
   availability: ReturnType<typeof useAvailability>['data']
 }) {
   const reducer = useMemo(() => selectionReducer(map.maxSeatsPerOrder), [map.maxSeatsPerOrder])
-  const [selection, rawDispatch] = useReducer(reducer, EMPTY_SELECTION)
+  const [selection, rawDispatch] = useReducer(
+    reducer,
+    performanceId,
+    (id) => readSavedSelection(id) ?? EMPTY_SELECTION,
+  )
   const [activeStanding, setActiveStanding] = useState<string | null>(null)
   const [lost, setLost] = useState<string[]>([])
+  const [hold, setHold] = useState<Hold | null>(null)
+  const [expired, setExpired] = useState(false)
+  const auth = useAuthState()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const createHold = useCreateHold(performanceId)
+  const releaseHold = useReleaseHold(performanceId)
+
+  // The saved selection (from before a sign-in redirect) has been restored: forget it.
+  useEffect(() => {
+    clearSavedSelection(performanceId)
+  }, [performanceId])
+
+  function holdSelection() {
+    if (!auth.isSignedIn) {
+      saveSelection(performanceId, selection)
+      void navigate(
+        `/connexion?redirect=${encodeURIComponent(location.pathname + location.search)}`,
+      )
+      return
+    }
+    createHold.mutate(selection, {
+      onSuccess: (created) => {
+        setHold(created)
+        setExpired(false)
+      },
+      onError: (error) => {
+        if (error instanceof ApiError && error.is('SEATS_UNAVAILABLE')) {
+          const gone = Array.isArray(error.problem.seatIds)
+            ? error.problem.seatIds.filter((id): id is string => typeof id === 'string')
+            : []
+          rawDispatch({ type: 'dropSeats', seatIds: gone })
+          setLost(gone)
+          return
+        }
+        toast(error instanceof ApiError ? error.message : 'La réservation n’a pas abouti.', {
+          tone: 'danger',
+        })
+      },
+    })
+  }
+
+  function modifySelection() {
+    if (hold) releaseHold.mutate(hold.id)
+    setHold(null)
+  }
+
+  const onExpire = useCallback(() => {
+    setExpired(true)
+  }, [])
 
   function dispatch(action: SelectionAction) {
     const before = selection
@@ -139,9 +204,16 @@ function SeatSelection({
             availability={availability}
             selection={selection}
             onToggleSeat={(seatId) => {
+              if (hold) {
+                toast('Vos places sont réservées', {
+                  description: 'Touchez « Modifier » pour changer de places.',
+                })
+                return
+              }
               dispatch({ type: 'toggleSeat', seatId })
             }}
             onStandingZone={(zoneId) => {
+              if (hold) return
               setActiveStanding(zoneId)
               if (!selection.standing[zoneId]) {
                 dispatch({ type: 'setStanding', zoneId, quantity: 1 })
@@ -174,21 +246,26 @@ function SeatSelection({
         </ul>
       </div>
 
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+      <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+        {hold && !expired ? <HoldCountdown expiresAt={hold.expiresAt} onExpire={onExpire} /> : null}
         <SelectionSummary
           map={map}
           availability={availability}
           selection={selection}
           dispatch={dispatch}
           activeStandingZoneId={activeStanding}
-          continueLabel={closed ? 'Vente fermée' : 'Continuer'}
+          locked={hold !== null}
+          busy={createHold.isPending}
+          continueLabel={
+            closed ? 'Vente fermée' : hold ? 'Passer au paiement' : 'Réserver ces places'
+          }
           onContinue={() => {
-            toast('Réservation bientôt disponible', {
-              description: `${String(selectedCount(selection))} place(s) choisie(s) pour ${performanceId.slice(0, 8)}…`,
-            })
+            if (hold) void navigate(`/commande/${hold.id}`)
+            else holdSelection()
           }}
+          onModify={hold ? modifySelection : undefined}
         />
-        <p className="mt-4 text-center text-sm">
+        <p className="text-center text-sm">
           <Link
             to={`/spectacles/${performance.eventSlug}`}
             className="underline underline-offset-4 hover:text-pop-yellow"
@@ -197,6 +274,40 @@ function SeatSelection({
           </Link>
         </p>
       </aside>
+      <Dialog
+        open={expired}
+        onOpenChange={(open) => {
+          if (!open) {
+            setExpired(false)
+            setHold(null)
+          }
+        }}
+        title="Temps écoulé"
+        description="Vos places ont été libérées après 10 minutes. Elles sont peut-être encore disponibles."
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setExpired(false)
+                setHold(null)
+              }}
+            >
+              Choisir d’autres places
+            </Button>
+            <Button
+              variant="gilt"
+              loading={createHold.isPending}
+              onClick={() => {
+                setHold(null)
+                holdSelection()
+              }}
+            >
+              Réserver à nouveau
+            </Button>
+          </>
+        }
+      />
     </div>
   )
 }

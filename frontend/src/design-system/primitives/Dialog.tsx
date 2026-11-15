@@ -49,12 +49,12 @@ export function Dialog({
           }
           className={cn(
             'fixed top-1/2 left-1/2 z-50 w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2',
-            'rounded-md border border-line bg-surface p-6 text-fg shadow-float',
+            'border-2 border-fg bg-surface p-6 text-fg shadow-hard',
             'data-[state=open]:animate-[rise-in_240ms_var(--ease-out)]',
             className,
           )}
         >
-          <RadixDialog.Title className="pr-8 font-display text-2xl">{title}</RadixDialog.Title>
+          <RadixDialog.Title className="pr-8 font-display text-4xl">{title}</RadixDialog.Title>
           {description ? (
             <RadixDialog.Description className="mt-2 text-muted">
               {description}

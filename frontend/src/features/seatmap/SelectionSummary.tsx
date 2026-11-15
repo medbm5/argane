@@ -19,6 +19,8 @@ export function SelectionSummary({
   onContinue,
   continueLabel = 'Continuer',
   busy = false,
+  locked = false,
+  onModify,
 }: {
   map: SeatMap
   availability: Availability | undefined
@@ -28,6 +30,9 @@ export function SelectionSummary({
   onContinue: () => void
   continueLabel?: string
   busy?: boolean
+  /** Places are held: no edits until the buyer chooses to modify. */
+  locked?: boolean
+  onModify?: () => void
 }) {
   const count = selectedCount(selection)
   const max = map.maxSeatsPerOrder
@@ -90,6 +95,7 @@ export function SelectionSummary({
               ) : null}
               <button
                 type="button"
+                hidden={locked}
                 aria-label={`Retirer rang ${seat.row} place ${String(seat.number)}`}
                 onClick={() => {
                   dispatch({ type: 'toggleSeat', seatId: id })
@@ -120,6 +126,7 @@ export function SelectionSummary({
                 </p>
               </div>
               <Stepper
+                className={locked ? 'pointer-events-none opacity-60' : undefined}
                 label={zone.name}
                 value={quantity}
                 min={0}
@@ -151,6 +158,11 @@ export function SelectionSummary({
       >
         {continueLabel}
       </Button>
+      {onModify ? (
+        <Button variant="ghost" block className="mt-2 text-paper-100" onClick={onModify}>
+          Modifier ma sélection
+        </Button>
+      ) : null}
       {count >= max ? (
         <p className="mt-3 text-xs font-bold text-pop-yellow">{max} places maximum par commande.</p>
       ) : null}

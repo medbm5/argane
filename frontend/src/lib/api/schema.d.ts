@@ -4,6 +4,38 @@
  */
 
 export interface paths {
+    "/api/performances/{id}/holds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_hold_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/holds/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_hold_show"];
+        put?: never;
+        post?: never;
+        delete: operations["delete_api_hold_release"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/performances/{id}": {
         parameters: {
             query?: never;
@@ -136,6 +168,31 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        HoldRequest: {
+            /** @default [] */
+            seatIds: string[];
+            /** @default [] */
+            standing: {
+                [key: string]: number | string;
+            }[];
+            /**
+             * @default ONLINE
+             * @enum {string}
+             */
+            channel: "ONLINE" | "BOX_OFFICE";
+        };
+        HoldView: {
+            id: string;
+            performanceId: string;
+            status: string;
+            channel: string;
+            expiresAt: string;
+            secondsLeft: number;
+            seatIds: string[];
+            standing: {
+                [key: string]: number | string;
+            }[];
+        };
         PerformanceDetailView: {
             id: string;
             eventId: string;
@@ -308,6 +365,95 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    post_api_hold_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HoldRequest"];
+            };
+        };
+        responses: {
+            /** @description Places held for 10 minutes; replaces the caller's previous hold on this performance */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HoldView"];
+                };
+            };
+            /** @description SEATS_UNAVAILABLE (context.seatIds) or STANDING_UNAVAILABLE */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description EMPTY_HOLD, TOO_MANY_PLACES, NOT_ON_SALE, UNKNOWN_ZONE */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many hold attempts */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_api_hold_show: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's hold */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HoldView"];
+                };
+            };
+        };
+    };
+    delete_api_hold_release: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Places released (idempotent) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     get_api_performance: {
         parameters: {
             query?: never;
