@@ -14,3 +14,11 @@ framework:
 when@test:
     framework:
         test: true
+
+when@prod:
+    framework:
+        # Render terminates TLS at its proxy. Trust the forwarded headers from the
+        # addresses in SYMFONY_TRUSTED_PROXIES (render.yaml: private ranges) so
+        # isSecure() is true and HSTS is sent.
+        trusted_proxies: '%env(default::SYMFONY_TRUSTED_PROXIES)%'
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']

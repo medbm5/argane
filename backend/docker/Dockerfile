@@ -38,9 +38,9 @@ CMD ["sh", "-c", "composer install --no-interaction --prefer-dist && frankenphp 
 # ---------------------------------------------------------------------------
 FROM base AS prod
 
+# SERVER_NAME is derived from Render's $PORT by the entrypoint.
 ENV APP_ENV=prod \
-    APP_DEBUG=0 \
-    SERVER_NAME=:8080
+    APP_DEBUG=0
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends supervisor \
