@@ -24,6 +24,16 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 ---
 
+## ADR-003 — Authentification déléguée à Clerk, rôles chez nous
+
+**Choix.** Clerk gère l'inscription, la connexion et les sessions. L'API vérifie localement le JWT de session (RS256) contre le JWKS de Clerk mis en cache une heure, avec une tolérance de 5 s sur `exp`/`nbf`, l'émetteur attendu et la liste blanche `azp`. Un `kid` inconnu déclenche un seul rafraîchissement du JWKS (rotation de clés). Les rôles (`CUSTOMER`, `BOX_OFFICE`, `ORGANIZER`) sont stockés dans notre table `app_user` ; l'utilisateur local est créé à la première requête authentifiée (JIT) via la Backend API de Clerk.
+
+**Raison.** Pas de mots de passe à stocker ni de flux de récupération à écrire ; le palier gratuit suffit. La vérification locale évite un appel réseau par requête. Garder les rôles chez nous découple l'autorisation métier du fournisseur et permet `app:user:grant` sans console Clerk.
+
+**Alternatives.** Auth maison (Symfony + mots de passe) : plus de surface de sécurité à maintenir. Rôles dans les métadonnées Clerk : dépendance au fournisseur pour une règle métier, et JWT à rafraîchir après chaque changement de rôle.
+
+---
+
 ## Questions du challenge
 
 > Réponses complètes rédigées au fil des slices et finalisées en Slice 22.
