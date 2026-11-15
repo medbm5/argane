@@ -3,6 +3,7 @@
 parameters:
     app.currency: '%env(default:app.default_currency:APP_CURRENCY)%'
     app.default_currency: 'mad'
+    clerk_default_api_url: 'https://api.clerk.com/v1'
 
 services:
     _defaults:
