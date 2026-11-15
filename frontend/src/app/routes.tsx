@@ -5,8 +5,9 @@ import { EventPage } from '../pages/EventPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
 import { ProgrammePage } from '../pages/ProgrammePage'
+import { SeatSelectionPage } from '../pages/SeatSelectionPage'
 import { RequireRole } from './auth/RequireRole'
-import { PublicLayout, StaffLayout } from './layouts/layouts'
+import { NightLayout, PublicLayout, StaffLayout } from './layouts/layouts'
 import { RootProviders } from './RootProviders'
 
 const devRoutes: RouteObject[] = import.meta.env.DEV
@@ -41,6 +42,10 @@ export const routes: RouteObject[] = [
           ...devRoutes,
           { path: '*', element: <NotFoundPage /> },
         ],
+      },
+      {
+        element: <NightLayout />,
+        children: [{ path: 'representations/:id', element: <SeatSelectionPage /> }],
       },
       {
         element: <RequireRole requires="ROLE_BOX_OFFICE" />,

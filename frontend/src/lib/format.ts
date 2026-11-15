@@ -85,3 +85,8 @@ export function upcomingMonths(from: Date, count: number): { value: string; labe
 const weekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: VENUE_TIME_ZONE })
 /** "Vendredi" */
 export const formatWeekday = (iso: string) => capitalize(weekday.format(new Date(iso)))
+
+/** "2026-12-12" in the venue time zone (groups performances by evening). */
+export function venueDay(iso: string): string {
+  return `${venueMonth(iso)}-${dateTile(iso).day.padStart(2, '0')}`
+}

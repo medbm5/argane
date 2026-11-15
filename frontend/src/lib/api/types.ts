@@ -12,7 +12,11 @@ export type PerformanceDetail = Schemas['PerformanceDetailView']
 export type VenueInfo = Schemas['VenueResponse']
 
 export type EventCategory = 'CONCERT' | 'THEATRE' | 'CONFERENCE' | 'DANCE' | 'COMEDY'
-export type SeatMap = Schemas['SeatMapView']
+/** PHP array shapes come out optional in OpenAPI; the API always sends them. */
+export type SeatMap = Omit<Schemas['SeatMapView'], 'viewBox' | 'stage'> & {
+  viewBox: { width: number; height: number }
+  stage: { x: number; y: number; width: number; height: number }
+}
 export type SeatMapZone = Schemas['SeatMapZoneView']
 export type SeatMapSeat = Schemas['SeatMapSeatView']
 export type ZonePrice = Schemas['ZonePriceView']

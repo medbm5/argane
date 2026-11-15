@@ -34,6 +34,14 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Alternatives.** Auth maison (Symfony + mots de passe) : plus de surface de sécurité à maintenir. Rôles dans les métadonnées Clerk : dépendance au fournisseur pour une règle métier, et JWT à rafraîchir après chaque changement de rôle.
 
+## ADR-004 — Plan de salle : géométrie et disponibilité séparées, polling avec ETag
+
+**Contexte.** Le plan (400 à 460 places) change rarement ; l'état des places change en continu pendant les ventes.
+
+**Décision.** Deux endpoints : `/seatmap` (géométrie, zones, prix autorisés pour l'appelant, cache privé 60 s) et `/availability` (uniquement les places *non* disponibles + stock debout, `Cache-Control: no-cache` + `ETag`). Le front interroge `/availability` toutes les 5 s ; le navigateur revalide seul avec `If-None-Match` et reçoit un 304 sans corps quand rien n'a bougé. Aucune gestion manuelle de l'ETag côté client.
+
+**Conséquences.** Réponse de quelques centaines d'octets au pire, 304 la plupart du temps. Mercure/SSE reste une option (Slice 20) si la latence de 5 s devient gênante.
+
 ---
 
 ## Questions du challenge

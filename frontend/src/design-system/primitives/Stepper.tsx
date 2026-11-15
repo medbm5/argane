@@ -28,7 +28,7 @@ export function Stepper({
       role="group"
       aria-label={label}
       className={cn(
-        'inline-flex h-10 items-center rounded-pill border border-line bg-surface text-fg',
+        'inline-flex h-11 items-center border-2 border-fg bg-surface text-fg shadow-[3px_3px_0_var(--c-text)]',
         className,
       )}
     >
@@ -39,11 +39,11 @@ export function Stepper({
         onClick={() => {
           onChange(clamp(value - step))
         }}
-        className="grid size-10 place-items-center rounded-pill transition-colors hover:bg-surface-alt disabled:opacity-40"
+        className="grid size-10 place-items-center transition-colors hover:bg-pop-yellow hover:text-ink-900 disabled:opacity-40 disabled:hover:bg-transparent"
       >
         <Minus aria-hidden className="size-4" />
       </button>
-      <output aria-live="polite" className="tabular min-w-8 text-center font-medium">
+      <output aria-live="polite" className="tabular min-w-8 text-center font-display text-xl">
         {value}
       </output>
       <button
@@ -53,7 +53,7 @@ export function Stepper({
         onClick={() => {
           onChange(clamp(value + step))
         }}
-        className="grid size-10 place-items-center rounded-pill transition-colors hover:bg-surface-alt disabled:opacity-40"
+        className="grid size-10 place-items-center transition-colors hover:bg-pop-yellow hover:text-ink-900 disabled:opacity-40 disabled:hover:bg-transparent"
       >
         <Plus aria-hidden className="size-4" />
       </button>
