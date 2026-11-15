@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="L’Atlantique — affiche">
+  <defs>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.95  0 0 0 0 0.9  0 0 0 0 0.83  0 0 0 0.09 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+  <rect width="600" height="800" fill="#2E3520"/>
+  <g><path d="M60 140 Q 135 130 210 140 T 360 140 T 510 140 T 660 140" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.40"/><path d="M60 170 Q 135 154 210 170 T 360 170 T 510 170 T 660 170" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.45"/><path d="M60 200 Q 135 178 210 200 T 360 200 T 510 200 T 660 200" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.50"/><path d="M60 230 Q 135 202 210 230 T 360 230 T 510 230 T 660 230" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.55"/><path d="M60 260 Q 135 250 210 260 T 360 260 T 510 260 T 660 260" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.60"/><path d="M60 290 Q 135 274 210 290 T 360 290 T 510 290 T 660 290" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.65"/><path d="M60 320 Q 135 298 210 320 T 360 320 T 510 320 T 660 320" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.70"/><path d="M60 350 Q 135 322 210 350 T 360 350 T 510 350 T 660 350" fill="none" stroke="#D4A657" stroke-width="4" opacity="0.75"/><path d="M60 380 Q 135 370 210 380 T 360 380 T 510 380 T 660 380" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.80"/><path d="M60 410 Q 135 394 210 410 T 360 410 T 510 410 T 660 410" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.85"/><path d="M60 440 Q 135 418 210 440 T 360 440 T 510 440 T 660 440" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.90"/><path d="M60 470 Q 135 442 210 470 T 360 470 T 510 470 T 660 470" fill="none" stroke="#F2E8D5" stroke-width="2" opacity="0.95"/><path d="M300 120 l 18 40 h -36 z" fill="#D4A657"/></g>
+  <g fill="#F2E8D5" font-family="'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-weight="600" letter-spacing="-1"><text x="48" y="600" font-size="72">L’Atlantique</text></g>
+  <text x="50" y="748" fill="#D4A657" font-family="'Instrument Sans', system-ui, sans-serif" font-size="18" letter-spacing="3">MÉMOIRE DES MARINS</text>
+  <text x="552" y="64" fill="#F2E8D5" text-anchor="end" font-family="'Instrument Sans', system-ui, sans-serif" font-size="14" letter-spacing="4" opacity=".8">CONFÉRENCE · SAISON 26/27</text>
+  <text x="48" y="64" fill="#F2E8D5" font-family="'Cormorant Garamond', Georgia, serif" font-size="22" font-style="italic" opacity=".9">Théâtre Argane</text>
+  <rect width="600" height="800" filter="url(#grain)"/>
+</svg>
