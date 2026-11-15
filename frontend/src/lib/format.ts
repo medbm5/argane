@@ -81,3 +81,7 @@ export function upcomingMonths(from: Date, count: number): { value: string; labe
     return { value: venueMonth(mid.toISOString()), label: formatMonthYear(mid.toISOString()) }
   })
 }
+
+const weekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: VENUE_TIME_ZONE })
+/** "Vendredi" */
+export const formatWeekday = (iso: string) => capitalize(weekday.format(new Date(iso)))
