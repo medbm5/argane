@@ -11,3 +11,7 @@ services:
         exclude:
             - '../src/*/Application/Dto/'
             - '../src/*/Application/Query/View/'
+
+    # Never call Stripe from tests.
+    App\Tests\Support\FakePaymentGateway: ~
+    App\Payment\Application\PaymentGateway: '@App\Tests\Support\FakePaymentGateway'
