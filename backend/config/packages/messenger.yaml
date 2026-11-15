@@ -13,6 +13,7 @@ framework:
 
         routing:
             App\Catalog\Application\Message\PerformanceCancelled: async
+            App\Shared\Application\Message\SalesChanged: async
 
 when@test:
     framework:

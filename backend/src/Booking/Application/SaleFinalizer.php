@@ -11,9 +11,12 @@ use App\Payment\Application\PaymentGateway;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Model\Refund;
 use App\Payment\Domain\PaymentRepository;
+use App\Shared\Application\Message\SalesChanged;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Throwable;
 
 /**
@@ -34,6 +37,7 @@ final readonly class SaleFinalizer
         private PaymentGateway $gateway,
         private EntityManagerInterface $em,
         private LoggerInterface $logger,
+        private MessageBusInterface $bus,
     ) {
     }
 
@@ -81,6 +85,7 @@ final readonly class SaleFinalizer
             $order->hold()?->convert();
             $this->em->flush();
             $connection->commit();
+            $this->bus->dispatch(new SalesChanged('sale', (float) $now->format('U.u')), [new DelayStamp(15_000)]);
         } catch (Throwable $e) {
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
@@ -112,6 +117,8 @@ final readonly class SaleFinalizer
             $this->logger->error('Late payment refund failed for {reference}', ['reference' => $order->reference(), 'exception' => $e]);
         }
         $this->em->flush();
+
+        $this->bus->dispatch(new SalesChanged('late-refund', (float) $now->format('U.u')), [new DelayStamp(15_000)]);
 
         return $refund;
     }

@@ -12,6 +12,7 @@ use App\Catalog\Domain\InventoryRepository;
 use App\Payment\Application\RefundIssuer;
 use App\Payment\Domain\Model\Refund;
 use App\Payment\Domain\Model\RefundStatus;
+use App\Shared\Application\Message\SalesChanged;
 use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\Exception\NotFoundException;
 use App\Shared\Domain\SalesChannel;
@@ -19,6 +20,8 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -39,6 +42,7 @@ final readonly class CancellationService
         private ClockInterface $clock,
         #[Autowire('%app.cancellation_notice_hours%')]
         private int $noticeHours,
+        private MessageBusInterface $bus,
     ) {
     }
 
@@ -65,6 +69,8 @@ final readonly class CancellationService
         });
 
         $this->refund($order, self::CUSTOMER_REASON, $userId, $now);
+
+        $this->salesChanged('cancellation');
 
         return OrderView::of($order);
     }
@@ -109,6 +115,8 @@ final readonly class CancellationService
         }
         $this->refund($order, 'Annulation au guichet', $staffId, $now);
 
+        $this->salesChanged('cancellation');
+
         return OrderView::of($order);
     }
 
@@ -118,6 +126,7 @@ final readonly class CancellationService
         $now = $this->clock->now();
         $this->refunds->settleAtCounter($refund, $now);
         $this->refund($refund->order(), $refund->reason(), null, $now);
+        $this->salesChanged('counter-refund');
     }
 
     /** The performance is off: void and refund every paid order. Safe to re-run. */
@@ -132,6 +141,10 @@ final readonly class CancellationService
             $order->cancel($now);
             $this->em->flush();
             $this->refund($order, self::PERFORMANCE_REASON, $requestedBy, $now);
+        }
+
+        if ([] !== $orders) {
+            $this->salesChanged('performance-cancelled');
         }
 
         return \count($orders);
@@ -176,5 +189,10 @@ final readonly class CancellationService
             }
             $this->em->flush();
         }
+    }
+
+    private function salesChanged(string $reason): void
+    {
+        $this->bus->dispatch(new SalesChanged($reason, (float) $this->clock->now()->format('U.u')), [new DelayStamp(15_000)]);
     }
 }
