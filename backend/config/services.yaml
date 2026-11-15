@@ -20,5 +20,6 @@ services:
             - '../src/*/Domain/Event/'
             - '../src/*/Domain/Exception/'
             - '../src/*/Application/Dto/'
+            - '../src/*/Application/Query/View/'
             - '../src/*/Api/Dto/'
             - '../src/Shared/Domain/Money.php'
