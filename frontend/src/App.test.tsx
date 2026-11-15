@@ -10,9 +10,9 @@ function renderAt(path: string) {
 }
 
 describe('App', () => {
-  it('renders the venue name inside the site shell', async () => {
+  it('renders the landing inside the site shell', async () => {
     render(<App />)
-    expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Théâtre Argane')
+    expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Le rideau se lève.')
     expect(screen.getByRole('navigation', { name: 'Navigation principale' })).toBeInTheDocument()
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
