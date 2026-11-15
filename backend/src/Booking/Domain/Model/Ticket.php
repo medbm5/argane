@@ -22,8 +22,27 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity]
 #[ORM\Table(name: 'ticket')]
 #[ORM\Index(name: 'idx_ticket_perf_status', columns: ['performance_id', 'status'])]
+#[ORM\UniqueConstraint(name: 'uniq_ticket_active_seat', columns: ['active_seat_key'])]
 class Ticket
 {
+    /**
+     * Final safety net against double sales, maintained by MySQL: equals the
+     * performance seat while the ticket is live, NULL otherwise. The unique index
+     * allows many NULLs but only one live ticket per performance seat, even if
+     * application code were wrong.
+     */
+    #[ORM\Column(
+        name: 'active_seat_key',
+        type: Types::BINARY,
+        length: 16,
+        nullable: true,
+        insertable: false,
+        updatable: false,
+        columnDefinition: "BINARY(16) GENERATED ALWAYS AS (IF(status IN ('VALID','CHECKED_IN'), performance_seat_id, NULL)) STORED",
+        generated: 'ALWAYS',
+    )]
+    private mixed $activeSeatKey = null;
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
     private Uuid $id;
