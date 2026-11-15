@@ -8,6 +8,8 @@ doctrine:
             collate: utf8mb4_unicode_ci
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        # Tables managed outside the ORM (created by migrations / Messenger).
+        schema_filter: ~^(?!(order_sequence|messenger_messages)$)~
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
