@@ -31,7 +31,7 @@ export function PerformanceRow({
     <li className="border-b border-line last:border-b-0">
       <Link
         to={href}
-        className="group grid grid-cols-[4rem_1fr_auto] items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-surface-alt focus-visible:bg-surface-alt sm:grid-cols-[5rem_1fr_8rem_9rem_auto] sm:px-8"
+        className="group grid grid-cols-[4rem_1fr_auto] items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-surface-alt focus-visible:bg-surface-alt sm:grid-cols-[5rem_1fr_5rem_8rem_8rem] sm:px-8 md:grid-cols-[5rem_1fr_5rem_8rem_15rem]"
       >
         <span className="flex flex-col items-center leading-none" aria-hidden>
           <span className="tabular font-display text-4xl">{tile.day}</span>
@@ -54,7 +54,7 @@ export function PerformanceRow({
             ? `dès ${formatMoney(performance.fromPriceCents, currency)}`
             : null}
         </span>
-        <span className="flex items-center gap-3">
+        <span className="flex items-center justify-end gap-3">
           {lowStock ? (
             <span className="hidden text-xs text-highlight md:inline">Dernières places</span>
           ) : null}

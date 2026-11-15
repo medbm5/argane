@@ -35,7 +35,7 @@ export function LandingHero() {
           className="rounded-full text-accent transition-transform duration-200 ease-theatre hover:scale-105"
         >
           <RotatingBadge
-            text="Saison 26/27 · Théâtre Argane · Saison 26/27 · Théâtre Argane · "
+            text="Saison 26/27 · Théâtre Argane · "
             size={168}
             center={
               <span className="font-display text-3xl leading-none text-fg">
