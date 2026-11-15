@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "posters": "node scripts/generate-posters.mjs",
-    "api:types": "node scripts/api-types.mjs"
+    "api:types": "node scripts/api-types.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@clerk/localizations": "^4.24.8",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.59.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.10",

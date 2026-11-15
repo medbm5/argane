@@ -98,6 +98,27 @@ says so (Studio → Intégrations).
 5. Check it: `php bin/console app:sheets:sync`, or *Synchroniser maintenant* in the Studio.
    Automatic syncs need the worker running (`docker compose up worker`).
 
+## End-to-end smoke test (optional)
+
+`frontend/e2e/purchase.spec.ts` buys a seat through the real stack: Clerk sign-in,
+seat map, hold, tariffs, Stripe Payment Element, confirmation. It is not part of
+`npm test` because it needs the servers and network access.
+
+1. Start the stack (`make up`, or the API and Vite dev servers) with demo data seeded.
+2. Keys: `VITE_CLERK_PUBLISHABLE_KEY` and `VITE_STRIPE_PUBLISHABLE_KEY` in
+   `frontend/.env.local`, plus `CLERK_SECRET_KEY` and the Stripe test secret in
+   `backend/.env.local`. Only `sk_test_` Clerk keys are accepted.
+3. `cd frontend && npm run e2e`
+
+The global setup creates the Clerk test user `client+clerk_test@example.com` if it is
+missing. `+clerk_test` addresses sign in with the fixed code `424242` on development
+instances, and the card is Stripe's `4242 4242 4242 4242`, so no inbox is needed and
+nothing is charged. The test uses your installed Google Chrome. To use Playwright's
+Chromium instead, run `npx playwright install chromium` and set
+`E2E_BROWSER_CHANNEL=chromium`.
+Overrides: `E2E_BASE_URL` (default `http://localhost:5173`), `E2E_API_URL` (default
+`http://127.0.0.1:8099/api`), `E2E_CLERK_EMAIL`.
+
 ## Services
 
 | Service | URL |
