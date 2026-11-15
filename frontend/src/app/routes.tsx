@@ -3,6 +3,7 @@ import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { EventPage } from '../pages/EventPage'
+import { GuichetPage } from '../pages/GuichetPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
 import { OrderConfirmationPage } from '../pages/OrderConfirmationPage'
@@ -62,7 +63,7 @@ export const routes: RouteObject[] = [
           {
             element: <StaffLayout />,
             children: [
-              { path: 'guichet', element: <ComingSoonPage title="Guichet" /> },
+              { path: 'guichet', element: <GuichetPage /> },
               { path: 'controle', element: <ComingSoonPage title="Contrôle des billets" /> },
             ],
           },
