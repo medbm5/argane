@@ -18,6 +18,7 @@ final readonly class UserProvisioner
     public function __construct(
         private UserRepository $users,
         private ClerkDirectory $directory,
+        private RoleAllowlist $allowlist,
         private ClockInterface $clock,
         private LoggerInterface $logger,
     ) {
@@ -32,8 +33,11 @@ final readonly class UserProvisioner
 
         $profile = $this->directory->fetchProfile($clerkUserId);
         $user = new User($profile->clerkUserId, $profile->email, $profile->displayName, $this->clock->now());
+        foreach ($this->allowlist->rolesFor($profile->email) as $role) {
+            $user->grant($role);
+        }
         $this->users->save($user);
-        $this->logger->info('Provisioned user from Clerk', ['clerkUserId' => $clerkUserId]);
+        $this->logger->info('Provisioned user from Clerk', ['clerkUserId' => $clerkUserId, 'roles' => $user->getRoles()]);
 
         return $user;
     }
