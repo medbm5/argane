@@ -71,6 +71,33 @@ Any other account you create is a plain customer. Grant roles later with:
 php bin/console app:user:grant someone@example.com ROLE_BOX_OFFICE
 ```
 
+## Google Sheets sync (optional)
+
+The box office can follow sales live in a Google Sheet: a `Ventes` tab (one row per
+ticket) and a `Synthèse` tab (sold, capacity, fill, revenue and scans per date). The
+sheet is fully rewritten after each sale, refund or cancellation (debounced 15 s) and
+every hour as a safety net. Without configuration the feature stays off and the Studio
+says so (Studio → Intégrations).
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project (or
+   reuse one) and enable the **Google Sheets API**.
+2. *IAM & Admin → Service accounts → Create*. No role is needed. Open the account,
+   *Keys → Add key → JSON*, and keep the downloaded file private.
+3. Create a Google Sheet and **share it with the service account's email**
+   (`…@….iam.gserviceaccount.com`) as **Editor**. The tabs are created on the first sync.
+4. Put the configuration in `backend/.env.local` (never commit the key):
+
+   ```
+   GOOGLE_SHEETS_SPREADSHEET_ID=<the id in the sheet URL, between /d/ and /edit>
+   GOOGLE_SERVICE_ACCOUNT_JSON_BASE64=<base64 of the JSON key file>
+   ```
+
+   Encode the key on one line: `base64 -w0 key.json` (Linux), `base64 -i key.json`
+   (macOS), or in PowerShell
+   `[Convert]::ToBase64String([IO.File]::ReadAllBytes("key.json"))`.
+5. Check it: `php bin/console app:sheets:sync`, or *Synchroniser maintenant* in the Studio.
+   Automatic syncs need the worker running (`docker compose up worker`).
+
 ## Services
 
 | Service | URL |
