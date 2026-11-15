@@ -11,7 +11,7 @@ use App\Venue\Application\Dto\ZoneSpec;
 use App\Venue\Domain\Model\ZoneKind;
 
 /**
- * The two configurations of Théâtre Argane (README "Hall configurations").
+ * The two configurations of Théâtre Argane (docs/BRIEF.md "Hall configurations").
  * Plan: 1000 × 700, stage at the top (y < 90).
  */
 final class StandardLayouts

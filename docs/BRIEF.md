@@ -12,7 +12,16 @@ The project is based on the EMC PFE Challenge, *Sujet 1 — Billetterie d'une sa
 
 ## Demo walkthrough
 
-Set it up with [INSTALL.md](INSTALL.md) (`make up && make fixtures`, about two minutes),
+**Live demo:** https://argane-five.vercel.app (API health: https://argane-api.onrender.com/api/health).
+The API runs on Render's free plan and sleeps when idle, so the first visit can take
+up to a minute while "Le rideau se lève…" is shown; after that it is fast.
+
+| Role | Sign in with | Code |
+|---|---|---|
+| Spectator | `client+clerk_test@example.com` | 424242 |
+| Organizer (Studio, box office, check-in) | `organisateur+clerk_test@example.com` | 424242 |
+
+Or run it locally with [INSTALL.md](../INSTALL.md) (`make up && make fixtures`, about two minutes),
 then follow the season from three seats: the spectator's, the box office's and the
 organizer's. The demo accounts use Clerk test emails with the fixed code **424242**.
 Payments use Stripe's test card **4242 4242 4242 4242**.
@@ -21,10 +30,10 @@ Payments use Stripe's test card **4242 4242 4242 4242**.
 
 | | |
 |---|---|
-| ![Home page](docs/screenshots/01-home.jpg) | **Home.** The season at a glance, with a quick search by show, month and category. |
-| ![Programme](docs/screenshots/02-programme.jpg) | **Programmation.** Filter by category and month; each show lists its next date, its price range and whether it is on sale. |
-| ![Show page](docs/screenshots/03-event.jpg) | **A show.** Synopsis, duration, age rating and every date with its hall configuration. |
-| ![Seat map](docs/screenshots/04-seat-map.jpg) | **Seat map.** Live availability (polled with ETags), zones coloured by price, keyboard and screen-reader friendly. Picking seats holds them for 10 minutes. |
+| ![Home page](screenshots/01-home.jpg) | **Home.** The season at a glance, with a quick search by show, month and category. |
+| ![Programme](screenshots/02-programme.jpg) | **Programmation.** Filter by category and month; each show lists its next date, its price range and whether it is on sale. |
+| ![Show page](screenshots/03-event.jpg) | **A show.** Synopsis, duration, age rating and every date with its hall configuration. |
+| ![Seat map](screenshots/04-seat-map.jpg) | **Seat map.** Live availability (polled with ETags), zones coloured by price, keyboard and screen-reader friendly. Picking seats holds them for 10 minutes. |
 
 Sign in as `client+clerk_test@example.com`, pick two seats, choose *Plein* and *Réduit*,
 and pay with the test card. The order is confirmed within seconds, from the Stripe
@@ -32,12 +41,12 @@ webhook or, if it is late, from reconciliation when the order is read.
 
 | | |
 |---|---|
-| ![Wallet](docs/screenshots/05-wallet.jpg) | **Mes billets.** Upcoming and past orders, PDF download. Online orders can be cancelled up to 48 h before the show, with an automatic refund. |
-| ![Ticket with QR code](docs/screenshots/06-ticket-qr.jpg) | **Tickets.** One signed QR code per seat (`ARG1.<id>.<HMAC>`), no personal data. The same layout is used in the PDF and the confirmation email. |
+| ![Wallet](screenshots/05-wallet.jpg) | **Mes billets.** Upcoming and past orders, PDF download. Online orders can be cancelled up to 48 h before the show, with an automatic refund. |
+| ![Ticket with QR code](screenshots/06-ticket-qr.jpg) | **Tickets.** One signed QR code per seat (`ARG1.<id>.<HMAC>`), no personal data. The same layout is used in the PDF and the confirmation email. |
 
 On a phone, the seat map opens zoomed in and pans with one finger:
 
-<img src="docs/screenshots/11-mobile-seat-map.jpg" alt="Seat map on a phone" width="260">
+<img src="screenshots/11-mobile-seat-map.jpg" alt="Seat map on a phone" width="260">
 
 ### 2. The box office sells and checks tickets
 
@@ -45,8 +54,8 @@ Sign in as `guichet+clerk_test@example.com`.
 
 | | |
 |---|---|
-| ![Box office](docs/screenshots/09-box-office.jpg) | **Guichet.** The next 14 days, the same seat map, every tariff the box office may sell (including *Invitation*, with a reason), cash or card. Counter refunds are settled here too. |
-| ![Check-in](docs/screenshots/10-check-in.jpg) | **Contrôle.** The phone camera scans QR codes at the door. A green or red verdict comes back in under a second, with a live count of admissions. A ticket only gets in once, even with two doors scanning at the same moment. |
+| ![Box office](screenshots/09-box-office.jpg) | **Guichet.** The next 14 days, the same seat map, every tariff the box office may sell (including *Invitation*, with a reason), cash or card. Counter refunds are settled here too. |
+| ![Check-in](screenshots/10-check-in.jpg) | **Contrôle.** The phone camera scans QR codes at the door. A green or red verdict comes back in under a second, with a live count of admissions. A ticket only gets in once, even with two doors scanning at the same moment. |
 
 ### 3. The organizer runs the season
 
@@ -54,8 +63,8 @@ Sign in as `organisateur+clerk_test@example.com` and open **Studio**.
 
 | | |
 |---|---|
-| ![Dashboard](docs/screenshots/07-studio-dashboard.jpg) | **Tableau de bord.** Revenue, tickets, average basket and refunds against the previous period; upcoming fill rate by zone; dates selling slower than usual; sales per day and revenue per tariff and channel. |
-| ![Sales](docs/screenshots/08-studio-sales.jpg) | **Ventes.** Every order, filterable and exportable to CSV. The same data is mirrored to Google Sheets within 15 seconds of each sale. |
+| ![Dashboard](screenshots/07-studio-dashboard.jpg) | **Tableau de bord.** Revenue, tickets, average basket and refunds against the previous period; upcoming fill rate by zone; dates selling slower than usual; sales per day and revenue per tariff and channel. |
+| ![Sales](screenshots/08-studio-sales.jpg) | **Ventes.** Every order, filterable and exportable to CSV. The same data is mirrored to Google Sheets within 15 seconds of each sale. |
 
 Also in the Studio: shows and dates (publish, put on sale, **cancel a date**: every
 ticket is voided, online payments are refunded and customers are emailed), hall

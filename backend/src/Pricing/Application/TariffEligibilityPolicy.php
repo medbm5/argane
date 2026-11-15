@@ -9,7 +9,7 @@ use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\SalesChannel;
 
 /**
- * Who may sell which tariff, where, and how many (README "Who can sell which tariff"):
+ * Who may sell which tariff, where, and how many (docs/BRIEF.md "Who can sell which tariff"):
  *
  * | Tariff     | Online (customer) | Box office      | Organizer |
  * |------------|-------------------|-----------------|-----------|

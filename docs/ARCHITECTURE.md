@@ -56,4 +56,4 @@ Checked by `tests/Unit/Architecture/ModuleBoundariesTest.php`:
 
 ## Frontend
 
-React 19 + Vite + TypeScript strict. Features live in `src/features/<feature>`, routes in `src/pages`, design tokens and primitives in `src/design-system`. Server state with TanStack Query, client state with Zustand. See the README for the full table.
+React 19 + Vite + TypeScript strict. Features live in `src/features/<feature>`, routes in `src/pages`, design tokens and primitives in `src/design-system`. Server state with TanStack Query, client state with Zustand. See [BRIEF.md](BRIEF.md#frontend) for the full table.
