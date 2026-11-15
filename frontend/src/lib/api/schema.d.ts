@@ -324,6 +324,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/check-in/performances/{id}/scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_check_in_scan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/check-in/performances/{id}/counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_check_in_counts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me/orders": {
         parameters: {
             query?: never;
@@ -655,6 +687,40 @@ export interface components {
             roles: string[];
             isBoxOffice: boolean;
             isOrganizer: boolean;
+        };
+        CheckInResult: {
+            verdict: string;
+            message: string;
+            /** @default null */
+            ticketId: string | null;
+            /** @default null */
+            reference: string | null;
+            /** @default null */
+            zone: string | null;
+            /** @default null */
+            seat: string | null;
+            /** @default null */
+            tariff: string | null;
+            /** @default false */
+            requiresProof: boolean;
+            /** @default null */
+            holder: string | null;
+            /**
+             * When it was first scanned (ALREADY_USED).
+             * @default null
+             */
+            checkedInAt: string | null;
+            /**
+             * The ticket's real performance (WRONG_PERFORMANCE).
+             * @default null
+             */
+            ticketPerformanceStartsAt: string | null;
+            /** @default null */
+            ticketEventTitle: string | null;
+            /** @default 0 */
+            admitted: number;
+            /** @default 0 */
+            expected: number;
         };
         LayoutSummary: {
             id: string;
@@ -1244,6 +1310,59 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    post_api_check_in_scan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    qr: string;
+                };
+            };
+        };
+        responses: {
+            /** @description A verdict for the scanner (admitted, already used, wrong date, not valid, invalid) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckInResult"];
+                };
+            };
+        };
+    };
+    get_api_check_in_counts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admitted so far / tickets expected */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        admitted?: number;
+                        expected?: number;
+                    };
+                };
             };
         };
     };
