@@ -1,6 +1,17 @@
+parameters:
+    env(DATABASE_SSL_CA): ''
+    env(DATABASE_SSL_VERIFY): 'false'
+
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
+        # Aiven MySQL requires TLS. In the image, docker/entrypoint.sh decodes
+        # DATABASE_SSL_CA_BASE64 to a file, exports its path and turns verification on;
+        # on a laptop (e.g. seeding Aiven) set DATABASE_SSL_CA / DATABASE_SSL_VERIFY by hand.
+        # Without a CA both options are off and nothing changes.
+        options:
+            !php/const PDO::MYSQL_ATTR_SSL_CA: '%env(DATABASE_SSL_CA)%'
+            !php/const PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: '%env(bool:DATABASE_SSL_VERIFY)%'
         server_version: '8.0'
         charset: utf8mb4
         default_table_options:
@@ -65,17 +76,7 @@ when@test:
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
-    parameters:
-        env(DATABASE_SSL_CA): ''
-        env(DATABASE_SSL_VERIFY): 'false'
     doctrine:
-        dbal:
-            # Aiven MySQL requires TLS. docker/entrypoint.sh decodes DATABASE_SSL_CA_BASE64
-            # to a file, exports its path and turns certificate verification on. With no CA
-            # (the prod image run locally) both options stay off and the connection is plain.
-            options:
-                !php/const PDO::MYSQL_ATTR_SSL_CA: '%env(DATABASE_SSL_CA)%'
-                !php/const PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: '%env(bool:DATABASE_SSL_VERIFY)%'
         orm:
             auto_generate_proxy_classes: false
             proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
