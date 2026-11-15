@@ -2,6 +2,7 @@ import type { RouteObject } from 'react-router'
 import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { CheckoutPage } from '../pages/CheckoutPage'
+import { ControlePage } from '../pages/ControlePage'
 import { EventPage } from '../pages/EventPage'
 import { GuichetPage } from '../pages/GuichetPage'
 import { HomePage } from '../pages/HomePage'
@@ -64,7 +65,7 @@ export const routes: RouteObject[] = [
             element: <StaffLayout />,
             children: [
               { path: 'guichet', element: <GuichetPage /> },
-              { path: 'controle', element: <ComingSoonPage title="Contrôle des billets" /> },
+              { path: 'controle', element: <ControlePage /> },
             ],
           },
         ],
