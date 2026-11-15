@@ -10,8 +10,75 @@ The project is based on the EMC PFE Challenge, *Sujet 1 — Billetterie d'une sa
 
 ---
 
+## Demo walkthrough
+
+Set it up with [INSTALL.md](INSTALL.md) (`make up && make fixtures`, about two minutes),
+then follow the season from three seats: the spectator's, the box office's and the
+organizer's. The demo accounts use Clerk test emails with the fixed code **424242**.
+Payments use Stripe's test card **4242 4242 4242 4242**.
+
+### 1. A spectator books a seat
+
+| | |
+|---|---|
+| ![Home page](docs/screenshots/01-home.jpg) | **Home.** The season at a glance, with a quick search by show, month and category. |
+| ![Programme](docs/screenshots/02-programme.jpg) | **Programmation.** Filter by category and month; each show lists its next date, its price range and whether it is on sale. |
+| ![Show page](docs/screenshots/03-event.jpg) | **A show.** Synopsis, duration, age rating and every date with its hall configuration. |
+| ![Seat map](docs/screenshots/04-seat-map.jpg) | **Seat map.** Live availability (polled with ETags), zones coloured by price, keyboard and screen-reader friendly. Picking seats holds them for 10 minutes. |
+
+Sign in as `client+clerk_test@example.com`, pick two seats, choose *Plein* and *Réduit*,
+and pay with the test card. The order is confirmed within seconds, from the Stripe
+webhook or, if it is late, from reconciliation when the order is read.
+
+| | |
+|---|---|
+| ![Wallet](docs/screenshots/05-wallet.jpg) | **Mes billets.** Upcoming and past orders, PDF download. Online orders can be cancelled up to 48 h before the show, with an automatic refund. |
+| ![Ticket with QR code](docs/screenshots/06-ticket-qr.jpg) | **Tickets.** One signed QR code per seat (`ARG1.<id>.<HMAC>`), no personal data. The same layout is used in the PDF and the confirmation email. |
+
+On a phone, the seat map opens zoomed in and pans with one finger:
+
+<img src="docs/screenshots/11-mobile-seat-map.jpg" alt="Seat map on a phone" width="260">
+
+### 2. The box office sells and checks tickets
+
+Sign in as `guichet+clerk_test@example.com`.
+
+| | |
+|---|---|
+| ![Box office](docs/screenshots/09-box-office.jpg) | **Guichet.** The next 14 days, the same seat map, every tariff the box office may sell (including *Invitation*, with a reason), cash or card. Counter refunds are settled here too. |
+| ![Check-in](docs/screenshots/10-check-in.jpg) | **Contrôle.** The phone camera scans QR codes at the door. A green or red verdict comes back in under a second, with a live count of admissions. A ticket only gets in once, even with two doors scanning at the same moment. |
+
+### 3. The organizer runs the season
+
+Sign in as `organisateur+clerk_test@example.com` and open **Studio**.
+
+| | |
+|---|---|
+| ![Dashboard](docs/screenshots/07-studio-dashboard.jpg) | **Tableau de bord.** Revenue, tickets, average basket and refunds against the previous period; upcoming fill rate by zone; dates selling slower than usual; sales per day and revenue per tariff and channel. |
+| ![Sales](docs/screenshots/08-studio-sales.jpg) | **Ventes.** Every order, filterable and exportable to CSV. The same data is mirrored to Google Sheets within 15 seconds of each sale. |
+
+Also in the Studio: shows and dates (publish, put on sale, **cancel a date**: every
+ticket is voided, online payments are refunded and customers are emailed), hall
+configurations (locked once used, clone to edit), price grids per zone and tariff
+rules.
+
+### Things to try
+
+- **Two buyers, one seat.** Open the same date in two browsers and pick the same seat.
+  The second hold is refused, and the seat turns red in the first browser within 5 seconds.
+- **A payment that never comes.** Hold seats and close the tab. Ten minutes later the
+  seats are back on sale, even if the worker is asleep.
+- **Cancel a performance** in the Studio, then look at *Mes billets*, the refunds in
+  Stripe's test dashboard and the emails in Mailpit (http://localhost:8025).
+- **A reused ticket.** Scan the same QR code twice at *Contrôle*.
+
+Screenshots are regenerated from the demo data with `cd frontend && npm run screenshots`.
+
+---
+
 ## Table of contents
 
+0. [Demo walkthrough](#demo-walkthrough)
 1. [Working agreement for Claude Code](#working-agreement-for-claude-code)
 2. [The brand: Théâtre Argane](#the-brand-théâtre-argane)
 3. [Product scope](#product-scope)

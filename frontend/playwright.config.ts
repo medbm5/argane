@@ -23,9 +23,24 @@ export default defineConfig({
   projects: [
     {
       name: 'chrome',
+      testIgnore: /screenshots\.spec\.ts/,
       // The installed Google Chrome by default (no browser download); set
       // E2E_BROWSER_CHANNEL=chromium after `npx playwright install chromium` in CI.
       use: { ...devices['Desktop Chrome'], channel: process.env.E2E_BROWSER_CHANNEL ?? 'chrome' },
+    },
+    {
+      // README screenshots: `npm run screenshots`.
+      name: 'screenshots',
+      testMatch: /screenshots\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: process.env.E2E_BROWSER_CHANNEL ?? 'chrome',
+        // Chrome's synthetic camera, so the door scanner shows a live feed.
+        permissions: ['camera'],
+        launchOptions: {
+          args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
+        },
+      },
     },
   ],
 })

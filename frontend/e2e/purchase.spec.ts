@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { E2E_EMAIL as EMAIL } from './global-setup.ts'
+import { CUSTOMER, performanceOnSale, signIn } from './support.ts'
 
 /**
  * Purchase smoke test: sign in → pick a seat → choose a tariff → pay with Stripe's
@@ -9,37 +9,6 @@ import { E2E_EMAIL as EMAIL } from './global-setup.ts'
  * development instances) and Stripe's published 4242 test card, so nothing real is
  * charged and no inbox is needed.
  */
-const API = process.env.E2E_API_URL ?? 'http://127.0.0.1:8099/api'
-const CLERK_TEST_CODE = '424242'
-
-interface EventSummary {
-  nextPerformance: { id: string; isOnSale: boolean; remaining: number } | null
-}
-
-async function performanceOnSale(page: Page): Promise<string> {
-  const response = await page.request.get(`${API}/events`)
-  expect(response.ok()).toBe(true)
-  const events = (await response.json()) as EventSummary[]
-  const next = events
-    .map((e) => e.nextPerformance)
-    .find((p) => p !== null && p.isOnSale && p.remaining > 0)
-  if (!next) throw new Error('No performance on sale: run `make seed` first.')
-  return next.id
-}
-
-async function signIn(page: Page, redirect: string): Promise<void> {
-  await page.goto(`/connexion?redirect=${encodeURIComponent(redirect)}`)
-  await page.getByLabel(/adresse e-mail|email/i).fill(EMAIL)
-  // Wait for Clerk to send the email code (test identities always get 424242).
-  const codeSent = page.waitForResponse((r) => r.url().includes('/prepare_first_factor') && r.ok())
-  await page.getByRole('button', { name: 'Continuer', exact: true }).click()
-  await codeSent
-  const code = page.getByRole('textbox', { name: /code/i }).first()
-  await code.waitFor()
-  await code.pressSequentially(CLERK_TEST_CODE)
-  await page.waitForURL((url) => url.pathname === redirect)
-}
-
 async function fillStripeCard(page: Page): Promise<void> {
   const stripe = page
     .locator('iframe[title*="paiement" i], iframe[title*="payment" i]')
@@ -66,7 +35,7 @@ test('a customer buys a seat with the Stripe test card', async ({ page }) => {
   const availability = page.waitForResponse(
     (r) => r.url().includes(`/performances/${performanceId}/availability`) && r.status() === 200,
   )
-  await signIn(page, seatPage)
+  await signIn(page, CUSTOMER.email, seatPage)
   await availability
 
   // Pick the first free standard seat, the keyboard way (focus + Space).
