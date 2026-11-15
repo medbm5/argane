@@ -118,6 +118,34 @@ final readonly class DbalInventoryRepository implements InventoryRepository
         );
     }
 
+    public function sellSeat(Uuid $performanceSeatId, Uuid $ticketId, ?Uuid $holdId, DateTimeImmutable $now): bool
+    {
+        return 1 === (int) $this->connection->executeStatement(
+            "UPDATE performance_seat
+                SET status = 'SOLD', ticket_id = :ticket, hold_id = NULL, hold_expires_at = NULL, updated_at = :now
+              WHERE id = :seat
+                AND (status = 'AVAILABLE'
+                     OR (status = 'HELD' AND (hold_id = :hold OR hold_expires_at <= :now)))",
+            ['ticket' => $ticketId->toBinary(), 'now' => self::sql($now), 'seat' => $performanceSeatId->toBinary(), 'hold' => ($holdId ?? Uuid::fromString('00000000-0000-0000-0000-000000000000'))->toBinary()],
+            ['ticket' => ParameterType::BINARY, 'seat' => ParameterType::BINARY, 'hold' => ParameterType::BINARY],
+        );
+    }
+
+    public function sellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity, ?Uuid $holdId, DateTimeImmutable $now): bool
+    {
+        $stock = $this->lockStanding($performanceId, $zoneId, $now, $holdId);
+        if (null === $stock || $stock['remaining'] < $quantity) {
+            return false;
+        }
+        $this->connection->executeStatement(
+            'UPDATE performance_zone_stock SET sold_count = sold_count + :q WHERE performance_id = :p AND zone_id = :z',
+            ['q' => $quantity, 'p' => $performanceId->toBinary(), 'z' => $zoneId->toBinary()],
+            ['p' => ParameterType::BINARY, 'z' => ParameterType::BINARY],
+        );
+
+        return true;
+    }
+
     public function releaseExpiredSeats(DateTimeImmutable $now): int
     {
         return (int) $this->connection->executeStatement(

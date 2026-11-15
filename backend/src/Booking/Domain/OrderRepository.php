@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Booking\Domain;
 
+use App\Booking\Domain\Model\Hold;
 use App\Booking\Domain\Model\Order;
+use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 
 interface OrderRepository
@@ -14,4 +16,14 @@ interface OrderRepository
     public function find(Uuid $id): ?Order;
 
     public function findByReference(string $reference): ?Order;
+
+    /**
+     * Unpaid (PENDING_PAYMENT or FAILED) orders created from this hold.
+     *
+     * @return list<Order>
+     */
+    public function unpaidOfHold(Hold $hold): array;
+
+    /** Unpaid orders whose hold expired become EXPIRED; returns how many. */
+    public function expireUnpaid(DateTimeImmutable $now): int;
 }

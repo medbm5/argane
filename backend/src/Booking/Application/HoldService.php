@@ -9,6 +9,7 @@ use App\Booking\Application\Dto\HoldView;
 use App\Booking\Domain\HoldRepository;
 use App\Booking\Domain\Model\Hold;
 use App\Booking\Domain\Model\StandingHoldLine;
+use App\Booking\Domain\OrderRepository;
 use App\Catalog\Domain\InventoryRepository;
 use App\Catalog\Domain\Model\Performance;
 use App\Catalog\Domain\PerformanceRepository;
@@ -36,6 +37,7 @@ final readonly class HoldService
     public function __construct(
         private PerformanceRepository $performances,
         private HoldRepository $holds,
+        private OrderRepository $orders,
         private InventoryRepository $inventory,
         private EntityManagerInterface $em,
         private ClockInterface $clock,
@@ -132,13 +134,14 @@ final readonly class HoldService
         });
     }
 
-    /** Housekeeping for the scheduler: marks due holds EXPIRED and frees their seats. */
+    /** Housekeeping for the scheduler: expires due holds and their unpaid orders, frees seats. */
     public function expireDue(): int
     {
         $now = $this->clock->now();
 
         return $this->em->wrapInTransaction(function () use ($now): int {
             $this->inventory->releaseExpiredSeats($now);
+            $this->orders->expireUnpaid($now);
 
             return $this->holds->expireDue($now);
         });

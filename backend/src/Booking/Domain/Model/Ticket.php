@@ -180,9 +180,25 @@ class Ticket
         $this->checkedInBy = $by;
     }
 
+    /** Ticket of an order not paid yet (online checkout). */
+    public function awaitPayment(): void
+    {
+        if (TicketStatus::VALID === $this->status && null === $this->checkedInAt) {
+            $this->status = TicketStatus::PENDING;
+        }
+    }
+
+    /** Payment confirmed: the ticket becomes admissible and claims its seat. */
+    public function activate(): void
+    {
+        if (TicketStatus::PENDING === $this->status) {
+            $this->status = TicketStatus::VALID;
+        }
+    }
+
     public function cancel(): void
     {
-        if ($this->status->isLive()) {
+        if ($this->status->isLive() || TicketStatus::PENDING === $this->status) {
             $this->status = TicketStatus::CANCELLED;
         }
     }

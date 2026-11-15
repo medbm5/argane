@@ -43,6 +43,19 @@ interface InventoryRepository
     /** Puts every seat of the hold back on sale; returns how many were freed. */
     public function releaseSeats(Uuid $holdId, DateTimeImmutable $now): int;
 
+    /**
+     * Marks a seat SOLD to a ticket if it is still ours to sell: held by this hold, or
+     * free (available, or held by an expired hold). Returns false when someone else got
+     * it (late payment after expiry). Run inside the finalising transaction.
+     */
+    public function sellSeat(Uuid $performanceSeatId, Uuid $ticketId, ?Uuid $holdId, DateTimeImmutable $now): bool;
+
+    /**
+     * Adds sold standing places if enough remain, not counting this hold's own lines.
+     * Locks the stock row; run inside the finalising transaction.
+     */
+    public function sellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity, ?Uuid $holdId, DateTimeImmutable $now): bool;
+
     /** Frees seats whose hold expired (housekeeping: reads already treat them as free). */
     public function releaseExpiredSeats(DateTimeImmutable $now): int;
 
