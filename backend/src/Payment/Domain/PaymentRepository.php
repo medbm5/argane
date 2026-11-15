@@ -20,6 +20,11 @@ interface PaymentRepository
 
     public function saveRefund(Refund $refund): void;
 
+    /**
+     * @return list<Refund>
+     */
+    public function refundsOf(Order $order): array;
+
     /** Records a webhook id; false when it was already processed (idempotency). */
     public function recordWebhook(string $eventId, string $type, DateTimeImmutable $now): bool;
 

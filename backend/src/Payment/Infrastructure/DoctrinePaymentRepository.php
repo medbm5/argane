@@ -40,6 +40,12 @@ final readonly class DoctrinePaymentRepository implements PaymentRepository
         $this->em->flush();
     }
 
+    public function refundsOf(Order $order): array
+    {
+        /** @var list<Refund> */
+        return $this->em->getRepository(Refund::class)->findBy(['order' => $order], ['createdAt' => 'ASC']);
+    }
+
     public function recordWebhook(string $eventId, string $type, DateTimeImmutable $now): bool
     {
         // Plain INSERT: the primary key makes concurrent deliveries of one event collide.
