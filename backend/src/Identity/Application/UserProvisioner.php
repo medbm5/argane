@@ -32,6 +32,16 @@ final readonly class UserProvisioner
         }
 
         $profile = $this->directory->fetchProfile($clerkUserId);
+
+        $seeded = $this->users->findByEmail($profile->email);
+        if (null !== $seeded && $seeded->isPlaceholder()) {
+            $seeded->linkClerkAccount($clerkUserId);
+            $this->users->save($seeded);
+            $this->logger->info('Linked Clerk account to seeded user', ['clerkUserId' => $clerkUserId]);
+
+            return $seeded;
+        }
+
         $user = new User($profile->clerkUserId, $profile->email, $profile->displayName, $this->clock->now());
         foreach ($this->allowlist->rolesFor($profile->email) as $role) {
             $user->grant($role);

@@ -11,6 +11,7 @@ use App\Identity\Application\UserProvisioner;
 use App\Identity\Domain\Model\User;
 use App\Identity\Domain\UserRepository;
 use App\Identity\Infrastructure\Clerk\ClerkBackendApiDirectory;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\Clock\MockClock;
@@ -84,6 +85,20 @@ final class UserProvisionerTest extends TestCase
         $user = $this->provisioner(boxOffice: 'OWNER@argane.test')->forClerkUser('user_desk');
 
         self::assertSame(['ROLE_CUSTOMER', 'ROLE_BOX_OFFICE'], $user->getRoles());
+    }
+
+    public function testLinksASeededUserWithTheSameEmail(): void
+    {
+        $seeded = new User('seed_organizer', 'owner@argane.test', 'Nadia', new DateTimeImmutable('2026-01-01'));
+        $seeded->grant(\App\Identity\Domain\Model\Role::ORGANIZER);
+        $this->users->save($seeded);
+
+        $user = $this->provisioner()->forClerkUser('user_real');
+
+        self::assertSame($seeded, $user);
+        self::assertSame('user_real', $user->clerkUserId());
+        self::assertFalse($user->isPlaceholder());
+        self::assertContains('ROLE_ORGANIZER', $user->getRoles());
     }
 
     public function testMapsTheClerkUserObject(): void

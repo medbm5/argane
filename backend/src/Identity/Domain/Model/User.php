@@ -7,6 +7,7 @@ namespace App\Identity\Domain\Model;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
@@ -69,6 +70,23 @@ class User implements UserInterface
     public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /** Demo/seeded users carry a placeholder id until their owner first signs in. */
+    public const string PLACEHOLDER_PREFIX = 'seed_';
+
+    public function isPlaceholder(): bool
+    {
+        return str_starts_with($this->clerkUserId, self::PLACEHOLDER_PREFIX);
+    }
+
+    /** Attach the real Clerk account to a seeded user (matched by email). */
+    public function linkClerkAccount(string $clerkUserId): void
+    {
+        if (!$this->isPlaceholder()) {
+            throw new LogicException('Only seeded users can be linked to a Clerk account.');
+        }
+        $this->clerkUserId = $clerkUserId;
     }
 
     public function updateProfile(string $email, string $displayName): void
