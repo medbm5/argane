@@ -5,3 +5,22 @@ framework:
             policy: sliding_window
             limit: 20
             interval: '1 minute'
+        # Checkout opens a Stripe PaymentIntent: a few tries per minute is plenty.
+        checkout:
+            policy: sliding_window
+            limit: 10
+            interval: '1 minute'
+        # A steward scans a crowd fast, but not 4 tickets a second for a minute.
+        check_in:
+            policy: sliding_window
+            limit: 240
+            interval: '1 minute'
+
+when@test:
+    framework:
+        rate_limiter:
+            # Small enough to reach in a test; existing check-in tests stay below it.
+            check_in:
+                policy: sliding_window
+                limit: 5
+                interval: '1 minute'

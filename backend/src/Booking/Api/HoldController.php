@@ -8,7 +8,7 @@ use App\Booking\Application\Dto\HoldRequest;
 use App\Booking\Application\Dto\HoldView;
 use App\Booking\Application\HoldService;
 use App\Identity\Domain\Model\User;
-use App\Shared\Domain\Exception\BusinessRuleException;
+use App\Shared\Application\RateLimit;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -43,10 +43,7 @@ final readonly class HoldController
     #[OA\Response(response: 429, description: 'Too many hold attempts')]
     public function create(string $id, #[CurrentUser] User $user, #[MapRequestPayload] HoldRequest $request): JsonResponse
     {
-        $limit = $this->holdLimiter->create($user->id()->toRfc4122())->consume();
-        if (!$limit->isAccepted()) {
-            throw BusinessRuleException::because('TOO_MANY_HOLDS', 'Trop de tentatives de réservation. Patientez une minute.', ['retryAfter' => $limit->getRetryAfter()->getTimestamp()], 429);
-        }
+        RateLimit::consume($this->holdLimiter, $user->id()->toRfc4122(), 'TOO_MANY_HOLDS', 'Trop de tentatives de réservation. Patientez une minute.');
 
         $roles = array_values($this->roleHierarchy->getReachableRoleNames($user->getRoles()));
 
