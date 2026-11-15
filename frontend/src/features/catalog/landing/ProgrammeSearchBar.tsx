@@ -12,7 +12,7 @@ function Cell({ label, children }: { label: string; children: (id: string) => Re
   const id = useId()
   return (
     <div className="relative flex-1 border-b border-paper-50/15 px-4 focus-within:bg-paper-50/5 sm:border-r sm:border-b-0">
-      <label htmlFor={id} className="small-caps absolute top-2 left-4 text-xs text-sepia-400">
+      <label htmlFor={id} className="small-caps absolute top-2 left-4 text-xs text-pop-yellow">
         {label}
       </label>
       {children(id)}
@@ -60,7 +60,7 @@ export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
       role="search"
       aria-label="Rechercher dans la programmation"
       onSubmit={submit}
-      className="flex flex-col border-b border-line bg-ink-900 text-paper-50 sm:flex-row"
+      className="flex flex-col border-b-2 border-ink-900 bg-ink-900 text-paper-50 sm:flex-row"
     >
       <Cell label="Spectacle">
         {(id) => (
@@ -121,7 +121,7 @@ export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
       </Cell>
       <button
         type="submit"
-        className="group flex items-center justify-between gap-4 px-6 py-5 text-left font-medium transition-colors duration-200 hover:bg-gilt-400 hover:text-ink-900 focus-visible:bg-gilt-400 focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
+        className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display font-medium tracking-[0.1em] uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
       >
         Voir la programmation
         <ArrowRight

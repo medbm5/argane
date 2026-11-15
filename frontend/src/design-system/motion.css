@@ -30,6 +30,39 @@
   }
 }
 
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Poster-strip ticker: content is rendered twice, the track slides by half. */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+}
+
+.group:hover .marquee-track {
+  animation-duration: 8s;
+}
+
+/* Brutal block: ink outline + hard offset shadow that presses in on hover. */
+.brutal {
+  border: 2px solid var(--ink-900);
+  box-shadow: var(--sh-hard);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.brutal-press:hover,
+a:hover > .brutal,
+.group:hover > .brutal {
+  transform: translate(3px, 3px);
+  box-shadow: 3px 3px 0 var(--ink-900);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -24,6 +24,14 @@
   --color-night-800: var(--night-800);
   --color-night-600: var(--night-600);
   --color-stage-glow: var(--stage-glow);
+  --color-pop-yellow: var(--pop-yellow);
+  --color-pop-blue: var(--pop-blue);
+  --color-pop-pink: var(--pop-pink);
+  --color-pop-orange: var(--pop-orange);
+  --color-pop-teal: var(--pop-teal);
+  --color-pop-red: var(--pop-red);
+  --color-pop-violet: var(--pop-violet);
+  --color-pop-green: var(--pop-green);
 
   /* Semantic, theme-aware */
   --color-bg: var(--c-bg);
@@ -42,6 +50,7 @@
 
   --font-display: var(--ff-display);
   --font-sans: var(--ff-text);
+  --font-marker: var(--ff-marker);
 
   --text-xs: var(--fs-xs);
   --text-sm: var(--fs-sm);
@@ -58,6 +67,8 @@
   --radius-pill: var(--r-pill);
 
   --shadow-float: var(--sh-float);
+  --shadow-hard: var(--sh-hard);
+  --shadow-hard-sm: var(--sh-hard-sm);
 
   --ease-theatre: var(--ease-out);
 }

@@ -9,18 +9,24 @@ import { PUBLIC_NAV, type NavItem } from './nav'
 
 function navClass({ isActive }: { isActive: boolean }) {
   return cn(
-    'text-sm transition-colors duration-200 hover:text-accent',
-    isActive ? 'text-accent underline decoration-1 underline-offset-8' : 'text-fg',
+    'font-display text-base tracking-[0.1em] uppercase transition-colors duration-200 hover:text-accent',
+    isActive ? 'text-accent underline decoration-2 underline-offset-8' : 'text-fg',
   )
 }
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link to="/" className={cn('group flex items-baseline gap-2', className)}>
-      <span className="font-display text-2xl leading-none font-semibold tracking-tight">
-        Théâtre Argane
+    <Link
+      to="/"
+      aria-label="Théâtre Argane, accueil"
+      className={cn('group flex flex-col items-start leading-none', className)}
+    >
+      <span className="-rotate-3 font-marker text-2xl transition-transform duration-200 group-hover:rotate-0">
+        Argane
       </span>
-      <span className="small-caps hidden text-xs text-muted sm:inline">Agadir · 1974</span>
+      <span className="font-display text-[0.65rem] tracking-[0.35em] text-accent uppercase">
+        Théâtre · Agadir
+      </span>
     </Link>
   )
 }
@@ -35,8 +41,11 @@ export function SiteHeader({
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="border-b border-line">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header
+      data-theme="night"
+      className="sticky top-0 z-40 border-b-2 border-ink-900 bg-ink-900 text-paper-100"
+    >
+      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Logo />
         <nav aria-label="Navigation principale" className="hidden items-center gap-6 md:flex">
           {nav.map((item) => (

@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import type { EventListItem } from '../../../lib/api/types'
 import { PerformanceRow } from '../components/PerformanceRow'
+import { SectionTitle } from './LandingGrid'
 
 export function UpcomingPerformances({
   events,
@@ -17,19 +18,25 @@ export function UpcomingPerformances({
     .slice(0, 6)
 
   return (
-    <section aria-labelledby="upcoming-title" className="border-b border-line">
-      <div className="flex items-baseline justify-between gap-4 border-b border-line px-4 py-5 sm:px-8">
-        <h2 id="upcoming-title" className="font-display text-3xl">
+    <section aria-labelledby="upcoming-title" className="border-b-2 border-ink-900">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink-900 px-4 pt-14 pb-8 sm:px-8">
+        <SectionTitle id="upcoming-title" kicker="les prochains soirs" bar="bg-pop-red">
           Prochainement
-        </h2>
-        <Link to="/programme" className="text-sm text-accent hover:underline">
-          Toute la programmation
+        </SectionTitle>
+        <Link
+          to="/programme"
+          className="font-display text-lg tracking-[0.1em] uppercase underline decoration-2 underline-offset-8 hover:text-accent"
+        >
+          Toute la programmation →
         </Link>
       </div>
       {isLoading ? (
         <ul aria-busy="true" aria-label="Chargement des représentations">
           {Array.from({ length: 3 }, (_, i) => (
-            <li key={i} className="h-20 animate-pulse border-b border-line bg-surface-alt/50" />
+            <li
+              key={i}
+              className="h-20 animate-pulse border-b-2 border-ink-900 bg-surface-alt/50"
+            />
           ))}
         </ul>
       ) : upcoming.length === 0 ? (

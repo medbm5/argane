@@ -28,19 +28,17 @@ export function PerformanceRow({
     performance.remaining / performance.capacity < 0.15
 
   return (
-    <li className="border-b border-line last:border-b-0">
+    <li className="border-b-2 border-ink-900 last:border-b-0">
       <Link
         to={href}
-        className="group grid grid-cols-[4rem_1fr_auto] items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-surface-alt focus-visible:bg-surface-alt sm:grid-cols-[5rem_1fr_5rem_8rem_8rem] sm:px-8 md:grid-cols-[5rem_1fr_5rem_8rem_15rem]"
+        className="group grid grid-cols-[4rem_1fr_auto] items-center gap-4 px-4 py-4 transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow sm:grid-cols-[5rem_1fr_5rem_8rem_8rem] sm:px-8 md:grid-cols-[5rem_1fr_5rem_8rem_15rem]"
       >
         <span className="flex flex-col items-center leading-none" aria-hidden>
-          <span className="tabular font-display text-4xl">{tile.day}</span>
-          <span className="small-caps text-xs text-muted">{tile.month}</span>
+          <span className="tabular font-display text-5xl">{tile.day}</span>
+          <span className="small-caps text-xs">{tile.month}</span>
         </span>
         <span className="min-w-0">
-          <span className="block truncate font-display text-2xl leading-tight group-hover:text-accent">
-            {title}
-          </span>
+          <span className="block truncate font-display text-3xl leading-tight">{title}</span>
           {subtitle ? <span className="block truncate text-sm text-muted">{subtitle}</span> : null}
           <span className="sr-only">
             {formatShortDate(performance.startsAt)} à {formatTime(performance.startsAt)}

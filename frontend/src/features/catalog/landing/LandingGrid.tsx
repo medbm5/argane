@@ -1,125 +1,189 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
-import { WaveMask } from '../../../design-system/components/WaveMask'
-import { formatLongDate } from '../../../lib/format'
+import { Button } from '../../../design-system/primitives/Button'
+import { formatShortDate } from '../../../lib/format'
 import type { EventListItem } from '../../../lib/api/types'
 import { CATEGORIES } from '../api'
 
 const PARTNERS = ['Atlas Imprimerie', 'Souss Radio', 'Maison Tifaout', 'Café Bab Al Bahr']
 
-/** Bottom grid row: categories · poster in a wave mask · news · follow us. */
+/** Strip colours cycle like paint pots; light text only where contrast needs it. */
+const STRIPS = [
+  'bg-pop-yellow text-ink-900',
+  'bg-pop-blue text-paper-50',
+  'bg-pop-pink text-ink-900',
+  'bg-pop-orange text-ink-900',
+  'bg-pop-teal text-ink-900',
+  'bg-pop-red text-paper-50',
+]
+
+const BLOCKS = [
+  'bg-pop-red text-paper-50',
+  'bg-pop-yellow text-ink-900',
+  'bg-pop-blue text-paper-50',
+  'bg-pop-pink text-ink-900',
+  'bg-pop-teal text-ink-900',
+  'bg-pop-violet text-paper-50',
+]
+
+export function SectionTitle({
+  id,
+  kicker,
+  children,
+  bar = 'bg-pop-blue',
+}: {
+  id: string
+  kicker: string
+  children: string
+  bar?: string
+}) {
+  return (
+    <div>
+      <p className="-rotate-1 font-marker text-lg text-accent">{kicker}</p>
+      <h2 id={id} className="font-display text-[clamp(2.5rem,6vw,4.5rem)]">
+        {children}
+      </h2>
+      <span aria-hidden className={`mt-3 block h-1.5 w-24 ${bar}`} />
+    </div>
+  )
+}
+
+/** A pasted poster with a looping title strip underneath. */
+function PosterCard({ event, strip }: { event: EventListItem; strip: string }) {
+  const label = `${event.title} ★ `
+  return (
+    <li>
+      <Link
+        to={`/spectacles/${event.slug}`}
+        aria-label={`À l’affiche : ${event.title}`}
+        className="group block focus-visible:outline-offset-4"
+      >
+        <div className="brutal overflow-hidden bg-paper-50">
+          <img
+            src={event.posterUrl ?? ''}
+            alt=""
+            className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-theatre group-hover:scale-105"
+          />
+          <div className={`overflow-hidden border-t-2 border-ink-900 py-1.5 ${strip}`}>
+            <div
+              aria-hidden
+              className="marquee-track font-display text-base tracking-wide uppercase"
+            >
+              {Array.from({ length: 8 }, (_, i) => (
+                <span key={i} className="px-2 whitespace-nowrap">
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <p className="mt-3 flex items-center justify-between text-sm">
+          <span className="font-bold tracking-wide uppercase">{event.categoryLabel}</span>
+          {event.nextPerformance ? (
+            <span className="tabular">{formatShortDate(event.nextPerformance.startsAt)}</span>
+          ) : null}
+        </p>
+      </Link>
+    </li>
+  )
+}
+
+/** À l'affiche poster wall · categories as paint blocks · news · partners. */
 export function LandingGrid({ events }: { events: EventListItem[] }) {
-  const featured =
-    [...events]
-      .filter((e) => e.nextPerformance?.isOnSale && e.posterUrl)
-      .sort((a, b) => {
-        const fill = (e: EventListItem) =>
-          e.nextPerformance && e.nextPerformance.capacity > 0
-            ? e.nextPerformance.remaining / e.nextPerformance.capacity
-            : 1
-        return fill(a) - fill(b)
-      })[0] ?? null
+  const onWall = events.filter((e) => e.posterUrl).slice(0, 6)
 
   return (
     <>
       <section
+        aria-labelledby="wall-title"
+        className="border-b-2 border-ink-900 px-4 py-14 sm:px-8"
+      >
+        <SectionTitle id="wall-title" kicker="ce qui se joue">
+          À l’affiche
+        </SectionTitle>
+        {onWall.length === 0 ? (
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={i} className="brutal aspect-[4/5] animate-pulse bg-surface-alt" />
+            ))}
+          </div>
+        ) : (
+          <ul className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            {onWall.map((event, i) => (
+              <PosterCard key={event.slug} event={event} strip={STRIPS[i % STRIPS.length] ?? ''} />
+            ))}
+          </ul>
+        )}
+        <div className="mt-12 flex justify-center">
+          <Button asChild variant="secondary" size="lg">
+            <Link to="/programme">
+              Toute la saison <ArrowRight aria-hidden className="size-5" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      <section
         aria-label="Découvrir"
-        className="grid border-b border-line sm:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1fr_0.8fr]"
+        className="grid border-b-2 border-ink-900 lg:grid-cols-[1.4fr_1fr]"
       >
         <nav
           aria-labelledby="categories-title"
-          className="border-b border-line p-6 sm:border-r lg:border-b-0 lg:p-8"
+          className="border-b-2 border-ink-900 px-4 py-12 sm:px-8 lg:border-r-2 lg:border-b-0"
         >
-          <h2 id="categories-title" className="small-caps mb-4 text-sm text-accent">
+          <SectionTitle id="categories-title" kicker="choisir son genre" bar="bg-pop-pink">
             Catégories
-          </h2>
-          <ul className="space-y-1">
-            {CATEGORIES.map((c) => (
+          </SectionTitle>
+          <ul className="mt-8 flex flex-wrap gap-4">
+            {CATEGORIES.map((c, i) => (
               <li key={c.value}>
                 <Link
                   to={`/programme?categorie=${c.value}`}
-                  className="group flex items-center justify-between font-display text-2xl leading-snug hover:text-accent"
+                  className={`brutal brutal-press inline-flex items-center gap-2 px-5 py-3 font-display text-2xl uppercase ${BLOCKS[i % BLOCKS.length] ?? ''}`}
                 >
                   {c.label}
-                  <ArrowRight
-                    aria-hidden
-                    className="size-4 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                  />
+                  <ArrowRight aria-hidden className="size-5" />
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="flex items-center justify-center border-b border-line p-6 lg:border-r lg:border-b-0">
-          {featured ? (
-            <Link
-              to={`/spectacles/${featured.slug}`}
-              className="group block w-full max-w-72"
-              aria-label={`À l’affiche : ${featured.title}`}
-            >
-              <WaveMask className="aspect-[3/4] w-full">
-                <img
-                  src={featured.posterUrl ?? ''}
-                  alt=""
-                  className="size-full object-cover transition-transform duration-500 ease-theatre group-hover:scale-105"
-                />
-              </WaveMask>
-              <p className="mt-3 text-center text-sm text-muted">
-                À l’affiche · <span className="font-display text-lg text-fg">{featured.title}</span>
-              </p>
-            </Link>
-          ) : (
-            <div className="aspect-[3/4] w-full max-w-72 animate-pulse rounded-md bg-surface-alt" />
-          )}
-        </div>
-
         <article
           aria-labelledby="news-title"
-          className="border-b border-line p-6 sm:border-r sm:border-b-0 lg:p-8"
+          className="bg-pop-yellow px-4 py-12 text-ink-900 sm:px-8"
         >
-          <h2 id="news-title" className="small-caps mb-4 text-sm text-accent">
+          <p className="-rotate-1 font-marker text-lg">quoi de neuf</p>
+          <h2 id="news-title" className="font-display text-[clamp(2.5rem,6vw,4.5rem)]">
             Nouvelles
           </h2>
-          <p className="font-display text-2xl leading-snug">
-            Nouvelle configuration concert : la fosse ouvre en janvier.
+          <p className="mt-6 font-display text-3xl leading-tight">
+            La fosse ouvre en janvier : trois cents places debout.
           </p>
-          <p className="mt-3 text-sm text-muted">
-            Trois cents places debout devant la scène, la corbeille et les loges restent assises.
-            Premier essai avec <em>Tamra — nuits gnaoua</em>.
+          <p className="mt-4">
+            La corbeille et les loges restent assises. Premier essai avec{' '}
+            <strong>Tamra — nuits gnaoua</strong>.
           </p>
-          {featured?.nextPerformance ? (
-            <p className="mt-4 text-xs text-muted">
-              Prochaine date à l’affiche : {formatLongDate(featured.nextPerformance.startsAt)}
-            </p>
-          ) : null}
+          <p className="mt-6 text-sm">
+            @theatre.argane · Boulevard du 20 Août, Agadir
+            <br />
+            <span className="opacity-70">Lieu et comptes fictifs, pour la démonstration.</span>
+          </p>
         </article>
-
-        <aside aria-labelledby="follow-title" className="p-6 lg:p-8">
-          <h2 id="follow-title" className="small-caps mb-4 text-sm text-accent">
-            Suivre la saison
-          </h2>
-          <ul className="space-y-2 text-sm">
-            <li>@theatre.argane</li>
-            <li>Lettre de saison, chaque mois</li>
-            <li>Boulevard du 20 Août, Agadir</li>
-          </ul>
-          <p className="mt-6 text-xs text-muted">Lieu et comptes fictifs, pour la démonstration.</p>
-        </aside>
       </section>
 
-      <section aria-labelledby="partners-title" className="px-4 py-8 sm:px-8">
-        <h2 id="partners-title" className="small-caps mb-5 text-center text-xs text-muted">
+      <section aria-labelledby="partners-title" className="px-4 py-10 sm:px-8">
+        <h2 id="partners-title" className="mb-6 text-center font-display text-xl tracking-[0.2em]">
           Avec le soutien de
         </h2>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+        <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
           {PARTNERS.map((name, i) => (
             <li
               key={name}
               className={
                 i % 2 === 0
-                  ? 'font-display text-2xl text-sepia-600 italic'
-                  : 'small-caps text-sm tracking-[0.2em] text-sepia-600'
+                  ? 'font-marker text-2xl text-sepia-800'
+                  : 'font-display text-xl tracking-[0.2em] text-sepia-800 uppercase'
               }
             >
               {name}

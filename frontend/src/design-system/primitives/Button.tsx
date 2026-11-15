@@ -6,21 +6,26 @@ import { cn } from '../cn'
 
 const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center gap-2 font-sans font-medium whitespace-nowrap select-none',
-    'rounded-sm border transition-[background-color,color,border-color,transform] duration-200 ease-theatre',
-    'active:translate-y-px disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center gap-2 font-display tracking-[0.08em] whitespace-nowrap uppercase select-none',
+    'rounded-sm border-2 transition-[background-color,color,border-color,transform,box-shadow] duration-200 ease-theatre',
+    'disabled:pointer-events-none disabled:opacity-50',
     'focus-visible:outline-2 focus-visible:outline-offset-2',
   ],
   {
     variants: {
       variant: {
-        primary:
-          'border-primary bg-primary text-on-primary hover:bg-sepia-800 hover:border-sepia-800',
-        secondary: 'border-fg bg-transparent text-fg hover:bg-surface-alt',
+        primary: [
+          'border-ink-900 bg-primary text-on-primary shadow-[4px_4px_0_var(--pop-red)]',
+          'hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--pop-red)]',
+        ],
+        secondary: [
+          'border-fg bg-surface text-fg shadow-hard-sm',
+          'hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--ink-900)]',
+        ],
         ghost: 'border-transparent bg-transparent text-fg hover:bg-surface-alt',
         gilt: [
-          'border-gilt-400 bg-gilt-400 text-ink-900 shadow-[0_0_0_0_var(--stage-glow)]',
-          'hover:bg-stage-glow hover:shadow-[0_0_24px_-4px_var(--stage-glow)]',
+          'border-ink-900 bg-pop-yellow text-ink-900 shadow-[4px_4px_0_var(--ink-900)]',
+          'hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--ink-900)]',
         ],
         danger: 'border-danger bg-transparent text-danger hover:bg-danger hover:text-paper-50',
       },

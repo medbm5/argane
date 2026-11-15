@@ -9,9 +9,9 @@ export function HomePage() {
   const list = events.data ?? []
 
   return (
-    <div className="mx-auto max-w-7xl border-x border-line">
+    <div className="mx-auto max-w-7xl">
       <ProgrammeSearchBar events={list} />
-      <LandingHero />
+      <LandingHero events={list} />
       <UpcomingPerformances events={list} isLoading={events.isPending} />
       <LandingGrid events={list} />
     </div>

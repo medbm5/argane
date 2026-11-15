@@ -1,18 +1,18 @@
 /*
- * Typography — Cormorant Garamond for display, Instrument Sans for text and UI.
+ * Typography — EXPERIMENT "mural": Anton (condensed poster display),
+ * Permanent Marker (hand-sprayed kickers), Space Grotesk (text and UI).
  * Self-hosted via @fontsource (no third-party font requests).
- * Scale: 1.25 ratio, 16px root.
  */
-@import '@fontsource/cormorant-garamond/500.css';
-@import '@fontsource/cormorant-garamond/600.css';
-@import '@fontsource/cormorant-garamond/500-italic.css';
-@import '@fontsource/instrument-sans/400.css';
-@import '@fontsource/instrument-sans/500.css';
-@import '@fontsource/instrument-sans/600.css';
+@import '@fontsource/anton/400.css';
+@import '@fontsource/permanent-marker/400.css';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/700.css';
 
 :root {
-  --ff-display: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;
-  --ff-text: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ff-display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --ff-marker: 'Permanent Marker', 'Segoe Print', cursive;
+  --ff-text: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
@@ -22,11 +22,11 @@
   --fs-2xl: 1.953rem;
   --fs-3xl: 2.441rem;
   --fs-4xl: 3.815rem;
-  --fs-hero: 5.96rem;
+  --fs-hero: 7rem;
 
-  --leading-body: 1.55;
-  --leading-display: 1.05;
-  --tracking-display: -0.01em;
+  --leading-body: 1.6;
+  --leading-display: 0.95;
+  --tracking-display: 0.005em;
   --measure: 72ch;
 }
 
@@ -43,24 +43,32 @@ h2,
 h3,
 .font-display {
   font-family: var(--ff-display);
-  font-weight: 500;
+  font-weight: 400;
+  font-style: normal;
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.font-marker {
+  font-family: var(--ff-marker);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 p {
   max-width: var(--measure);
 }
 
-/* Prices, counts, references */
 .tabular,
 table,
 time {
   font-variant-numeric: tabular-nums;
 }
 
-/* Reserved for row letters on the seat map and the ticket stub */
+/* Labels: was small caps, now tracked uppercase. Seat rows and stubs keep using it. */
 .small-caps {
-  font-variant-caps: all-small-caps;
-  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
 }

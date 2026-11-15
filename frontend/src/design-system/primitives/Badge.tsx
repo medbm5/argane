@@ -4,17 +4,17 @@ import { cn } from '../cn'
 import { STATUS_BADGES } from './status'
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-pill border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
+  'inline-flex items-center gap-1 border-2 px-2 py-0.5 text-[0.7rem] font-bold tracking-[0.08em] whitespace-nowrap uppercase',
   {
     variants: {
       tone: {
-        neutral: 'border-line bg-surface text-muted',
-        accent: 'border-accent/40 bg-transparent text-accent',
-        success: 'border-success/40 bg-success/10 text-success',
-        danger: 'border-danger/40 bg-danger/10 text-danger',
-        highlight: 'border-highlight bg-highlight text-paper-50',
-        gilt: 'border-gilt-400 bg-gilt-400/20 text-fg',
-        ink: 'border-ink-900 bg-ink-900 text-paper-50',
+        neutral: 'border-fg bg-surface text-fg',
+        accent: 'border-fg bg-pop-teal text-ink-900',
+        success: 'border-fg bg-pop-green text-ink-900',
+        danger: 'border-fg bg-pop-red text-paper-50',
+        highlight: 'border-fg bg-pop-pink text-ink-900',
+        gilt: 'border-fg bg-pop-yellow text-ink-900',
+        ink: 'border-fg bg-ink-900 text-paper-50',
       },
     },
     defaultVariants: { tone: 'neutral' },

@@ -2,11 +2,13 @@ import { Link } from 'react-router'
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-line">
+    <footer data-theme="night" className="mt-auto bg-ink-900 text-paper-100">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-sm sm:grid-cols-3 sm:px-6">
         <div>
-          <p className="font-display text-xl">Théâtre Argane</p>
-          <p className="mt-1 text-muted italic">Chaque place raconte une histoire.</p>
+          <p className="font-display text-4xl">Théâtre Argane</p>
+          <p className="mt-2 -rotate-2 font-marker text-lg text-accent">
+            Chaque place raconte une histoire.
+          </p>
         </div>
         <address className="text-muted not-italic">
           Boulevard du 20 Août

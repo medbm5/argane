@@ -1,65 +1,78 @@
 /*
- * Théâtre Argane — design tokens.
- * Sepia, ceremonial, theatrical: aged programme paper by day,
- * a dark auditorium with stage light when choosing seats.
+ * Théâtre Argane — design tokens. EXPERIMENT: "mural" direction.
+ * Street-poster energy: cream wall, ink outlines, hard offset shadows,
+ * loud pop colours. Token names are kept from the sepia direction so
+ * every screen re-skins without component changes.
  */
 
 :root {
-  /* Paper — light surfaces */
-  --paper-50: #fbf6ec;
-  --paper-100: #f2e8d5;
-  --paper-200: #e6d7bc;
-  --paper-300: #d3bf9c;
+  /* Wall — light surfaces (names kept: paper-*) */
+  --paper-50: #fbf8f1;
+  --paper-100: #f6f2e9;
+  --paper-200: #ece5d6;
+  --paper-300: #15121e;
 
-  /* Sepia and ink */
-  --sepia-400: #b08a5a;
-  --sepia-600: #704214;
-  --sepia-800: #4a2c17;
-  --ink-900: #2b1a10;
+  /* Ink (names kept: sepia-* / ink-*) */
+  --sepia-400: #8a8494;
+  --sepia-600: #e8432e;
+  --sepia-800: #4a4556;
+  --ink-900: #15121e;
 
-  /* Accents */
-  --bordeaux-700: #6b1e24;
-  --gilt-400: #d4a657;
-  --olive-600: #5b6b3a;
-  --rust-700: #9a3a26;
+  /* Pop palette */
+  --pop-yellow: #ffc21a;
+  --pop-blue: #2f4fe0;
+  --pop-pink: #ff5fae;
+  --pop-orange: #ff7a1a;
+  --pop-teal: #18b3c6;
+  --pop-red: #e8432e;
+  --pop-violet: #7c4dff;
+  --pop-green: #2fb36b;
 
-  /* Night — immersive seat selection */
-  --night-950: #140e0a;
-  --night-900: #1e1510;
-  --night-800: #2a1e16;
-  --night-600: #4a3626;
-  --stage-glow: #e9b96e;
+  /* Accents (names kept) */
+  --bordeaux-700: var(--pop-red);
+  --gilt-400: var(--pop-yellow);
+  --olive-600: var(--pop-green);
+  --rust-700: var(--pop-red);
 
-  /* Semantic roles (light / "day" theme) */
+  /* Night — seat selection: same wall, lights out */
+  --night-950: #15121e;
+  --night-900: #1f1b2b;
+  --night-800: #2b2639;
+  --night-600: #4a4556;
+  --stage-glow: var(--pop-yellow);
+
+  /* Semantic roles */
   --c-bg: var(--paper-100);
   --c-surface: var(--paper-50);
   --c-surface-alt: var(--paper-200);
-  --c-border: var(--paper-300);
+  --c-border: var(--ink-900);
   --c-text: var(--ink-900);
   --c-text-muted: var(--sepia-800);
-  --c-accent: var(--sepia-600);
-  --c-accent-hover: var(--sepia-800);
-  --c-focus: var(--sepia-600);
+  --c-accent: var(--pop-red);
+  --c-accent-hover: var(--ink-900);
+  --c-focus: var(--pop-blue);
   --c-primary: var(--ink-900);
-  --c-on-primary: var(--paper-50);
-  --c-highlight: var(--bordeaux-700);
-  --c-gilt: var(--gilt-400);
-  --c-success: var(--olive-600);
-  --c-danger: var(--rust-700);
+  --c-on-primary: var(--paper-100);
+  --c-highlight: var(--pop-red);
+  --c-gilt: var(--pop-yellow);
+  --c-success: var(--pop-green);
+  --c-danger: var(--pop-red);
 
-  /* Seat states (day — used in the studio previews) */
+  /* Seat states */
   --seat-available: var(--paper-50);
-  --seat-available-stroke: var(--sepia-400);
-  --seat-selected: var(--gilt-400);
+  --seat-available-stroke: var(--ink-900);
+  --seat-selected: var(--pop-yellow);
   --seat-held: var(--paper-200);
-  --seat-sold: var(--paper-300);
+  --seat-sold: var(--sepia-400);
 
-  /* Shape */
-  --r-sm: 2px;
-  --r-md: 10px;
+  /* Shape — square corners, hard shadows */
+  --r-sm: 0;
+  --r-md: 0;
   --r-pill: 999px;
-  --sh-float: 0 12px 32px -8px rgba(43, 26, 16, 0.14), 0 2px 6px rgba(43, 26, 16, 0.08);
-  --hairline: 1px solid var(--c-border);
+  --sh-float: 6px 6px 0 var(--ink-900);
+  --sh-hard: 6px 6px 0 var(--ink-900);
+  --sh-hard-sm: 4px 4px 0 var(--ink-900);
+  --hairline: 2px solid var(--c-border);
 
   /* Motion */
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -70,27 +83,28 @@
   color-scheme: light;
 }
 
-/* Night — "house lights down", applied on the seat selection route. */
 [data-theme='night'] {
   --c-bg: var(--night-950);
   --c-surface: var(--night-900);
   --c-surface-alt: var(--night-800);
-  --c-border: var(--night-600);
+  --c-border: var(--paper-100);
   --c-text: var(--paper-100);
   --c-text-muted: var(--sepia-400);
-  --c-accent: var(--gilt-400);
-  --c-accent-hover: var(--stage-glow);
-  --c-focus: var(--gilt-400);
-  --c-primary: var(--gilt-400);
-  --c-on-primary: var(--night-950);
+  --c-accent: var(--pop-yellow);
+  --c-accent-hover: var(--paper-50);
+  --c-focus: var(--pop-yellow);
+  --c-primary: var(--pop-yellow);
+  --c-on-primary: var(--ink-900);
 
   --seat-available: var(--night-600);
-  --seat-available-stroke: var(--sepia-400);
-  --seat-selected: var(--gilt-400);
+  --seat-available-stroke: var(--paper-100);
+  --seat-selected: var(--pop-yellow);
   --seat-held: var(--night-800);
   --seat-sold: color-mix(in srgb, var(--night-800) 50%, transparent);
 
-  --sh-float: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
+  --sh-float: 6px 6px 0 var(--pop-yellow);
+  --sh-hard: 6px 6px 0 var(--pop-yellow);
+  --sh-hard-sm: 4px 4px 0 var(--pop-yellow);
 
   color-scheme: dark;
 }
