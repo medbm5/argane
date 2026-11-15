@@ -52,6 +52,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/performances/{id}/seatmap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_performance_seatmap"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/performances/{id}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_performance_availability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -173,6 +205,74 @@ export interface components {
             currency: string;
             performances: components["schemas"]["PerformanceSummaryView"][];
         };
+        ZonePriceView: {
+            tariffId: string;
+            tariffCode: string;
+            label: string;
+            description?: string | null;
+            amountCents: number;
+            minQuantity: number;
+            maxQuantity?: number | null;
+            requiresProofAtEntry: boolean;
+            requiresReason: boolean;
+        };
+        SeatMapZoneView: {
+            id: string;
+            code: string;
+            name: string;
+            kind: string;
+            colorToken: string;
+            sortOrder: number;
+            /** SVG path in plan coordinates */
+            shape: string;
+            /** Standing zones only */
+            capacity?: number | null;
+            prices: components["schemas"]["ZonePriceView"][];
+        };
+        SeatMapSeatView: {
+            id: string;
+            zoneId: string;
+            row: string;
+            number: number;
+            label: string;
+            /** Format: float */
+            x: number;
+            /** Format: float */
+            y: number;
+            accessible: boolean;
+        };
+        SeatMapView: {
+            performanceId: string;
+            layoutId: string;
+            layoutName: string;
+            channel: string;
+            currency: string;
+            viewBox: {
+                [key: string]: number;
+            };
+            stage: {
+                [key: string]: number;
+            };
+            maxSeatsPerOrder: number;
+            zones: components["schemas"]["SeatMapZoneView"][];
+            seats: components["schemas"]["SeatMapSeatView"][];
+        };
+        StandingAvailabilityView: {
+            zoneId: string;
+            remaining: number;
+            capacity: number;
+        };
+        AvailabilityView: {
+            performanceId: string;
+            status: string;
+            isOnSale: boolean;
+            remaining: number;
+            held: string[];
+            mine: string[];
+            sold: string[];
+            blocked: string[];
+            standing: components["schemas"]["StandingAvailabilityView"][];
+        };
         MeResponse: {
             id: string;
             email: string;
@@ -282,6 +382,81 @@ export interface operations {
                 };
             };
             /** @description Unknown or unpublished event */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_api_performance_seatmap: {
+        parameters: {
+            query?: {
+                /** @description BOX_OFFICE requires the box office role */
+                channel?: "ONLINE" | "BOX_OFFICE";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Plan geometry and the prices the caller may buy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeatMapView"];
+                };
+            };
+            /** @description Box office channel without the role */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown or unpublished performance */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_api_performance_availability: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Seats that are not available, plus standing stock. Polled; supports If-None-Match. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AvailabilityView"];
+                };
+            };
+            /** @description Unchanged since the given ETag */
+            304: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown or unpublished performance */
             404: {
                 headers: {
                     [name: string]: unknown;

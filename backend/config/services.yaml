@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
 
 parameters:
+    app.max_seats_per_order: 10
     app.currency: '%env(default:app.default_currency:APP_CURRENCY)%'
     app.default_currency: 'mad'
     clerk_default_api_url: 'https://api.clerk.com/v1'
