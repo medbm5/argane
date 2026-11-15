@@ -30,6 +30,52 @@
   }
 }
 
+@keyframes stage-breathe {
+  to {
+    opacity: 0.7;
+  }
+}
+
+/* A seat taken by someone else: pulse in red twice. */
+@keyframes seat-lost {
+  0%,
+  100% {
+    fill: var(--night-800);
+  }
+  30% {
+    fill: var(--pop-red);
+  }
+}
+
+/* Seat map focus ring (SVG has no outline): shown only on keyboard focus. */
+.seat .seat-focus,
+.standing-zone:focus-visible path {
+  stroke: transparent;
+}
+
+.seat:focus-visible .seat-focus {
+  stroke: var(--pop-yellow);
+  stroke-width: 3;
+  stroke-dasharray: 4 3;
+}
+
+.standing-zone:focus-visible path {
+  stroke: var(--pop-yellow);
+  stroke-width: 6;
+}
+
+@keyframes curtain-left {
+  to {
+    transform: translateX(-102%);
+  }
+}
+
+@keyframes curtain-right {
+  to {
+    transform: translateX(102%);
+  }
+}
+
 @keyframes curtain {
   to {
     transform: scaleX(0.15);
