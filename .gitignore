@@ -26,6 +26,8 @@ test-results/
 
 # Secrets
 *.pem
+# Throwaway RSA keys that sign fake Clerk tokens in tests (see their README)
+!backend/tests/Support/keys/*.pem
 service-account*.json
 
 # Submission archive (make ai-traces)
