@@ -1,0 +1,13 @@
+# Test environment: use cases and adapters are public so functional tests can
+# fetch them from the container even before a controller injects them.
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    App\:
+        resource: '../src/*/{Application,Infrastructure}/'
+        exclude:
+            - '../src/*/Application/Dto/'
+            - '../src/*/Application/Query/View/'
