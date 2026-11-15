@@ -46,8 +46,14 @@ final class FakePaymentGateway implements PaymentGateway
         $this->cancelled[] = $intentId;
     }
 
+    /** Simulates the processor refusing refunds (network down, insufficient balance…). */
+    public bool $failRefunds = false;
+
     public function refund(string $intentId, int $amountCents, string $idempotencyKey): string
     {
+        if ($this->failRefunds) {
+            throw new RuntimeException('Stripe is unavailable');
+        }
         foreach ($this->refunds as $i => $refund) {
             if ($refund['key'] === $idempotencyKey) {
                 return 're_fake_'.$i;
