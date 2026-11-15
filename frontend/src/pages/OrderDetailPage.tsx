@@ -1,7 +1,9 @@
 import { ArrowLeft, Download } from 'lucide-react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { StatusBadge } from '../design-system/primitives/Badge'
 import { Button } from '../design-system/primitives/Button'
+import { CancelOrder } from '../features/tickets/CancelOrder'
 import { OrderTickets } from '../features/tickets/OrderTickets'
 import { useDownload, useWallet } from '../features/tickets/api'
 import { formatLongDate, formatMoney, formatTime } from '../lib/format'
@@ -12,6 +14,7 @@ export function OrderDetailPage() {
   const { orderId = '' } = useParams()
   const wallet = useWallet()
   const { download, busy } = useDownload()
+  const [now] = useState(() => Date.now())
 
   if (wallet.isPending) {
     return <p className="px-4 py-20 text-center font-display text-3xl">Chargement…</p>
@@ -64,6 +67,9 @@ export function OrderDetailPage() {
 
       <div className="mt-10">
         <OrderTickets order={order} />
+      </div>
+      <div className="mt-10 border-t-2 border-fg pt-6">
+        <CancelOrder order={order} now={now} />
       </div>
       <p className="mt-8 text-sm text-muted">
         Présentez le QR code à l’entrée, sur téléphone ou imprimé. Chaque billet n’est valable

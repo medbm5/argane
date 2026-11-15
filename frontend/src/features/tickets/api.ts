@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useAuthState } from '../../app/auth/AuthContext'
 import { toast } from '../../design-system/toast-store'
@@ -47,4 +47,20 @@ export function useDownload() {
   )
 
   return { download, busy }
+}
+
+/** Online cancellation closes this long before the show (mirrors the API policy). */
+export const CANCELLATION_NOTICE_HOURS = 48
+
+export function cancellableUntil(order: Order): Date {
+  return new Date(new Date(order.startsAt).getTime() - CANCELLATION_NOTICE_HOURS * 3_600_000)
+}
+
+export function useCancelOrder() {
+  const api = useApi()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (orderId: string) => api.post<Order>(`/orders/${orderId}/cancel`),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: walletKeys.wallet }),
+  })
 }
