@@ -49,6 +49,7 @@ RUN apt-get update \
 
 COPY docker/php/prod.ini "$PHP_INI_DIR/conf.d/zz-argane.ini"
 COPY docker/supervisor/argane.conf /etc/supervisor/conf.d/argane.conf
+COPY --chmod=0755 docker/entrypoint.sh /usr/local/bin/argane-entrypoint
 
 # Dependencies first, so code changes reuse this layer.
 COPY composer.json composer.lock symfony.lock ./
@@ -63,4 +64,5 @@ RUN composer dump-autoload --no-dev --classmap-authoritative \
 
 EXPOSE 8080
 
+ENTRYPOINT ["argane-entrypoint"]
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/argane.conf"]
