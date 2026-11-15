@@ -146,6 +146,25 @@ final readonly class DbalInventoryRepository implements InventoryRepository
         return true;
     }
 
+    public function unsellSeat(Uuid $performanceSeatId, Uuid $ticketId, DateTimeImmutable $now): void
+    {
+        $this->connection->executeStatement(
+            "UPDATE performance_seat SET status = 'AVAILABLE', ticket_id = NULL, updated_at = :now
+              WHERE id = :seat AND ticket_id = :ticket AND status = 'SOLD'",
+            ['now' => self::sql($now), 'seat' => $performanceSeatId->toBinary(), 'ticket' => $ticketId->toBinary()],
+            ['seat' => ParameterType::BINARY, 'ticket' => ParameterType::BINARY],
+        );
+    }
+
+    public function unsellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity): void
+    {
+        $this->connection->executeStatement(
+            'UPDATE performance_zone_stock SET sold_count = GREATEST(0, sold_count - :q) WHERE performance_id = :p AND zone_id = :z',
+            ['q' => $quantity, 'p' => $performanceId->toBinary(), 'z' => $zoneId->toBinary()],
+            ['p' => ParameterType::BINARY, 'z' => ParameterType::BINARY],
+        );
+    }
+
     public function releaseExpiredSeats(DateTimeImmutable $now): int
     {
         return (int) $this->connection->executeStatement(

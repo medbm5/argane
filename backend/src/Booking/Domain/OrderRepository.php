@@ -32,6 +32,13 @@ interface OrderRepository
      */
     public function ticketedOf(Uuid $customerId): array;
 
+    /**
+     * Paid orders of a performance (to refund when it is cancelled).
+     *
+     * @return list<Order>
+     */
+    public function paidOfPerformance(Uuid $performanceId): array;
+
     /** Unpaid orders whose hold expired become EXPIRED; returns how many. */
     public function expireUnpaid(DateTimeImmutable $now): int;
 }

@@ -56,6 +56,12 @@ interface InventoryRepository
      */
     public function sellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity, ?Uuid $holdId, DateTimeImmutable $now): bool;
 
+    /** A cancelled sale gives its seat back (only if still sold to this ticket). */
+    public function unsellSeat(Uuid $performanceSeatId, Uuid $ticketId, DateTimeImmutable $now): void;
+
+    /** A cancelled sale gives standing places back. */
+    public function unsellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity): void;
+
     /** Frees seats whose hold expired (housekeeping: reads already treat them as free). */
     public function releaseExpiredSeats(DateTimeImmutable $now): int;
 

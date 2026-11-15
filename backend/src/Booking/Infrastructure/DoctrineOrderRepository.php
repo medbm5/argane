@@ -64,6 +64,19 @@ final readonly class DoctrineOrderRepository implements OrderRepository
             ->getResult();
     }
 
+    public function paidOfPerformance(Uuid $performanceId): array
+    {
+        /** @var list<Order> */
+        return $this->em->createQueryBuilder()
+            ->select('o')
+            ->from(Order::class, 'o')
+            ->where('o.performance = :performance AND o.status = :paid')
+            ->setParameter('performance', $performanceId, 'uuid')
+            ->setParameter('paid', OrderStatus::PAID->value)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function expireUnpaid(DateTimeImmutable $now): int
     {
         return (int) $this->em->getConnection()->executeStatement(

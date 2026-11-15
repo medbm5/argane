@@ -3,6 +3,7 @@
 parameters:
     app.max_seats_per_order: 10
     app.hold_ttl_seconds: 600
+    app.cancellation_notice_hours: 48
     app.currency: '%env(default:app.default_currency:APP_CURRENCY)%'
     app.default_currency: 'mad'
     clerk_default_api_url: 'https://api.clerk.com/v1'
