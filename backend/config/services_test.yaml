@@ -16,3 +16,7 @@ services:
     # Never call Stripe from tests.
     App\Tests\Support\FakePaymentGateway: ~
     App\Payment\Application\PaymentGateway: '@App\Tests\Support\FakePaymentGateway'
+
+    # Never call Google from tests.
+    App\Tests\Support\FakeSheetsClient: ~
+    App\Integration\Application\SheetsClient: '@App\Tests\Support\FakeSheetsClient'

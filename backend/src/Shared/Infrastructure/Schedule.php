@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure;
 
 use App\Booking\Application\Message\ExpireHolds;
+use App\Integration\Application\Message\SyncSheets;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;
@@ -24,6 +25,7 @@ final readonly class Schedule implements ScheduleProviderInterface
         return (new SymfonySchedule())
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
-            ->add(RecurringMessage::every('1 minute', new ExpireHolds()));
+            ->add(RecurringMessage::every('1 minute', new ExpireHolds()))
+            ->add(RecurringMessage::every('1 hour', new SyncSheets()));
     }
 }
