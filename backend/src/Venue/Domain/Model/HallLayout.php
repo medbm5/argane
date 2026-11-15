@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Venue\Domain\Model;
 
+use App\Shared\Domain\Exception\ConflictException;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,8 +14,8 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * A seating configuration of the hall (théâtre, concert…), drawn in a fixed
- * 1000 × 700 viewBox with the stage at the top.
+ * A seating configuration of the hall (thÃ©Ã¢tre, concertâ€¦), drawn in a fixed
+ * 1000 Ã— 700 viewBox with the stage at the top.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'hall_layout')]
@@ -33,6 +34,14 @@ class HallLayout
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $archivedAt = null;
+
+    /** Set when the first ticket is sold for a performance using this layout. */
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $lockedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?HallLayout $clonedFrom = null;
 
     /** @var Collection<int, Zone> */
     #[ORM\OneToMany(targetEntity: Zone::class, mappedBy: 'layout', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -98,8 +107,66 @@ class HallLayout
         $this->isDefault = false;
     }
 
+    public function isLocked(): bool
+    {
+        return null !== $this->lockedAt;
+    }
+
+    public function lockedAt(): ?DateTimeImmutable
+    {
+        return $this->lockedAt;
+    }
+
+    /** Freeze the geometry: sold tickets point at these seats. Idempotent. */
+    public function lock(DateTimeImmutable $now): void
+    {
+        $this->lockedAt ??= $now;
+    }
+
+    public function clonedFrom(): ?self
+    {
+        return $this->clonedFrom;
+    }
+
+    /**
+     * @throws ConflictException when the layout is locked
+     */
+    public function assertEditable(): void
+    {
+        if ($this->isLocked()) {
+            throw ConflictException::because('LAYOUT_LOCKED', sprintf('La configuration Â« %s Â» est utilisÃ©e par des ventes. Dupliquez-la pour la modifier.', $this->name), ['layoutId' => $this->id->toRfc4122()]);
+        }
+    }
+
+    /**
+     * "Clone & edit": a deep, unlocked copy with fresh ids for zones and seats.
+     */
+    public function cloneAs(string $name, DateTimeImmutable $now): self
+    {
+        $copy = new self($this->venue, $name, $now);
+        $copy->clonedFrom = $this;
+        foreach ($this->zones() as $zone) {
+            $zoneCopy = new Zone(
+                $copy,
+                $zone->code(),
+                $zone->name(),
+                $zone->kind(),
+                $zone->colorToken(),
+                $zone->sortOrder(),
+                $zone->shape(),
+                $zone->capacity(),
+            );
+            foreach ($zone->seats() as $seat) {
+                new Seat($zoneCopy, $seat->rowLabel(), $seat->number(), $seat->x(), $seat->y(), $seat->isAccessible(), $seat->isBlocked());
+            }
+        }
+
+        return $copy;
+    }
+
     public function addZone(Zone $zone): void
     {
+        $this->assertEditable();
         if (!$this->zones->contains($zone)) {
             $this->zones->add($zone);
         }

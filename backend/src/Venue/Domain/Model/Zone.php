@@ -104,6 +104,7 @@ class Zone
 
     public function addSeat(Seat $seat): void
     {
+        $this->layout->assertEditable();
         if (!$this->seats->contains($seat)) {
             $this->seats->add($seat);
         }
