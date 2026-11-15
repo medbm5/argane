@@ -2,4 +2,10 @@ vendor/
 var/
 .env.local
 .env.*.local
+.env.test
 .phpunit.cache/
+.php-cs-fixer.cache
+.php-cs-fixer.dist.php
+phpstan.dist.neon
+phpunit.dist.xml
+tests/

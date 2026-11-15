@@ -29,3 +29,38 @@ RUN install-php-extensions xdebug \
 EXPOSE 8080
 
 CMD ["sh", "-c", "composer install --no-interaction --prefer-dist && frankenphp run --config /etc/caddy/Caddyfile"]
+
+# ---------------------------------------------------------------------------
+# Production (Render): code baked in, no dev dependencies, warmed cache.
+# FrankenPHP and the Messenger worker run side by side under supervisord,
+# because Render's free plan has no separate background workers (ADR in README).
+# This is the last stage, so it is what `docker build` produces by default.
+# ---------------------------------------------------------------------------
+FROM base AS prod
+
+ENV APP_ENV=prod \
+    APP_DEBUG=0 \
+    SERVER_NAME=:8080
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends supervisor \
+    && rm -rf /var/lib/apt/lists/* \
+    && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY docker/php/prod.ini "$PHP_INI_DIR/conf.d/zz-argane.ini"
+COPY docker/supervisor/argane.conf /etc/supervisor/conf.d/argane.conf
+
+# Dependencies first, so code changes reuse this layer.
+COPY composer.json composer.lock symfony.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction --no-progress
+
+COPY . .
+RUN composer dump-autoload --no-dev --classmap-authoritative \
+    && composer dump-env prod \
+    && composer run-script --no-dev post-install-cmd \
+    && php bin/console cache:warmup \
+    && chmod -R a+rwX var
+
+EXPOSE 8080
+
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/argane.conf"]
