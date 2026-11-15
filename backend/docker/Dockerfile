@@ -45,8 +45,12 @@ FROM base AS prod
 ENV APP_ENV=prod \
     APP_DEBUG=0
 
+# The base image grants frankenphp cap_net_bind_service (to bind :80/:443 without root).
+# Platforms that drop capabilities (Render) then refuse to exec it with EPERM. We listen
+# on a high $PORT, so remove the file capability.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends supervisor \
+    && apt-get install -y --no-install-recommends supervisor libcap2-bin \
+    && setcap -r /usr/local/bin/frankenphp \
     && rm -rf /var/lib/apt/lists/* \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
