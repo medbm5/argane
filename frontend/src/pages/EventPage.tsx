@@ -1,5 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link, useParams } from 'react-router'
+import { StatePanel } from '../design-system/components/StatePanel'
+import { Button } from '../design-system/primitives/Button'
 import { CATEGORIES, useEvent } from '../features/catalog/api'
 import { PerformanceRow } from '../features/catalog/components/PerformanceRow'
 import { ApiError } from '../lib/api'
@@ -14,9 +16,18 @@ export function EventPage() {
     if (query.error instanceof ApiError && query.error.status === 404) return <NotFoundPage />
     return (
       <div className="mx-auto max-w-3xl px-4 py-20">
-        <p className="brutal bg-pop-pink p-6 font-bold text-ink-900">
+        <StatePanel
+          kind="error"
+          kicker="petit incident"
+          title="Ce spectacle ne s’affiche pas"
+          actions={
+            <Button variant="gilt" onClick={() => void query.refetch()}>
+              Réessayer
+            </Button>
+          }
+        >
           Ce spectacle n’a pas pu être chargé. Réessayez dans un instant.
-        </p>
+        </StatePanel>
       </div>
     )
   }

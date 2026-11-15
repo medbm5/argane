@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { useAuthState } from '../app/auth/AuthContext'
+import { StatePanel } from '../design-system/components/StatePanel'
 import { Button } from '../design-system/primitives/Button'
 import { Dialog } from '../design-system/primitives/Dialog'
 import { toast } from '../design-system/toast-store'
@@ -59,9 +60,26 @@ export function SeatSelectionPage() {
     performance.error instanceof ApiError && performance.error.status === 404 ? (
       <NotFoundPage />
     ) : (
-      <p className="mx-auto max-w-xl px-4 py-20 text-center">
-        Le plan de salle n’a pas pu être chargé. Réessayez dans un instant.
-      </p>
+      <div className="px-4 py-16">
+        <StatePanel
+          kind="error"
+          kicker="petit incident"
+          title="Le plan de salle ne s’affiche pas"
+          actions={
+            <Button
+              variant="gilt"
+              onClick={() => {
+                void performance.refetch()
+                void seatMap.refetch()
+              }}
+            >
+              Réessayer
+            </Button>
+          }
+        >
+          Le plan de salle n’a pas pu être chargé. Réessayez dans un instant.
+        </StatePanel>
+      </div>
     )
   ) : (
     <div className="grid min-h-[70dvh] place-items-center" aria-busy="true">

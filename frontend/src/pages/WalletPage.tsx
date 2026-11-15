@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ArrowRight, Download } from 'lucide-react'
 import { Link } from 'react-router'
+import { StatePanel } from '../design-system/components/StatePanel'
 import { StatusBadge } from '../design-system/primitives/Badge'
 import { Button } from '../design-system/primitives/Button'
 import { SectionTitle } from '../features/catalog/landing/LandingGrid'
@@ -30,19 +31,35 @@ export function WalletPage() {
           ))}
         </div>
       ) : wallet.isError ? (
-        <p className="brutal mt-10 bg-pop-pink p-6 font-bold text-ink-900">
+        <StatePanel
+          kind="error"
+          kicker="petit incident"
+          title="Vos billets restent en coulisses"
+          className="mt-10"
+          actions={
+            <Button variant="gilt" onClick={() => void wallet.refetch()}>
+              Réessayer
+            </Button>
+          }
+        >
           Vos billets n’ont pas pu être chargés. Réessayez dans un instant.
-        </p>
+        </StatePanel>
       ) : orders.length === 0 ? (
-        <div className="brutal mt-10 bg-surface p-10 text-center">
-          <p className="font-display text-4xl">Pas encore de billets</p>
-          <p className="mt-3 text-muted">Vos réservations apparaîtront ici, QR code compris.</p>
-          <Button asChild variant="gilt" size="lg" className="mt-6">
-            <Link to="/programme">
-              Voir la programmation <ArrowRight aria-hidden className="size-5" />
-            </Link>
-          </Button>
-        </div>
+        <StatePanel
+          kind="empty"
+          kicker="la scène vous attend"
+          title="Pas encore de billets"
+          className="mt-10"
+          actions={
+            <Button asChild variant="gilt" size="lg">
+              <Link to="/programme">
+                Voir la programmation <ArrowRight aria-hidden className="size-5" />
+              </Link>
+            </Button>
+          }
+        >
+          Vos réservations apparaîtront ici, QR code compris.
+        </StatePanel>
       ) : (
         <>
           <OrderList
