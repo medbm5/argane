@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/api/orders/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_order_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/holds/{id}/checkout": {
         parameters: {
             query?: never;
@@ -63,6 +79,118 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["delete_api_hold_release"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/performances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_box_office_performances"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/holds/{id}/sell": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_box_office_sell"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_box_office_order_lookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/orders/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_box_office_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/refunds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_box_office_refunds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/box-office/refunds/{id}/settle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_box_office_refund_settle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/studio/performances/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["post_api_studio_performance_cancel"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -196,6 +324,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_wallet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{id}/tickets.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_order_pdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tickets/{id}.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_api_ticket_pdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/venue": {
         parameters: {
             query?: never;
@@ -244,6 +420,31 @@ export interface components {
              */
             channel: "ONLINE" | "BOX_OFFICE";
         };
+        CounterSaleRequest: {
+            /** @default [] */
+            seats: {
+                [key: string]: string;
+            }[];
+            /** @default [] */
+            standing: {
+                [key: string]: number | string;
+            }[];
+            /**
+             * CASH or CARD_TERMINAL; ignored when nothing is due (invitations).
+             * @default CASH
+             * @enum {string}
+             */
+            method: "CASH" | "CARD_TERMINAL" | "NONE";
+            /**
+             * Required for invitations.
+             * @default null
+             */
+            reason: string | null;
+            /** @default null */
+            buyerName: string | null;
+            /** @default null */
+            buyerEmail: string | null;
+        };
         OrderView: {
             id: string;
             reference: string;
@@ -280,6 +481,35 @@ export interface components {
             standing: {
                 [key: string]: number | string;
             }[];
+        };
+        CounterPerformanceView: {
+            id: string;
+            eventTitle: string;
+            eventSlug: string;
+            category: string;
+            posterUrl?: string | null;
+            startsAt: string;
+            status: string;
+            sellable: boolean;
+            onlineOpen: boolean;
+            remaining: number;
+            capacity: number;
+            layoutName: string;
+        };
+        PendingRefundView: {
+            id: string;
+            orderId: string;
+            reference: string;
+            eventTitle: string;
+            startsAt: string;
+            amountCents: number;
+            currency: string;
+            paidWith?: string | null;
+            buyerName?: string | null;
+            buyerEmail?: string | null;
+            reason: string;
+            createdAt: string;
+            tickets: number;
         };
         PerformanceDetailView: {
             id: string;
@@ -453,6 +683,42 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    post_api_order_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order cancelled, places back on sale, refund issued (REFUNDED once the money is back) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"];
+                };
+            };
+            /** @description ORDER_NOT_CANCELLABLE, PERFORMANCE_CANCELLED, ALREADY_CHECKED_IN */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description CANCELLATION_TOO_LATE (less than 48 h before), COUNTER_ORDER */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     post_api_checkout: {
         parameters: {
             query?: never;
@@ -597,6 +863,164 @@ export interface operations {
         responses: {
             /** @description Places released (idempotent) */
             204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_api_box_office_performances: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Today and the next 14 days, soonest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CounterPerformanceView"][];
+                };
+            };
+        };
+    };
+    post_api_box_office_sell: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CounterSaleRequest"];
+            };
+        };
+        responses: {
+            /** @description Paid counter order (tickets valid, places sold) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"];
+                };
+            };
+        };
+    };
+    get_api_box_office_order_lookup: {
+        parameters: {
+            query: {
+                reference: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order found by reference (ARG-26-000123) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"];
+                };
+            };
+        };
+    };
+    post_api_box_office_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Counter sale cancelled, money handed back, places back on sale */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"];
+                };
+            };
+        };
+    };
+    get_api_box_office_refunds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Refunds to hand back at the counter, oldest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PendingRefundView"][];
+                };
+            };
+        };
+    };
+    post_api_box_office_refund_settle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Money handed back; the order is REFUNDED */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PendingRefundView"];
+                };
+            };
+        };
+    };
+    post_api_studio_performance_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Sales stopped; refunds run in the background */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -820,6 +1244,70 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    get_api_wallet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's ticketed orders, soonest first, with QR payloads for live tickets */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderView"][];
+                };
+            };
+        };
+    };
+    get_api_order_pdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All live tickets of the order, one page each */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+        };
+    };
+    get_api_ticket_pdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One ticket */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
             };
         };
     };
