@@ -353,4 +353,4 @@ and swap in the `pk_live`/`sk_live` keys.
 | Orders stay *En attente de paiement* | Webhook not reaching the API (wrong URL or `STRIPE_WEBHOOK_SECRET`). Opening the order page still reconciles with Stripe. |
 | First request takes ~1 minute | Render free cold start (and Aiven free power-off). Expected. |
 | Holds never expire in the list | They do: expiry is lazy (`expires_at < now`). The scheduler only cleans up, and needs the worker. |
-| PDF/email show a time one hour off the website | Known issue: PHP's time zone database and the browser disagree on Casablanca's UTC offset. See `docs/DECISIONS.md`. |
+| PDF/email show a time one hour off the website | PHP's bundled time zone database predates Morocco's return to UTC+0 (2026-09-20). The Docker image installs `timezonedb`; on a host PHP, run `pecl install timezonedb` (ADR-013). |

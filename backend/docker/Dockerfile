@@ -3,13 +3,16 @@ FROM dunglas/frankenphp:1-php8.3 AS base
 
 WORKDIR /app
 
+# timezonedb: the current IANA time zone database, newer than the copy bundled in PHP
+# (Morocco left UTC+1 on 2026-09-20; see ADR-013).
 RUN install-php-extensions \
         pdo_mysql \
         intl \
         zip \
         opcache \
         apcu \
-        sodium
+        sodium \
+        timezonedb
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1

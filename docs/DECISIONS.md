@@ -106,11 +106,13 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Alternatives.** Worker séparé (payant), migrations lancées à la main (oubli possible). Pas de `Content-Security-Policy` côté Vercel pour l'instant : Clerk et Stripe chargent scripts et iframes depuis plusieurs domaines, et une CSP non testée en production risquerait de casser la connexion ou le paiement. L'API, elle, envoie une CSP stricte (`default-src 'none'`).
 
-## ADR-013 — Limite connue : heure locale de Casablanca
+## ADR-013 — Heure de Casablanca : une base de fuseaux à jour partout
 
-**Constat.** Les heures sont stockées en UTC et affichées à l'heure du théâtre (`Africa/Casablanca`). La base de fuseaux de PHP et celle du navigateur ne donnent pas le même décalage pour certaines dates : les heures du PDF et de l'email (formatées par PHP) peuvent différer d'une heure de celles du site (formatées par le navigateur).
+**Constat.** Les heures sont stockées en UTC et affichées à l'heure du théâtre (`Africa/Casablanca`). Le PDF et l'email (formatés par PHP) affichaient une heure de plus que le site (formaté par le navigateur). Cause : le Maroc est repassé de UTC+1 à UTC+0 le 20 septembre 2026 (IANA tzdata 2026e). Les navigateurs et Node récents le savent ; la copie de la base intégrée à PHP (2025.2 / 2026.1) ne le savait pas.
 
-**Piste.** Ne formater les heures que côté serveur (l'API renverrait l'heure locale déjà calculée), pour n'avoir qu'une source de vérité, et épingler la version des données de fuseau. Les tests calculent déjà l'heure attendue via `VenueTime`, pour ne pas dépendre de la machine.
+**Décision.** L'image Docker installe l'extension `timezonedb`, qui apporte la base IANA la plus récente à PHP (vérifié : `2026.6`, 18:00 UTC le 20 novembre 2026 → 18:00 à Casablanca). Une seule règle : la base la plus récente fait foi, côté serveur comme côté navigateur. Les tests unitaires du frontend utilisent des dates antérieures au changement, sur lesquelles toutes les versions s'accordent ; ceux du backend calculent l'heure attendue via `VenueTime`.
+
+**Conséquences.** Hors Docker, un PHP local ancien affiche encore UTC+1 : installer `timezonedb` (`pecl install timezonedb`) ou utiliser `make up`. Les données de démonstration chargées avec un PHP ancien ont des horaires décalés d'une heure ; les recharger depuis le conteneur.
 
 ---
 
