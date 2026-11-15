@@ -1,0 +1,34 @@
+{% extends 'email/base.html.twig' %}
+
+{% block content %}
+    <p class="kicker">C’est réservé</p>
+    <h1>{{ event.title }}</h1>
+    {% if event.subtitle %}<p class="muted">{{ event.subtitle }}</p>{% endif %}
+
+    <table role="presentation" class="facts">
+        <tr>
+            <td><div class="label">Date</div><div class="value">{{ date|capitalize }}</div></td>
+            <td><div class="label">Heure</div><div class="value">{{ time }}</div></td>
+            <td><div class="label">Portes</div><div class="value">{{ doors }}</div></td>
+        </tr>
+    </table>
+
+    <h2>Vos billets · {{ order.reference }}</h2>
+    <table role="presentation" class="tickets">
+        {% for ticket in tickets %}
+            <tr>
+                <td><strong>{{ ticket.seatLabel ? 'Place ' ~ ticket.seatLabel : 'Debout' }}</strong> · {{ ticket.zoneLabel }} · {{ ticket.tariffLabel }}</td>
+                <td class="right">{{ (ticket.unitPriceCents / 100)|number_format(ticket.unitPriceCents % 100 ? 2 : 0, ',', ' ') }}&nbsp;{{ order.currency }}</td>
+            </tr>
+        {% endfor %}
+        <tr class="total"><td>Total</td><td class="right">{{ total }}</td></tr>
+    </table>
+
+    {% if tickets|filter(t => t.requiresProof)|length > 0 %}
+        <p class="notice">Tarif réduit : présentez un justificatif à l’entrée avec votre billet.</p>
+    {% endif %}
+
+    <p>Vos billets sont en pièce jointe (PDF, un par page). Présentez le QR code à l’entrée, imprimé ou sur votre téléphone : chaque billet n’est valable qu’une fois.</p>
+    <p><a class="button" href="{{ wallet_url }}">Voir mes billets</a></p>
+    <p class="muted">Annulation possible depuis votre espace jusqu’à 48 h avant la représentation, avec remboursement.</p>
+{% endblock %}

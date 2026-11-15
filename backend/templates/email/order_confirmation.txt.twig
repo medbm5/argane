@@ -1,0 +1,20 @@
+THÉÂTRE ARGANE — c’est réservé
+
+{{ event.title }}{% if event.subtitle %} — {{ event.subtitle }}{% endif %}
+
+{{ date|capitalize }} à {{ time }} (portes {{ doors }})
+
+Commande {{ order.reference }}
+{% for ticket in tickets %}
+- {{ ticket.seatLabel ? 'Place ' ~ ticket.seatLabel : 'Debout' }} · {{ ticket.zoneLabel }} · {{ ticket.tariffLabel }} : {{ (ticket.unitPriceCents / 100)|number_format(ticket.unitPriceCents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }}
+{% endfor %}
+Total : {{ total }}
+{% if tickets|filter(t => t.requiresProof)|length > 0 %}
+Tarif réduit : présentez un justificatif à l’entrée.
+{% endif %}
+Vos billets (PDF avec QR code) sont en pièce jointe. Chaque billet n’est valable qu’une fois.
+Mes billets : {{ wallet_url }}
+
+Annulation possible jusqu’à 48 h avant la représentation.
+
+{{ venue.name }} · {{ venue.address }}

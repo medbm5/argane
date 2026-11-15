@@ -1,0 +1,55 @@
+{% apply inline_css %}
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>{{ email.subject }}</title>
+<style>
+    body { margin: 0; padding: 0; background: #f6f2e9; color: #15121e; font-family: 'Space Grotesk', Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.55; }
+    .wrap { width: 100%; background: #f6f2e9; padding: 24px 0; }
+    .card { width: 100%; max-width: 600px; margin: 0 auto; background: #fbf8f1; border: 3px solid #15121e; }
+    .bar { background: #15121e; color: #fbf8f1; padding: 14px 24px; font-size: 18px; font-weight: bold; letter-spacing: 4px; }
+    .bar span { color: #ffc21a; }
+    .body { padding: 28px 24px 8px; }
+    .kicker { color: #e8432e; font-size: 13px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 6px; }
+    h1 { font-family: Impact, 'Arial Narrow', sans-serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; margin: 0 0 6px; letter-spacing: 0.5px; }
+    h2 { font-size: 16px; text-transform: uppercase; letter-spacing: 2px; margin: 24px 0 8px; }
+    p { margin: 0 0 12px; }
+    .muted { color: #4a4556; font-size: 13px; }
+    .facts { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    .facts td { border: 2px solid #15121e; padding: 8px 10px; vertical-align: top; }
+    .label { font-size: 10px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #4a4556; }
+    .value { font-size: 16px; font-weight: bold; }
+    .tickets { width: 100%; border-collapse: collapse; }
+    .tickets td { padding: 8px 0; border-bottom: 1px solid #ddd5c4; }
+    .right { text-align: right; white-space: nowrap; }
+    .total td { border-top: 3px solid #15121e; border-bottom: 0; font-weight: bold; font-size: 17px; }
+    .button { display: inline-block; background: #ffc21a; color: #15121e; border: 2px solid #15121e; padding: 12px 20px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; }
+    .notice { background: #ffc21a; border: 2px solid #15121e; padding: 10px 12px; font-weight: bold; }
+    .alert { background: #e8432e; color: #fbf8f1; border: 2px solid #15121e; padding: 10px 12px; font-weight: bold; }
+    .foot { padding: 16px 24px 20px; color: #4a4556; font-size: 12px; }
+    .strip td { height: 8px; font-size: 0; line-height: 0; }
+</style>
+</head>
+<body>
+<table role="presentation" class="wrap" cellpadding="0" cellspacing="0"><tr><td>
+    <table role="presentation" class="card" cellpadding="0" cellspacing="0" align="center">
+        <tr><td class="bar">THÉÂTRE <span>ARGANE</span></td></tr>
+        <tr><td class="body">{% block content %}{% endblock %}</td></tr>
+        <tr><td class="foot">
+            {{ venue.name }} · {{ venue.address }}{% if venue.city not in venue.address %}, {{ venue.city }}{% endif %}<br>
+            Vous recevez cet email à la suite d’une commande sur la billetterie. Lieu et billetterie fictifs, projet de démonstration.
+        </td></tr>
+        <tr><td>
+            <table role="presentation" class="strip" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="background:#ffc21a">&nbsp;</td><td style="background:#2f4fe0">&nbsp;</td><td style="background:#ff5fae">&nbsp;</td>
+                <td style="background:#ff7a1a">&nbsp;</td><td style="background:#18b3c6">&nbsp;</td><td style="background:#e8432e">&nbsp;</td>
+            </tr></table>
+        </td></tr>
+    </table>
+</td></tr></table>
+</body>
+</html>
+{% endapply %}

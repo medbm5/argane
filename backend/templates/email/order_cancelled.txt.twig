@@ -1,0 +1,20 @@
+THÉÂTRE ARGANE — {{ cause == 'performance' ? 'représentation annulée' : 'commande annulée' }}
+
+{{ event.title }} · {{ date }} à {{ time }}
+Commande {{ order.reference }}
+{% if cause == 'performance' %}
+La représentation est annulée.{% if reason %} {{ reason }}{% endif %}
+
+{% else %}
+Votre commande est annulée. Les places ont été remises en vente.
+
+{% endif %}
+{% if refund_state == 'card' %}Remboursement : {{ (refund_cents / 100)|number_format(refund_cents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }} sur votre carte (5 à 10 jours).
+{% elseif refund_state == 'counter' %}Remboursement : présentez-vous au guichet avec la référence {{ order.reference }}.
+{% elseif refund_state == 'done' %}Remboursement effectué : {{ (refund_cents / 100)|number_format(refund_cents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }}.
+{% elseif refund_state == 'pending' %}Remboursement en cours.
+{% else %}Aucun paiement n’était associé à ces billets.
+{% endif %}
+{% if cause == 'performance' %}Autres dates : {{ event_url }}
+{% endif %}
+{{ venue.name }} · {{ venue.address }}

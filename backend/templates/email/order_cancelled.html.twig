@@ -1,0 +1,31 @@
+{% extends 'email/base.html.twig' %}
+
+{% block content %}
+    {% if cause == 'performance' %}
+        <p class="kicker">Représentation annulée</p>
+        <h1>{{ event.title }}</h1>
+        <p class="alert">La représentation du {{ date }} à {{ time }} est annulée.{% if reason %} {{ reason }}{% endif %}</p>
+        <p>Nous sommes désolés. Vos billets ({{ order.reference }}) ne sont plus valables.</p>
+    {% else %}
+        <p class="kicker">Commande annulée</p>
+        <h1>{{ event.title }}</h1>
+        <p>Votre commande <strong>{{ order.reference }}</strong> pour le {{ date }} à {{ time }} est annulée. Les places ont été remises en vente.</p>
+    {% endif %}
+
+    <h2>Remboursement</h2>
+    {% if refund_state == 'card' %}
+        <p><strong>{{ (refund_cents / 100)|number_format(refund_cents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }}</strong> ont été remboursés sur votre carte. Comptez 5 à 10 jours selon votre banque.</p>
+    {% elseif refund_state == 'counter' %}
+        <p class="notice">Vous avez payé au guichet : présentez-vous au guichet avec votre référence {{ order.reference }} pour être remboursé ({{ (refund_cents / 100)|number_format(refund_cents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }}).</p>
+    {% elseif refund_state == 'done' %}
+        <p>Le remboursement de {{ (refund_cents / 100)|number_format(refund_cents % 100 ? 2 : 0, ',', ' ') }} {{ order.currency }} a été effectué.</p>
+    {% elseif refund_state == 'pending' %}
+        <p>Le remboursement est en cours de traitement. Vous recevrez une confirmation de votre banque.</p>
+    {% else %}
+        <p>Aucun paiement n’était associé à ces billets (invitation).</p>
+    {% endif %}
+
+    {% if cause == 'performance' %}
+        <p><a class="button" href="{{ event_url }}">Voir les autres dates</a></p>
+    {% endif %}
+{% endblock %}
