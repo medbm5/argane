@@ -40,7 +40,7 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Décision.** Deux endpoints : `/seatmap` (géométrie, zones, prix autorisés pour l'appelant, cache privé 60 s) et `/availability` (uniquement les places *non* disponibles + stock debout, `Cache-Control: no-cache` + `ETag`). Le front interroge `/availability` toutes les 5 s ; le navigateur revalide seul avec `If-None-Match` et reçoit un 304 sans corps quand rien n'a bougé. Aucune gestion manuelle de l'ETag côté client.
 
-**Conséquences.** Réponse de quelques centaines d'octets au pire, 304 la plupart du temps. Mercure/SSE reste une option (Slice 20) si la latence de 5 s devient gênante.
+**Conséquences.** Réponse de quelques centaines d'octets au pire, 304 la plupart du temps. Mercure/SSE (intégré à FrankenPHP) reste une option si la latence de 5 s devient gênante ; non livré.
 
 ## ADR-005 — Contraste : un rouge « texte » distinct du rouge « aplat »
 
@@ -50,23 +50,117 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Conséquences.** Le rendu reste vif ; seuls les petits textes rouges sont un peu plus sombres.
 
+## ADR-006 — Contrôleurs simples plutôt qu'API Platform
+
+**Choix.** Des contrôleurs Symfony fins (`Api/`) qui délèguent à des services applicatifs et renvoient des DTO en lecture ; les types TypeScript sont générés depuis un schéma OpenAPI.
+
+**Raison.** Presque chaque écriture est une commande métier (réserver, payer, annuler, scanner) et non un CRUD de ressource. Les règles vivent dans les services, testables sans HTTP ; les contrôleurs restent lisibles en une page.
+
+**Alternatives.** API Platform : très productif pour le CRUD (Studio), mais les opérations métier deviennent des *processors* et des *state providers* qui dispersent la logique, pour peu de gain ici.
+
+## ADR-007 — Une place vendue une seule fois : UPDATE conditionnel
+
+**Choix.** La réservation d'un fauteuil est un seul `UPDATE` sur l'inventaire de la représentation, limité aux places `AVAILABLE` ou dont la réservation a expiré. Si le nombre de lignes modifiées ne correspond pas, la transaction est annulée et le client apprend quelles places il a perdues. Les places debout verrouillent la ligne de stock (`FOR UPDATE`) et somment les réservations actives. Une contrainte unique sur `ticket.active_seat_key` (renseignée seulement pour les billets valides) est le filet de sécurité final.
+
+**Raison.** L'atomicité vient de MySQL, sans verrou applicatif ; une place ne coûte qu'une ligne. Testé par `ParallelHoldTest` : plusieurs processus PHP réels se disputent les mêmes places, un seul gagne.
+
+**Alternatives.** Verrou pessimiste `SELECT … FOR UPDATE` sur chaque fauteuil (plus de verrous tenus, risque d'interblocage selon l'ordre), verrou optimiste par version (plus de nouvelles tentatives sous forte demande), verrou Redis (un service de plus à héberger gratuitement, alors que la base reste la vérité).
+
+## ADR-008 — Expiration paresseuse des réservations
+
+**Choix.** Une réservation expirée est traitée comme libre dans *toutes* les requêtes (`hold_expires_at < now`). Le planificateur (toutes les minutes) ne fait que du ménage.
+
+**Raison.** Render gratuit endort le conteneur : un traitement planifié ne peut pas garantir la correction. Avec l'expiration paresseuse, une place redevient vendable à la seconde près, que le worker tourne ou non.
+
+**Alternatives.** Expiration uniquement par tâche planifiée (places bloquées tant que le service dort), TTL Redis (service supplémentaire).
+
+## ADR-009 — Stripe PaymentIntents, webhook idempotent et réconciliation à la lecture
+
+**Choix.** Paiement intégré (Payment Element + PaymentIntent) créé par l'API pour le montant calculé côté serveur. La commande passe à « payée » sur le webhook `payment_intent.succeeded` (signature vérifiée, événement enregistré une seule fois dans `stripe_webhook_event`), ou à la lecture de la commande en interrogeant Stripe si le webhook n'est pas encore arrivé. La finalisation vend tout ou rien ; un paiement arrivé après l'expiration reprend les places si elles sont libres, sinon il est remboursé automatiquement (`SaleFinalizer`).
+
+**Raison.** Une session Stripe Checkout ne peut pas expirer en moins de 30 minutes, plus que notre réservation de 10 minutes. Le webhook seul ne suffit pas sur un hébergement qui dort : la réconciliation à la lecture rend la confirmation immédiate.
+
+**Alternatives.** Stripe Checkout hébergé (expiration trop longue, moins de contrôle sur l'expérience), confirmation côté client seulement (falsifiable).
+
+## ADR-010 — Google Sheets : réécriture complète, différée de 15 s
+
+**Choix.** Après chaque vente, remboursement ou annulation, un message `SalesChanged` (différé de 15 s, dédoublonné) réécrit entièrement les onglets `Ventes` et `Synthèse`. Une synchronisation horaire sert de filet. Authentification par compte de service (JWT signé), via l'API REST.
+
+**Raison.** Quelques milliers de lignes au plus : la réécriture complète est idempotente, corrige toute dérive et ne demande aucun état de synchronisation. Le délai regroupe les rafales de ventes en un seul appel et ménage les quotas.
+
+**Alternatives.** Ajout ligne par ligne (dérive dès qu'un appel échoue ou qu'un remboursement modifie une ligne passée), Apps Script côté Google (logique hors du dépôt, non testée).
+
+## ADR-011 — Identifiants UUID v7, montants en centimes
+
+**Choix.** Toutes les entités ont un UUID v7 (stocké en `BINARY(16)`) ; tous les montants sont des entiers en centimes, avec la devise à côté (`MAD`). Les commandes ont en plus une référence lisible (`ARG-26-001268`) tirée d'une séquence.
+
+**Raison.** Le v7 est ordonné dans le temps (index compacts) et se génère côté application avant l'insertion ; il ne révèle pas le volume de ventes. Les entiers évitent toute erreur d'arrondi.
+
+**Alternatives.** Auto-incrément (énumérable, révèle le volume), UUID v4 (index fragmentés), `DECIMAL` (correct mais facile à mal manipuler en PHP et en JS).
+
+## ADR-012 — Livraison sur offres gratuites : un seul conteneur
+
+**Choix.** Render (Docker) exécute FrankenPHP et le worker Messenger dans le même conteneur sous supervisord. Au démarrage, un script décode le certificat CA d'Aiven (variable base64), écoute sur `$PORT` et applique les migrations, avec nouvelles tentatives pendant le réveil de la base. Le frontend est un site statique sur Vercel (réécriture SPA, en-têtes de sécurité, cache immuable des assets).
+
+**Raison.** L'offre gratuite de Render n'a pas de worker séparé. Les migrations au démarrage gardent le schéma aligné sur le code sans étape manuelle ; `--all-or-nothing` évite un schéma à moitié migré. La vérification du certificat n'est activée que si un CA est fourni, ce qui laisse l'image tourner telle quelle contre le MySQL local.
+
+**Alternatives.** Worker séparé (payant), migrations lancées à la main (oubli possible). Pas de `Content-Security-Policy` côté Vercel pour l'instant : Clerk et Stripe chargent scripts et iframes depuis plusieurs domaines, et une CSP non testée en production risquerait de casser la connexion ou le paiement. L'API, elle, envoie une CSP stricte (`default-src 'none'`).
+
+## ADR-013 — Limite connue : heure locale de Casablanca
+
+**Constat.** Les heures sont stockées en UTC et affichées à l'heure du théâtre (`Africa/Casablanca`). La base de fuseaux de PHP et celle du navigateur ne donnent pas le même décalage pour certaines dates : les heures du PDF et de l'email (formatées par PHP) peuvent différer d'une heure de celles du site (formatées par le navigateur).
+
+**Piste.** Ne formater les heures que côté serveur (l'API renverrait l'heure locale déjà calculée), pour n'avoir qu'une source de vérité, et épingler la version des données de fuseau. Les tests calculent déjà l'heure attendue via `VenueTime`, pour ne pas dépendre de la machine.
+
 ---
 
 ## Questions du challenge
 
-> Réponses complètes rédigées au fil des slices et finalisées en Slice 22.
-
 ### 1. Le prix d'un billet déjà vendu change-t-il si le tarif est modifié ?
-Non. Le prix, le libellé du tarif et la place sont figés sur le billet au moment de la vente. *(Slice 7)*
+
+**Non.** Au moment de la vente, le billet recopie son prix unitaire (`unit_price_cents`), le libellé du tarif, la zone et la place. Modifier ou désactiver un tarif, ou changer la grille de prix d'une représentation, n'affecte que les ventes suivantes. Le montant d'une commande est figé dès sa création.
+
+*Pourquoi.* Un billet est une preuve d'achat : son prix ne peut pas dépendre de la configuration actuelle, ni pour le client ni pour la comptabilité et les remboursements (on rembourse ce qui a été payé).
+*Alternative écartée.* Lire le prix à travers la relation au tarif : l'historique deviendrait faux au premier changement.
 
 ### 2. Une représentation peut-elle utiliser une configuration de salle différente ?
-Oui. Chaque représentation référence une configuration (théâtre ou concert). Une configuration utilisée par des ventes est verrouillée ; on la clone pour la modifier. *(Slice 4)*
+
+**Oui.** Chaque représentation référence une configuration (`HallLayout`) : « théâtre » (400 fauteuils) ou « concert » (fosse debout de 300 + 160 fauteuils). À la création de la représentation, l'inventaire (une ligne par fauteuil, une ligne de stock par zone debout) est généré depuis la configuration, et les prix sont fixés par zone et par tarif.
+
+Une configuration déjà utilisée par des ventes est **verrouillée** : on la **clone** pour la modifier (Studio → Configurations).
+
+*Pourquoi.* Les billets vendus pointent vers des places précises ; modifier la géométrie sous eux rendrait des billets invalides.
+*Alternative écartée.* Une seule salle figée : ne couvre pas les concerts debout.
 
 ### 3. Que devient une place dont le paiement n'aboutit pas ?
-Elle reste bloquée jusqu'à l'expiration de la réservation (10 min), puis redevient disponible. Un paiement tardif reprend la place si elle est libre, sinon il est remboursé automatiquement. *(Slices 11–12)*
+
+Elle reste **réservée pour le client pendant 10 minutes** (compte à rebours visible), puis redevient disponible automatiquement : la place est considérée libre dès l'expiration, sans attendre de tâche planifiée (ADR-008). Un paiement refusé laisse le client réessayer tant que la réservation court.
+
+Si un paiement réussit **après** l'expiration (banque lente, 3-D Secure), la vente est reprise si toutes les places sont encore libres ; sinon le paiement est **remboursé automatiquement** (ADR-009). Il n'y a jamais de place vendue deux fois, ni de paiement conservé sans billet.
 
 ### 4. Que se passe-t-il pour les billets si une représentation est annulée ?
-Ventes stoppées, billets invalidés, remboursement automatique des paiements en ligne, remboursement au guichet pour les ventes guichet, email aux clients. *(Slice 14)*
+
+L'organisateur annule depuis le Studio, avec un motif. Alors :
+1. les ventes s'arrêtent immédiatement, en ligne et au guichet ;
+2. tous les billets sont **invalidés** : le contrôle à l'entrée les refuse ;
+3. les commandes payées en ligne sont **remboursées automatiquement** via Stripe ;
+4. les ventes au guichet passent en **remboursement à effectuer au guichet**, que l'agent solde quand il rend l'argent ;
+5. chaque client reçoit un **email d'annulation**, et la commande apparaît « Remboursée » dans « Mes billets ».
+
+Le traitement passe par Messenger. Il est idempotent et peut être relancé sans double remboursement (clé d'idempotence par remboursement).
+
+En dehors d'une annulation de la représentation, un client peut annuler une commande en ligne jusqu'à **48 h avant**, si aucun billet n'a été scanné. Les achats au guichet s'annulent au guichet.
 
 ### 5. Qui a le droit de vendre à quel tarif ?
-Matrice canal × rôle × quantité appliquée côté serveur par `TariffEligibilityPolicy`. *(Slice 6)*
+
+| Tarif | En ligne (client) | Guichet | Organisateur |
+|---|---|---|---|
+| Plein | oui | oui | oui |
+| Réduit | oui (justificatif à l'entrée) | oui | oui |
+| Groupe | oui, 10 à 30 places | oui, 10 à 30 places | oui |
+| Invitation (0 MAD) | non | oui, motif obligatoire | oui |
+
+Les règles sont des **données du tarif** (canaux, rôles autorisés, quantités min/max, gratuité), modifiables dans le Studio. Un seul service, `TariffEligibilityPolicy`, les interprète **côté serveur** : à l'affichage (tarifs proposés) comme au moment de la vente (refus avec un message explicite). Le frontend ne fait que refléter ce que l'API autorise.
+
+*Pourquoi.* Une règle de prix appliquée seulement dans l'interface se contourne avec une simple requête HTTP.
+*Rôles.* Client, guichetier et administrateur correspondent à `ROLE_CUSTOMER`, `ROLE_BOX_OFFICE` et `ROLE_ORGANIZER`, hiérarchisés : l'organisateur peut tout ce que peut le guichet.
