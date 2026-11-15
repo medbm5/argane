@@ -24,6 +24,14 @@ interface OrderRepository
      */
     public function unpaidOfHold(Hold $hold): array;
 
+    /**
+     * The buyer's orders that produced tickets (paid, then possibly cancelled or refunded),
+     * soonest performance first.
+     *
+     * @return list<Order>
+     */
+    public function ticketedOf(Uuid $customerId): array;
+
     /** Unpaid orders whose hold expired become EXPIRED; returns how many. */
     public function expireUnpaid(DateTimeImmutable $now): int;
 }

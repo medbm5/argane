@@ -47,6 +47,23 @@ final readonly class DoctrineOrderRepository implements OrderRepository
             ->getResult();
     }
 
+    public function ticketedOf(Uuid $customerId): array
+    {
+        /** @var list<Order> */
+        return $this->em->createQueryBuilder()
+            ->select('o', 'p', 't')
+            ->from(Order::class, 'o')
+            ->join('o.performance', 'p')
+            ->leftJoin('o.tickets', 't')
+            ->where('o.customerId = :customer AND o.status IN (:ticketed)')
+            ->setParameter('customer', $customerId, 'uuid')
+            ->setParameter('ticketed', [OrderStatus::PAID->value, OrderStatus::PARTIALLY_REFUNDED->value, OrderStatus::REFUNDED->value, OrderStatus::CANCELLED->value])
+            ->andWhere('o.paidAt IS NOT NULL')
+            ->orderBy('p.startsAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function expireUnpaid(DateTimeImmutable $now): int
     {
         return (int) $this->em->getConnection()->executeStatement(

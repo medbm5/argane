@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Booking\Application\Dto;
 
 use App\Booking\Domain\Model\Order;
+use App\Booking\Domain\Model\Ticket;
+use Closure;
 use DateTimeInterface;
 
 /** An order as its buyer sees it (confirmation page, wallet). */
 final readonly class OrderView
 {
     /**
-     * @param list<array{id: string, zone: string, seat: ?string, tariff: string, priceCents: int, status: string, requiresProof: bool}> $tickets
+     * @param list<array{id: string, zone: string, seat: ?string, tariff: string, priceCents: int, status: string, requiresProof: bool, qr: ?string}> $tickets
      */
     public function __construct(
         public string $id,
@@ -32,7 +34,10 @@ final readonly class OrderView
     ) {
     }
 
-    public static function of(Order $order): self
+    /**
+     * @param (Closure(Ticket): string)|null $qr signs live tickets (wallet); null elsewhere
+     */
+    public static function of(Order $order, ?Closure $qr = null): self
     {
         $performance = $order->performance();
         $event = $performance->event();
@@ -52,7 +57,7 @@ final readonly class OrderView
             $order->createdAt()->format(DateTimeInterface::ATOM),
             $order->paidAt()?->format(DateTimeInterface::ATOM),
             $order->hold()?->id()->toRfc4122(),
-            array_map(static fn ($t): array => [
+            array_map(static fn (Ticket $t): array => [
                 'id' => $t->id()->toRfc4122(),
                 'zone' => $t->zoneLabel(),
                 'seat' => $t->seatLabel(),
@@ -60,6 +65,7 @@ final readonly class OrderView
                 'priceCents' => $t->unitPriceCents(),
                 'status' => $t->status()->value,
                 'requiresProof' => $t->requiresProof(),
+                'qr' => null !== $qr && $t->status()->isLive() ? $qr($t) : null,
             ], $order->tickets()),
         );
     }
