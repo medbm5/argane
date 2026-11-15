@@ -113,30 +113,35 @@ export function ProgrammeSearchBar({ events }: { events: EventListItem[] }) {
   }
 
   return (
-    <form
-      role="search"
-      aria-label="Rechercher dans la programmation"
-      onSubmit={submit}
-      className="flex flex-col border-b-2 border-ink-900 bg-ink-900 text-paper-50 sm:flex-row"
-    >
-      <BarSelect label="Spectacle" value={slug} onValueChange={setSlug} options={showOptions} />
-      <BarSelect label="Mois" value={month} onValueChange={setMonth} options={monthOptions} />
-      <BarSelect
-        label="Catégorie"
-        value={category}
-        onValueChange={setCategory}
-        options={categoryOptions}
-      />
-      <button
-        type="submit"
-        className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display tracking-[0.1em] text-ink-900 uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
+    <div className="px-4 pt-8 sm:px-8 sm:pt-10">
+      <p aria-hidden className="mb-2 -rotate-1 font-marker text-lg text-accent">
+        trouvez votre soirée
+      </p>
+      <form
+        role="search"
+        aria-label="Rechercher dans la programmation"
+        onSubmit={submit}
+        className="flex flex-col border-2 border-ink-900 bg-ink-900 text-paper-50 shadow-[6px_6px_0_var(--pop-yellow)] sm:flex-row"
       >
-        Voir la programmation
-        <ArrowRight
-          aria-hidden
-          className="size-5 transition-transform duration-200 ease-theatre group-hover:translate-x-1"
+        <BarSelect label="Spectacle" value={slug} onValueChange={setSlug} options={showOptions} />
+        <BarSelect label="Mois" value={month} onValueChange={setMonth} options={monthOptions} />
+        <BarSelect
+          label="Catégorie"
+          value={category}
+          onValueChange={setCategory}
+          options={categoryOptions}
         />
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="group flex items-center justify-between gap-4 bg-pop-red px-6 py-5 text-left font-display tracking-[0.1em] text-ink-900 uppercase transition-colors duration-200 hover:bg-pop-yellow hover:text-ink-900 focus-visible:bg-pop-yellow focus-visible:text-ink-900 focus-visible:outline-none sm:w-72"
+        >
+          Voir la programmation
+          <ArrowRight
+            aria-hidden
+            className="size-5 transition-transform duration-200 ease-theatre group-hover:translate-x-1"
+          />
+        </button>
+      </form>
+    </div>
   )
 }
