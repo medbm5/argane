@@ -34,7 +34,7 @@ final class SalesFixtures extends Fixture implements DependentFixtureInterface
 {
     /** Target fill (share of sellable places) once a performance has fully sold its curve. */
     public const array TARGET_FILL = [
-        'tamra-1' => 0.90, 'tamra-2' => 0.82, 'tamra-3' => 0.70,
+        'tamra-1' => 0.97, 'tamra-2' => 0.82, 'tamra-3' => 0.70,
         'misanthrope-1' => 0.88, 'misanthrope-2' => 0.80, 'misanthrope-3' => 0.62, 'misanthrope-4' => 0.66,
         'cyrano-1' => 0.93, 'cyrano-2' => 0.74, 'cyrano-3' => 0.78,
         'quatuor-1' => 0.58, 'quatuor-2' => 0.45,
@@ -43,6 +43,9 @@ final class SalesFixtures extends Fixture implements DependentFixtureInterface
         'rire-1' => 0.72, 'rire-2' => 0.76,
         'jazz-1' => 0.86,
     ];
+
+    /** The first Tamra night is the hit of the season: almost sold out already. */
+    public const string NEAR_SOLD_OUT = 'tamra-1';
 
     /** Zone popularity among buyers. */
     private const array ZONE_WEIGHTS = ['ORCHESTRE' => 55, 'FOSSE' => 60, 'CORBEILLE' => 30, 'LOGES' => 12];
@@ -92,7 +95,8 @@ final class SalesFixtures extends Fixture implements DependentFixtureInterface
             $target = (int) round($capacity * (self::TARGET_FILL[$key] ?? 0.5));
             $invitationShare = str_starts_with($key, 'atlantique') ? 0.4 : 0.06;
 
-            foreach ($this->orderTimes($performance, $target, $now) as $at) {
+            $nearSoldOut = self::NEAR_SOLD_OUT === $key;
+            foreach ($this->orderTimes($performance, $target, $now, $nearSoldOut) as $at) {
                 if ($writer->totalRemaining($performance) <= 2) {
                     break;
                 }
@@ -113,7 +117,7 @@ final class SalesFixtures extends Fixture implements DependentFixtureInterface
      *
      * @return list<DateTimeImmutable>
      */
-    private function orderTimes(Performance $performance, int $targetTickets, DateTimeImmutable $now): array
+    private function orderTimes(Performance $performance, int $targetTickets, DateTimeImmutable $now, bool $alreadyReached = false): array
     {
         $open = $performance->salesOpenAt();
         $close = min($performance->startsAt(), $performance->salesCloseAt());
@@ -130,6 +134,11 @@ final class SalesFixtures extends Fixture implements DependentFixtureInterface
             };
         }
         $total = array_sum($weights);
+        if ($alreadyReached) {
+            // A hit: the target is reached by today, not by the curtain.
+            $elapsedDays = (int) floor(($now->getTimestamp() - $open->getTimestamp()) / 86400);
+            $total = array_sum(\array_slice($weights, 0, max(1, min($spanDays, $elapsedDays)))) * 0.92;
+        }
         $orders = (int) round($targetTickets / 2.6);
 
         $times = [];

@@ -66,5 +66,6 @@ db-reset: ## Drop, create and migrate the database
 	$(PHP_RUN) php bin/console doctrine:database:create
 	$(PHP_RUN) php bin/console doctrine:migrations:migrate --no-interaction
 
-fixtures: db-reset ## Reset the database and load demo data
-	$(PHP_RUN) php bin/console doctrine:fixtures:load --no-interaction
+fixtures: db-reset ## Reset the database and load demo data (deterministic, ~30 s)
+	$(PHP_RUN) php bin/console cache:clear --no-debug -q
+	$(PHP_RUN) php -d memory_limit=1G bin/console doctrine:fixtures:load --no-interaction --no-debug
