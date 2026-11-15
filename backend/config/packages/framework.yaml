@@ -5,6 +5,12 @@ framework:
     # Stateless JSON API: authentication is a bearer token on every request.
     session: false
 
+    # Business-rule violations (409/422/404 from the domain) are expected outcomes,
+    # not incidents: keep them out of the error logs.
+    exceptions:
+        App\Shared\Domain\Exception\DomainException:
+            log_level: info
+
 when@test:
     framework:
         test: true
