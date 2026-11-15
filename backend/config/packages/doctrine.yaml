@@ -23,6 +23,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Identity/Domain/Model'
                 prefix: 'App\Identity\Domain\Model'
                 alias: Identity
+            Venue:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Venue/Domain/Model'
+                prefix: 'App\Venue\Domain\Model'
+                alias: Venue
         controller_resolver:
             auto_mapping: false
 
