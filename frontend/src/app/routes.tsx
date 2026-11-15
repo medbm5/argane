@@ -2,6 +2,7 @@ import type { RouteObject } from 'react-router'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
 import { PublicLayout } from './layouts/layouts'
+import { RootProviders } from './RootProviders'
 
 const devRoutes: RouteObject[] = import.meta.env.DEV
   ? [
@@ -17,12 +18,17 @@ const devRoutes: RouteObject[] = import.meta.env.DEV
 
 export const routes: RouteObject[] = [
   {
-    element: <PublicLayout />,
+    element: <RootProviders />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
-      ...devRoutes,
-      { path: '*', element: <NotFoundPage /> },
+      {
+        element: <PublicLayout />,
+        children: [
+          { index: true, element: <HomePage /> },
+          ...devRoutes,
+          { path: '*', element: <NotFoundPage /> },
+        ],
+      },
     ],
   },
 ]

@@ -13,5 +13,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     include: ['src/**/*.test.{ts,tsx}'],
+    // Never load Clerk/Stripe from .env.local in unit tests.
+    env: { VITE_CLERK_PUBLISHABLE_KEY: '', VITE_STRIPE_PUBLISHABLE_KEY: '' },
   },
 })
