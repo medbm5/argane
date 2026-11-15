@@ -35,6 +35,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Catalog/Domain/Model'
                 prefix: 'App\Catalog\Domain\Model'
                 alias: Catalog
+            Pricing:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Pricing/Domain/Model'
+                prefix: 'App\Pricing\Domain\Model'
+                alias: Pricing
         controller_resolver:
             auto_mapping: false
 
