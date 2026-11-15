@@ -7,11 +7,13 @@ import { usePriceGrid, usePriceGridMutations, type PriceGrid } from '../../featu
 import { StudioPage } from '../../features/studio/StudioPage'
 import { parseAmount } from '../../features/studio/prices'
 import { ApiError } from '../../lib/api'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 const key = (zoneId: string, tariffId: string) => `${zoneId}|${tariffId}`
 
 /** /studio/representations/:id/prix — zones as rows, tariffs as columns. */
 export function StudioPricesPage() {
+  usePageTitle('Prix · Studio')
   const { id = '' } = useParams()
   const grid = usePriceGrid(id)
   if (!grid.data) return <p className="font-display text-3xl">Chargement…</p>

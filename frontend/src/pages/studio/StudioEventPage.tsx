@@ -15,11 +15,13 @@ import { CancelPerformanceDialog, ScheduleDialog } from '../../features/studio/P
 import { StudioPage, StudioTable } from '../../features/studio/StudioPage'
 import { ApiError } from '../../lib/api'
 import { formatMoney, formatShortDate, formatTime } from '../../lib/format'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 /** /studio/spectacles/:id — the event, its dates and every lifecycle action. */
 export function StudioEventPage() {
   const { id = '' } = useParams()
   const event = useStudioEvent(id)
+  usePageTitle(event.data ? `${event.data.title} · Studio` : 'Studio')
   const eventAction = useEventAction(id)
   const performanceAction = usePerformanceAction()
 

@@ -6,9 +6,11 @@ import { useStudioEvents } from '../../features/studio/api'
 import { EventFormDialog } from '../../features/studio/EventFormDialog'
 import { StudioPage, StudioTable } from '../../features/studio/StudioPage'
 import { formatMoney, formatShortDate } from '../../lib/format'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 /** /studio/spectacles — every event with its fill and revenue. */
 export function StudioEventsPage() {
+  usePageTitle('Spectacles · Studio')
   const events = useStudioEvents()
 
   return (

@@ -8,9 +8,11 @@ import { SectionTitle } from '../features/catalog/landing/LandingGrid'
 import { useDownload, useWallet } from '../features/tickets/api'
 import type { Order } from '../lib/api/types'
 import { dateTile, formatLongDate, formatMoney, formatTime } from '../lib/format'
+import { usePageTitle } from '../lib/usePageTitle'
 
 /** /mes-billets — upcoming evenings first, then past ones. */
 export function WalletPage() {
+  usePageTitle('Mes billets')
   const wallet = useWallet()
   // "Now" as of opening the wallet: stable across re-renders.
   const [now] = useState(() => Date.now())

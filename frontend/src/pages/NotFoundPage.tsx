@@ -1,8 +1,10 @@
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router'
 import { StatePanel } from '../design-system/components/StatePanel'
 import { Button } from '../design-system/primitives/Button'
+import { usePageTitle } from '../lib/usePageTitle'
 
 export function NotFoundPage() {
+  usePageTitle('Page introuvable')
   return (
     <div className="px-4 py-16">
       <StatePanel
@@ -23,6 +25,7 @@ export function NotFoundPage() {
 }
 
 export function RouteErrorPage() {
+  usePageTitle('Incident technique')
   const error = useRouteError()
   if (isRouteErrorResponse(error) && error.status === 404) return <NotFoundPage />
   return (

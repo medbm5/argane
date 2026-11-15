@@ -22,6 +22,7 @@ import { CurveChart, DailyBars, RankBars, SeatHeat } from '../../features/analyt
 import { MasksArt } from '../../features/analytics/MasksArt'
 import { useLayouts } from '../../features/studio/api'
 import { formatMoney, formatShortDate, formatTime } from '../../lib/format'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 const PRESETS = [7, 30, 90] as const
 const CURRENCY = 'MAD'
@@ -46,6 +47,7 @@ function Panel({
 
 /** /studio — the BI dashboard. */
 export function StudioDashboardPage() {
+  usePageTitle('Studio')
   const [now] = useState(() => new Date())
   const [preset, setPreset] = useState<number | null>(30)
   const [range, setRange] = useState<Range>(() => rangeOfDays(30, now))

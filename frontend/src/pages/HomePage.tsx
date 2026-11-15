@@ -3,8 +3,10 @@ import { LandingGrid } from '../features/catalog/landing/LandingGrid'
 import { LandingHero } from '../features/catalog/landing/LandingHero'
 import { ProgrammeSearchBar } from '../features/catalog/landing/ProgrammeSearchBar'
 import { UpcomingPerformances } from '../features/catalog/landing/UpcomingPerformances'
+import { usePageTitle } from '../lib/usePageTitle'
 
 export function HomePage() {
+  usePageTitle(null)
   const events = useEvents()
   const list = events.data ?? []
 

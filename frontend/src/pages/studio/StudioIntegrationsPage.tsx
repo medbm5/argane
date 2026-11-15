@@ -7,6 +7,7 @@ import { StudioPage } from '../../features/studio/StudioPage'
 import { ApiError } from '../../lib/api'
 import { formatLongDate, formatTime } from '../../lib/format'
 import { useApi } from '../../lib/useApi'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 interface SheetsStatus {
   configured: boolean
@@ -21,6 +22,7 @@ const KEY = ['studio', 'integrations', 'sheets'] as const
 
 /** /studio/integrations — the Google Sheets mirror of sales. */
 export function StudioIntegrationsPage() {
+  usePageTitle('Intégrations · Studio')
   const api = useApi()
   const queryClient = useQueryClient()
   const status = useQuery({

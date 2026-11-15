@@ -21,9 +21,11 @@ import { useSeatMap } from '../features/seatmap/api'
 import { ApiError } from '../lib/api'
 import type { Checkout, HoldInfo, SeatMap } from '../lib/api/types'
 import { formatLongDate, formatMoney, formatTime } from '../lib/format'
+import { usePageTitle } from '../lib/usePageTitle'
 
 /** /commande/:holdId — tariffs, then card payment, against the hold's countdown. */
 export function CheckoutPage() {
+  usePageTitle('Paiement')
   const { holdId = '' } = useParams()
   const hold = useHold(holdId)
   const map = useSeatMap(hold.data?.performanceId ?? '')

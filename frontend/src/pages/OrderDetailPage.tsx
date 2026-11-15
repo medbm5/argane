@@ -8,9 +8,11 @@ import { OrderTickets } from '../features/tickets/OrderTickets'
 import { useDownload, useWallet } from '../features/tickets/api'
 import { formatLongDate, formatMoney, formatTime } from '../lib/format'
 import { NotFoundPage } from './NotFoundPage'
+import { usePageTitle } from '../lib/usePageTitle'
 
 /** /mes-billets/:orderId — one order: its tickets with QR codes and downloads. */
 export function OrderDetailPage() {
+  usePageTitle('Ma commande')
   const { orderId = '' } = useParams()
   const wallet = useWallet()
   const { download, busy } = useDownload()

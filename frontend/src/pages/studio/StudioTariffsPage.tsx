@@ -14,6 +14,7 @@ import {
 } from '../../features/studio/api'
 import { StudioPage, StudioTable } from '../../features/studio/StudioPage'
 import { ApiError } from '../../lib/api'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 const EMPTY: TariffForm = {
   code: '',
@@ -174,6 +175,7 @@ function TariffDialog({ tariff, trigger }: { tariff?: Tariff; trigger: ReactNode
 
 /** /studio/tarifs */
 export function StudioTariffsPage() {
+  usePageTitle('Tarifs · Studio')
   const tariffs = useTariffs()
   const { toggle } = useTariffMutations()
 

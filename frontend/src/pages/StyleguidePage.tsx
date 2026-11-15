@@ -17,6 +17,7 @@ import { Sheet } from '../design-system/primitives/Sheet'
 import { Stepper } from '../design-system/primitives/Stepper'
 import { Tabs } from '../design-system/primitives/Tabs'
 import { toast } from '../design-system/toast-store'
+import { usePageTitle } from '../lib/usePageTitle'
 
 const SWATCHES = [
   ['paper-50', '#FBF6EC'],
@@ -79,6 +80,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export function StyleguidePage() {
+  usePageTitle('Charte graphique')
   const [qty, setQty] = useState(2)
   const [tariff, setTariff] = useState<string | undefined>('FULL')
   const [pill, setPill] = useState('ven')

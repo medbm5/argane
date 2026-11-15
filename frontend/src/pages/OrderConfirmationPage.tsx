@@ -4,9 +4,11 @@ import { Link, useParams } from 'react-router'
 import { Button } from '../design-system/primitives/Button'
 import { useOrder } from '../features/checkout/api'
 import { formatLongDate, formatMoney, formatTime } from '../lib/format'
+import { usePageTitle } from '../lib/usePageTitle'
 
 /** /commandes/:orderId/confirmation — waits for the payment to settle, then celebrates. */
 export function OrderConfirmationPage() {
+  usePageTitle('Confirmation de commande')
   const { orderId = '' } = useParams()
   const order = useOrder(orderId)
 

@@ -27,6 +27,7 @@ import {
 import { SelectionSummary } from '../features/seatmap/SelectionSummary'
 import { ApiError } from '../lib/api'
 import { NotFoundPage } from './NotFoundPage'
+import { usePageTitle } from '../lib/usePageTitle'
 
 const LEGEND = [
   { label: 'Libre', swatch: 'bg-pop-teal' },
@@ -43,6 +44,7 @@ export function SeatSelectionPage() {
   const { id = '' } = useParams()
   const performance = usePerformance(id)
   const event = useEvent(performance.data?.eventSlug ?? '')
+  usePageTitle(event.data ? `Places · ${event.data.title}` : 'Choix des places')
   const seatMap = useSeatMap(id)
   const availability = useAvailability(id, seatMap.isSuccess)
 

@@ -7,11 +7,13 @@ import { useCheckInCounts, useScan, type CheckInResult } from '../features/check
 import { CameraScanner } from '../features/checkin/CameraScanner'
 import { Verdict } from '../features/checkin/Verdict'
 import { formatShortDate, formatTime } from '../lib/format'
+import { usePageTitle } from '../lib/usePageTitle'
 
 const VERDICT_MS = 2500
 
 /** /controle — door check-in for one performance, camera first, typing as a fallback. */
 export function ControlePage() {
+  usePageTitle('Contrôle des billets')
   const performances = useCounterPerformances()
   const [picked, setPicked] = useState<string | undefined>(undefined)
   const list = (performances.data ?? []).filter((p) => p.status !== 'CANCELLED')

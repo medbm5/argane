@@ -1,6 +1,7 @@
 import { SignIn, SignUp } from '@clerk/react'
 import type { ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
+import { usePageTitle } from '../lib/usePageTitle'
 
 const CLERK_ENABLED = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 
@@ -44,6 +45,7 @@ function useRedirectTarget(): string {
 }
 
 export function SignInPage() {
+  usePageTitle('Connexion')
   const redirect = useRedirectTarget()
   return (
     <AuthFrame
@@ -61,6 +63,7 @@ export function SignInPage() {
 }
 
 export function SignUpPage() {
+  usePageTitle('Inscription')
   const redirect = useRedirectTarget()
   return (
     <AuthFrame

@@ -6,9 +6,11 @@ import { toast } from '../../design-system/toast-store'
 import { useLayoutMutations, useLayouts } from '../../features/studio/api'
 import { LayoutGenerator } from '../../features/studio/LayoutGenerator'
 import { StudioPage } from '../../features/studio/StudioPage'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 /** /studio/configurations — hall layouts and the generator. */
 export function StudioLayoutsPage() {
+  usePageTitle('Configurations · Studio')
   const layouts = useLayouts()
   const { clone, archive } = useLayoutMutations()
   const [creating, setCreating] = useState(false)

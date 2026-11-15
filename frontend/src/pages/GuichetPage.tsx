@@ -4,9 +4,11 @@ import { useCounterPerformances } from '../features/boxoffice/api'
 import { CounterPerformanceList } from '../features/boxoffice/CounterPerformanceList'
 import { CounterRefunds } from '../features/boxoffice/CounterRefunds'
 import { CounterSale } from '../features/boxoffice/CounterSale'
+import { usePageTitle } from '../lib/usePageTitle'
 
 /** /guichet — the box office point of sale. */
 export function GuichetPage() {
+  usePageTitle('Guichet')
   const performances = useCounterPerformances()
   const [selected, setSelected] = useState<string | null>(null)
   const current = performances.data?.find((p) => p.id === selected)

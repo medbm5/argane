@@ -7,10 +7,12 @@ import { PerformanceRow } from '../features/catalog/components/PerformanceRow'
 import { ApiError } from '../lib/api'
 import { formatAgeRating, formatDuration, formatMoney, formatWeekday } from '../lib/format'
 import { NotFoundPage } from './NotFoundPage'
+import { usePageTitle } from '../lib/usePageTitle'
 
 export function EventPage() {
   const { slug = '' } = useParams()
   const query = useEvent(slug)
+  usePageTitle(query.data?.title ?? null)
 
   if (query.isError) {
     if (query.error instanceof ApiError && query.error.status === 404) return <NotFoundPage />

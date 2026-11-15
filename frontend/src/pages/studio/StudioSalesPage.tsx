@@ -8,11 +8,13 @@ import { useSales, useStudioEvents } from '../../features/studio/api'
 import { StudioPage, StudioTable } from '../../features/studio/StudioPage'
 import { useDownload } from '../../features/tickets/api'
 import { formatMoney, formatShortDate, formatTime } from '../../lib/format'
+import { usePageTitle } from '../../lib/usePageTitle'
 
 const ANY = 'all'
 
 /** /studio/ventes — orders with filters, totals and the CSV export. */
 export function StudioSalesPage() {
+  usePageTitle('Ventes · Studio')
   const events = useStudioEvents()
   const [filters, setFilters] = useState({
     event: ANY,
