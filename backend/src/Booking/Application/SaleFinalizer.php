@@ -11,6 +11,7 @@ use App\Payment\Application\PaymentGateway;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Model\Refund;
 use App\Payment\Domain\PaymentRepository;
+use App\Shared\Application\Message\OrderPaid;
 use App\Shared\Application\Message\SalesChanged;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -86,6 +87,7 @@ final readonly class SaleFinalizer
             $this->em->flush();
             $connection->commit();
             $this->bus->dispatch(new SalesChanged('sale', (float) $now->format('U.u')), [new DelayStamp(15_000)]);
+            $this->bus->dispatch(new OrderPaid($order->id()->toRfc4122()));
         } catch (Throwable $e) {
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
