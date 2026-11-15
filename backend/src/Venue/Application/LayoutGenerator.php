@@ -119,9 +119,42 @@ final readonly class LayoutGenerator
         return $zone;
     }
 
+    /**
+     * Standing zones have no seats: a capacity sold by quantity and a shape on the plan.
+     * The shape gently bows towards the stage, like a pit in front of it.
+     */
     private function buildStandingZone(HallLayout $layout, ZoneSpec $spec, int $index): Zone
     {
-        throw BusinessRuleException::because('LAYOUT_STANDING_UNSUPPORTED', 'Les zones debout ne sont pas encore prises en charge.', ['zone' => $spec->code]);
+        if (null === $spec->capacity || $spec->capacity < 1) {
+            throw BusinessRuleException::because('LAYOUT_STANDING_CAPACITY', sprintf('La zone debout %s doit avoir une capacité.', $spec->name), ['zone' => $spec->code]);
+        }
+        if ([] !== $spec->rowLabels || [] !== $spec->accessibleSeats || [] !== $spec->blockedSeats) {
+            throw BusinessRuleException::because('LAYOUT_STANDING_HAS_SEATS', sprintf('La zone debout %s ne peut pas avoir de places numérotées.', $spec->name), ['zone' => $spec->code]);
+        }
+
+        $shape = $spec->curve > 0 ? self::pitPath($spec->area, $spec->curve) : self::rectPath($spec->area);
+
+        return new Zone($layout, $spec->code, $spec->name, ZoneKind::STANDING, $spec->colorToken, $index, $shape, $spec->capacity);
+    }
+
+    /** Rectangle whose front edge (stage side) is concave towards the stage. */
+    public static function pitPath(Area $a, float $curve): string
+    {
+        $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 1, '.', ''), '0'), '.');
+        $x2 = $a->x + $a->width;
+        $y2 = $a->y + $a->height;
+
+        return sprintf(
+            'M%s %s Q%s %s %s %s V%s H%s Z',
+            $fmt($a->x),
+            $fmt($a->y + $curve),
+            $fmt($a->x + $a->width / 2),
+            $fmt($a->y - $curve),
+            $fmt($x2),
+            $fmt($a->y + $curve),
+            $fmt($y2),
+            $fmt($a->x),
+        );
     }
 
     /**
