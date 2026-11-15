@@ -8,6 +8,7 @@ use App\Integration\Application\SheetsClient;
 use Firebase\JWT\JWT;
 use LogicException;
 use Psr\Clock\ClockInterface;
+use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -52,7 +53,7 @@ final class GoogleSheetsClient implements SheetsClient
     {
         $this->ensureTab($tab);
         $range = rawurlencode("'".str_replace("'", "''", $tab)."'");
-        $this->call('POST', $this->spreadsheetId.'/values/'.$range.':clear', []);
+        $this->call('POST', $this->spreadsheetId.'/values/'.$range.':clear', new stdClass());
         $this->call('PUT', $this->spreadsheetId.'/values/'.$range.'!A1?valueInputOption=RAW', ['range' => "'{$tab}'!A1", 'majorDimension' => 'ROWS', 'values' => $rows]);
     }
 
@@ -66,17 +67,19 @@ final class GoogleSheetsClient implements SheetsClient
     }
 
     /**
-     * @param array<string, mixed>|null $json
+     * @param array<string, mixed>|stdClass|null $json a body; stdClass for an empty object,
+     *                                                 since Google rejects `[]` ("Root element must be a message")
      *
      * @return array<string, mixed>
      */
-    private function call(string $method, string $path, ?array $json = null): array
+    private function call(string $method, string $path, array|stdClass|null $json = null): array
     {
-        $response = $this->http->request($method, self::API.$path, array_filter([
-            'auth_bearer' => $this->token(),
-            'json' => $json,
-            'timeout' => 20,
-        ], static fn (mixed $v): bool => null !== $v));
+        $options = ['auth_bearer' => $this->token(), 'timeout' => 20];
+        if (null !== $json) {
+            $options['body'] = json_encode($json, \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_SLASHES);
+            $options['headers'] = ['Content-Type' => 'application/json'];
+        }
+        $response = $this->http->request($method, self::API.$path, $options);
 
         /** @var array<string, mixed> */
         return $response->toArray();
