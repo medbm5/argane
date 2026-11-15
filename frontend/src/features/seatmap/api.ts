@@ -3,6 +3,18 @@ import type { Availability, SeatMap, ZonePrice } from '../../lib/api/types'
 import { useApi } from '../../lib/useApi'
 
 export const POLL_INTERVAL_MS = 5000
+export const MAX_POLL_INTERVAL_MS = 60_000
+
+/**
+ * Poll every 5 s; after failures, back off exponentially (10 s, 20 s, 40 s, then every
+ * minute) so a struggling API is not hammered by every open seat map. Recovers at
+ * once on the next success.
+ */
+export function availabilityInterval(failures: number): number {
+  return failures === 0
+    ? POLL_INTERVAL_MS
+    : Math.min(MAX_POLL_INTERVAL_MS, POLL_INTERVAL_MS * 2 ** failures)
+}
 
 export const seatMapKeys = {
   map: (id: string, channel: string) => ['seatmap', id, channel] as const,
@@ -20,7 +32,7 @@ export function useSeatMap(performanceId: string, channel: 'ONLINE' | 'BOX_OFFIC
 }
 
 /**
- * Polled every 5 s. The endpoint sends an ETag with `no-cache`: the browser revalidates
+ * Polled every 5 s while the tab is visible. The endpoint sends an ETag with `no-cache`: the browser revalidates
  * each poll and gets a 304 when nothing moved, and structural sharing means React only
  * re-renders seats whose state changed.
  */
@@ -30,7 +42,11 @@ export function useAvailability(performanceId: string, enabled = true) {
     queryKey: seatMapKeys.availability(performanceId),
     queryFn: ({ signal }) =>
       api.get<Availability>(`/performances/${performanceId}/availability`, { signal }),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: (query) => availabilityInterval(query.state.fetchFailureCount),
+    // Hidden tab: no polling at all; coming back refreshes at once.
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: 'always',
+    retry: false,
     enabled,
   })
 }
