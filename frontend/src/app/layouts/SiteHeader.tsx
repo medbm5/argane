@@ -4,6 +4,7 @@ import { Link, NavLink } from 'react-router'
 import { cn } from '../../design-system/cn'
 import { IconButton } from '../../design-system/primitives/IconButton'
 import { Sheet } from '../../design-system/primitives/Sheet'
+import { UserMenu } from '../auth/UserMenu'
 import { PUBLIC_NAV, type NavItem } from './nav'
 
 function navClass({ isActive }: { isActive: boolean }) {
@@ -26,7 +27,7 @@ export function Logo({ className }: { className?: string }) {
 
 export function SiteHeader({
   nav = PUBLIC_NAV,
-  actions,
+  actions = <UserMenu />,
 }: {
   nav?: NavItem[]
   actions?: ReactNode
