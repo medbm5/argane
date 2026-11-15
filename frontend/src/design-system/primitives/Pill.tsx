@@ -19,11 +19,11 @@ export function Pill({
       type={type}
       aria-pressed={selected}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-pill border px-4 py-1.5 text-sm font-medium whitespace-nowrap',
-        'transition-colors duration-200 ease-theatre disabled:pointer-events-none disabled:opacity-40',
+        'inline-flex items-center gap-2 border-2 border-fg px-4 py-1.5 text-sm font-bold tracking-wide whitespace-nowrap uppercase',
+        'transition-[background-color,box-shadow,transform] duration-150 ease-theatre disabled:pointer-events-none disabled:opacity-40',
         selected
-          ? 'border-primary bg-primary text-on-primary'
-          : 'border-line bg-transparent text-fg hover:border-fg',
+          ? 'bg-pop-yellow text-ink-900 shadow-[3px_3px_0_var(--c-text)]'
+          : 'bg-surface text-fg hover:-translate-y-px hover:shadow-[3px_3px_0_var(--c-text)]',
         className,
       )}
       {...props}

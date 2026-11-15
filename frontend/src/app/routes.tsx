@@ -3,6 +3,7 @@ import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage, RouteErrorPage } from '../pages/NotFoundPage'
+import { ProgrammePage } from '../pages/ProgrammePage'
 import { RequireRole } from './auth/RequireRole'
 import { PublicLayout, StaffLayout } from './layouts/layouts'
 import { RootProviders } from './RootProviders'
@@ -28,6 +29,7 @@ export const routes: RouteObject[] = [
         element: <PublicLayout />,
         children: [
           { index: true, element: <HomePage /> },
+          { path: 'programme', element: <ProgrammePage /> },
           { path: 'connexion/*', element: <SignInPage /> },
           { path: 'inscription/*', element: <SignUpPage /> },
           {

@@ -72,3 +72,12 @@ export function formatDuration(minutes: number): string {
 export function formatAgeRating(age: number | null | undefined): string {
   return age ? `Dès ${String(age)} ans` : 'Tout public'
 }
+
+/** The next `count` season months from `from` (venue time), as { value: "2026-12", label: "décembre 2026" }. */
+export function upcomingMonths(from: Date, count: number): { value: string; label: string }[] {
+  const [y, m] = venueMonth(from.toISOString()).split('-').map(Number)
+  return Array.from({ length: count }, (_, i) => {
+    const mid = new Date(Date.UTC(y ?? 2026, (m ?? 1) - 1 + i, 15, 12))
+    return { value: venueMonth(mid.toISOString()), label: formatMonthYear(mid.toISOString()) }
+  })
+}
