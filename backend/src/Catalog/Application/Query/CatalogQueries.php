@@ -26,4 +26,11 @@ interface CatalogQueries
     public function eventBySlug(string $slug, DateTimeImmutable $now): ?EventDetailView;
 
     public function performance(string $performanceId, DateTimeImmutable $now): ?PerformanceDetailView;
+
+    /**
+     * Published performances starting in [from, to), soonest first (box office day list).
+     *
+     * @return list<PerformanceDetailView>
+     */
+    public function performancesBetween(DateTimeImmutable $from, DateTimeImmutable $to, DateTimeImmutable $now): array;
 }

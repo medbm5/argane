@@ -169,6 +169,18 @@ class Performance
             && $now < $this->startsAt;
     }
 
+    /**
+     * The box office keeps selling after online sales close, right up to curtain time
+     * (walk-ins), as long as sales were opened and the date is not cancelled.
+     */
+    public function isOnSaleAtCounter(DateTimeImmutable $now): bool
+    {
+        return \in_array($this->status, [PerformanceStatus::ON_SALE, PerformanceStatus::SALES_CLOSED], true)
+            && $this->isPublished()
+            && $this->salesOpenAt <= $now
+            && $now < $this->startsAt;
+    }
+
     public function reschedule(DateTimeImmutable $startsAt, DateTimeImmutable $doorsAt, DateTimeImmutable $salesOpenAt, DateTimeImmutable $salesCloseAt): void
     {
         $this->assertNotCancelled();

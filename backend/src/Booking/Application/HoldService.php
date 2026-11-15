@@ -59,7 +59,7 @@ final readonly class HoldService
             throw BusinessRuleException::because('CHANNEL_FORBIDDEN', 'Le guichet est réservé au personnel.', [], 403);
         }
 
-        $performance = $this->onSale($performanceId, $now);
+        $performance = $this->onSale($performanceId, $channel, $now);
         $seatIds = array_map(static fn (string $id): Uuid => Uuid::fromString($id), array_values(array_unique($request->seatIds)));
         $standing = $this->standingRequest($performance, $request->standing);
         $total = \count($seatIds) + array_sum(array_column($standing, 'quantity'));
@@ -157,13 +157,14 @@ final readonly class HoldService
         return $hold;
     }
 
-    private function onSale(string $performanceId, DateTimeImmutable $now): Performance
+    private function onSale(string $performanceId, SalesChannel $channel, DateTimeImmutable $now): Performance
     {
         $performance = Uuid::isValid($performanceId) ? $this->performances->find(Uuid::fromString($performanceId)) : null;
         if (null === $performance || !$performance->isPublished()) {
             throw NotFoundException::of('Représentation', $performanceId);
         }
-        if (!$performance->isOnSale($now)) {
+        $open = SalesChannel::BOX_OFFICE === $channel ? $performance->isOnSaleAtCounter($now) : $performance->isOnSale($now);
+        if (!$open) {
             throw BusinessRuleException::because('NOT_ON_SALE', 'Cette représentation n’est pas en vente.', ['status' => $performance->displayStatus($now)]);
         }
 

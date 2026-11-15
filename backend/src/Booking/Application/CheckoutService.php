@@ -25,6 +25,7 @@ use App\Pricing\Domain\Model\PerformancePrice;
 use App\Pricing\Domain\PriceRepository;
 use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\Exception\NotFoundException;
+use App\Shared\Domain\SalesChannel;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
@@ -64,6 +65,68 @@ final readonly class CheckoutService
     public function checkout(string $holdId, Uuid $userId, ?string $email, array $roles, CheckoutRequest $request): CheckoutView
     {
         $now = $this->clock->now();
+        [$hold, $order] = $this->prepareOrder($holdId, $userId, $roles, $request, customerId: $userId, sellerId: null);
+
+        if (0 === $order->totalCents()) {
+            $this->finalizer->finalize($order, null, $now);
+
+            return new CheckoutView(OrderView::of($order), null, $hold->expiresAt()->format(DateTimeInterface::ATOM));
+        }
+
+        $payment = new Payment($order, PaymentProvider::STRIPE, $order->totalCents(), $order->currency(), $now);
+        $intent = $this->gateway->createIntent(
+            $order->totalCents(),
+            $order->currency(),
+            'order-'.$order->id()->toRfc4122(),
+            ['orderId' => $order->id()->toRfc4122(), 'reference' => $order->reference(), 'holdId' => $hold->id()->toRfc4122()],
+            $email,
+        );
+        $payment->attachProviderRef($intent->id);
+        $this->payments->save($payment);
+
+        return new CheckoutView(OrderView::of($order), $intent->clientSecret, $hold->expiresAt()->format(DateTimeInterface::ATOM));
+    }
+
+    /**
+     * Box office: the money is taken at the counter (cash or card terminal), or nothing is
+     * due (invitations). The sale is final at once; the buyer may stay anonymous.
+     *
+     * @param list<string> $roles the seller's reachable roles
+     */
+    public function sellAtCounter(string $holdId, Uuid $sellerId, array $roles, CheckoutRequest $request, PaymentProvider $method, ?string $buyerName, ?string $buyerEmail): OrderView
+    {
+        $now = $this->clock->now();
+        [$hold, $order] = $this->prepareOrder($holdId, $sellerId, $roles, $request, customerId: null, sellerId: $sellerId);
+        if (SalesChannel::BOX_OFFICE !== $hold->channel()) {
+            throw BusinessRuleException::because('NOT_A_COUNTER_HOLD', 'Ces places n’ont pas été réservées au guichet.', [], 409);
+        }
+        if (null !== $buyerName && '' !== trim($buyerName)) {
+            $order->forWalkIn(trim($buyerName), null !== $buyerEmail && '' !== trim($buyerEmail) ? trim($buyerEmail) : null);
+        }
+        $payment = null;
+        if ($order->totalCents() > 0) {
+            if (!\in_array($method, [PaymentProvider::CASH, PaymentProvider::CARD_TERMINAL], true)) {
+                throw BusinessRuleException::because('PAYMENT_METHOD_REQUIRED', 'Choisissez espèces ou carte bancaire (TPE).');
+            }
+            $payment = new Payment($order, $method, $order->totalCents(), $order->currency(), $now);
+            $this->payments->save($payment);
+        }
+        $this->finalizer->finalize($order, $payment, $now);
+
+        return OrderView::of($order);
+    }
+
+    /**
+     * Validates the hold and the tariff of every place, and builds the order (saved,
+     * tickets PENDING). Replaces any unpaid order of the same hold.
+     *
+     * @param list<string> $roles
+     *
+     * @return array{Hold, Order}
+     */
+    private function prepareOrder(string $holdId, Uuid $userId, array $roles, CheckoutRequest $request, ?Uuid $customerId, ?Uuid $sellerId): array
+    {
+        $now = $this->clock->now();
         $hold = $this->ownedHold($holdId, $userId);
         $hold->assertActive($now);
         $performance = $hold->performance();
@@ -79,7 +142,7 @@ final readonly class CheckoutService
                 ?? throw BusinessRuleException::because('TARIFF_NOT_PRICED', 'Ce tarif n’est pas proposé dans cette zone.', ['zoneId' => $zoneId, 'tariffId' => $tariffId]);
         };
 
-        $order = new Order($this->references->next($now), $performance, $hold->channel(), $this->currency, $now, $userId, null, $hold);
+        $order = new Order($this->references->next($now), $performance, $hold->channel(), $this->currency, $now, $customerId, $sellerId, $hold);
         $perTariff = [];
         foreach ($request->seats as $line) {
             $seat = $this->em->find(PerformanceSeat::class, Uuid::fromString($line['seatId'])) ?? throw NotFoundException::of('Place', $line['seatId']);
@@ -106,24 +169,7 @@ final readonly class CheckoutService
         }
         $this->orders->save($order);
 
-        if (0 === $order->totalCents()) {
-            $this->finalizer->finalize($order, null, $now);
-
-            return new CheckoutView(OrderView::of($order), null, $hold->expiresAt()->format(DateTimeInterface::ATOM));
-        }
-
-        $payment = new Payment($order, PaymentProvider::STRIPE, $order->totalCents(), $order->currency(), $now);
-        $intent = $this->gateway->createIntent(
-            $order->totalCents(),
-            $order->currency(),
-            'order-'.$order->id()->toRfc4122(),
-            ['orderId' => $order->id()->toRfc4122(), 'reference' => $order->reference(), 'holdId' => $hold->id()->toRfc4122()],
-            $email,
-        );
-        $payment->attachProviderRef($intent->id);
-        $this->payments->save($payment);
-
-        return new CheckoutView(OrderView::of($order), $intent->clientSecret, $hold->expiresAt()->format(DateTimeInterface::ATOM));
+        return [$hold, $order];
     }
 
     /**

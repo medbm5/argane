@@ -127,6 +127,21 @@ final readonly class DbalCatalogQueries implements CatalogQueries
         );
     }
 
+    public function performancesBetween(DateTimeImmutable $from, DateTimeImmutable $to, DateTimeImmutable $now): array
+    {
+        $ids = $this->connection->fetchFirstColumn(
+            'SELECT p.id FROM performance p JOIN event e ON e.id = p.event_id
+              WHERE p.published_at IS NOT NULL AND e.status = ? AND p.starts_at >= ? AND p.starts_at < ?
+           ORDER BY p.starts_at',
+            ['PUBLISHED', $from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')],
+        );
+
+        return array_values(array_filter(array_map(
+            fn (mixed $id): ?PerformanceDetailView => $this->performance(Uuid::fromBinary((string) $id)->toRfc4122(), $now),
+            $ids,
+        )));
+    }
+
     public function performance(string $performanceId, DateTimeImmutable $now): ?PerformanceDetailView
     {
         if (!Uuid::isValid($performanceId)) {

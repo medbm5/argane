@@ -7,10 +7,12 @@ namespace App\Payment\Infrastructure;
 use App\Booking\Domain\Model\Order;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Model\Refund;
+use App\Payment\Domain\Model\RefundStatus;
 use App\Payment\Domain\PaymentRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Uid\Uuid;
 
 final readonly class DoctrinePaymentRepository implements PaymentRepository
 {
@@ -44,6 +46,17 @@ final readonly class DoctrinePaymentRepository implements PaymentRepository
     {
         /** @var list<Refund> */
         return $this->em->getRepository(Refund::class)->findBy(['order' => $order], ['createdAt' => 'ASC']);
+    }
+
+    public function findRefund(Uuid $id): ?Refund
+    {
+        return $this->em->find(Refund::class, $id);
+    }
+
+    public function awaitingCounter(): array
+    {
+        /** @var list<Refund> */
+        return $this->em->getRepository(Refund::class)->findBy(['status' => RefundStatus::AWAITING_COUNTER], ['createdAt' => 'ASC']);
     }
 
     public function recordWebhook(string $eventId, string $type, DateTimeImmutable $now): bool

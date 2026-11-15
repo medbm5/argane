@@ -10,6 +10,7 @@ use App\Booking\Domain\Model\OrderStatus;
 use App\Booking\Domain\OrderRepository;
 use App\Catalog\Domain\InventoryRepository;
 use App\Payment\Application\RefundIssuer;
+use App\Payment\Domain\Model\Refund;
 use App\Payment\Domain\Model\RefundStatus;
 use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\Exception\NotFoundException;
@@ -66,6 +67,57 @@ final readonly class CancellationService
         $this->refund($order, self::CUSTOMER_REASON, $userId, $now);
 
         return OrderView::of($order);
+    }
+
+    /**
+     * Box office: a counter sale is cancelled and the money handed back on the spot
+     * (any time before the show). Places go back on sale.
+     */
+    public function cancelAtCounter(string $orderId, Uuid $staffId): OrderView
+    {
+        $order = Uuid::isValid($orderId) ? $this->orders->find(Uuid::fromString($orderId)) : null;
+        if (null === $order) {
+            throw NotFoundException::of('Commande', $orderId);
+        }
+        $now = $this->clock->now();
+        if (SalesChannel::BOX_OFFICE !== $order->channel()) {
+            throw BusinessRuleException::because('ONLINE_ORDER', 'Les commandes en ligne s’annulent depuis l’espace client (remboursement par carte).');
+        }
+        if (OrderStatus::PAID !== $order->status() || $order->performance()->isPast($now)) {
+            throw BusinessRuleException::because('ORDER_NOT_CANCELLABLE', 'Cette commande ne peut pas être annulée.', ['status' => $order->status()->value], 409);
+        }
+
+        $this->em->wrapInTransaction(function () use ($order, $now): void {
+            foreach ($order->tickets() as $ticket) {
+                if (null !== $ticket->checkedInAt()) {
+                    throw BusinessRuleException::because('ALREADY_CHECKED_IN', 'Un billet de cette commande a déjà été utilisé.', [], 409);
+                }
+                $seat = $ticket->performanceSeat();
+                if (null !== $seat) {
+                    $this->inventory->unsellSeat($seat->id(), $ticket->id(), $now);
+                } else {
+                    $this->inventory->unsellStanding($order->performance()->id(), $ticket->zone()->id(), 1);
+                }
+                $ticket->cancel();
+            }
+            $order->cancel($now);
+        });
+
+        $refund = $this->refunds->refundOrder($order, 'Annulation au guichet', $staffId, $now);
+        if (null !== $refund) {
+            $this->refunds->settleAtCounter($refund, $now);
+        }
+        $this->refund($order, 'Annulation au guichet', $staffId, $now);
+
+        return OrderView::of($order);
+    }
+
+    /** The box office handed back the money of a pending counter refund. */
+    public function settleCounterRefund(Refund $refund): void
+    {
+        $now = $this->clock->now();
+        $this->refunds->settleAtCounter($refund, $now);
+        $this->refund($refund->order(), $refund->reason(), null, $now);
     }
 
     /** The performance is off: void and refund every paid order. Safe to re-run. */
