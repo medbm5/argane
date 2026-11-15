@@ -371,7 +371,7 @@ Enforced server-side by `TariffEligibilityPolicy` (channel + role + quantity); t
 Changing a `PerformancePrice` never affects sold tickets: `Ticket.unitPriceCents` is a snapshot. Active holds are re-priced at checkout time; the UI shows the new price before payment.
 
 ### Tickets and QR codes
-- QR payload: `ARG1.<ticketId>.<nonce>.<hmac>` where `hmac = HMAC-SHA256(TICKET_SIGNING_SECRET, ticketId|nonce)`. No personal data in the QR.
+- QR payload: `ARG1.<ticketId base58>.<signature>` where the signature is a truncated `HMAC-SHA256(TICKET_QR_SECRET, "ARG1|ticketId|qrNonce")`; the nonce stays server-side, so a reissued ticket invalidates the old QR. No personal data in the QR.
 - Check-in validates signature, status `VALID`, performance date (door opens − 2 h to end); marks `CHECKED_IN`. A second scan shows "Déjà scanné à 20:04 par …".
 
 ---
@@ -559,7 +559,8 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 APP_CURRENCY=mad
 HOLD_TTL_SECONDS=600
-TICKET_SIGNING_SECRET=
+TICKET_QR_SECRET=                  # falls back to APP_SECRET
+SYMFONY_TRUSTED_PROXIES=private_ranges,REMOTE_ADDR   # Render
 MAILER_DSN=smtp://mailpit:1025     # prod: a free SMTP provider (e.g. Brevo/Resend), optional
 MAILER_FROM="Théâtre Argane <billetterie@example.com>"
 GOOGLE_SHEETS_SPREADSHEET_ID=
