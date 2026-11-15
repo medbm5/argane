@@ -14,6 +14,8 @@ framework:
         routing:
             App\Catalog\Application\Message\PerformanceCancelled: async
             App\Shared\Application\Message\SalesChanged: async
+            App\Shared\Application\Message\OrderPaid: async
+            App\Shared\Application\Message\OrderCancelled: async
 
 when@test:
     framework:

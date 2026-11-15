@@ -12,6 +12,7 @@ use App\Catalog\Domain\InventoryRepository;
 use App\Payment\Application\RefundIssuer;
 use App\Payment\Domain\Model\Refund;
 use App\Payment\Domain\Model\RefundStatus;
+use App\Shared\Application\Message\OrderCancelled;
 use App\Shared\Application\Message\SalesChanged;
 use App\Shared\Domain\Exception\BusinessRuleException;
 use App\Shared\Domain\Exception\NotFoundException;
@@ -69,6 +70,7 @@ final readonly class CancellationService
         });
 
         $this->refund($order, self::CUSTOMER_REASON, $userId, $now);
+        $this->bus->dispatch(new OrderCancelled($order->id()->toRfc4122(), OrderCancelled::BY_CUSTOMER));
 
         $this->salesChanged('cancellation');
 
@@ -114,6 +116,7 @@ final readonly class CancellationService
             $this->refunds->settleAtCounter($refund, $now);
         }
         $this->refund($order, 'Annulation au guichet', $staffId, $now);
+        $this->bus->dispatch(new OrderCancelled($order->id()->toRfc4122(), OrderCancelled::AT_COUNTER));
 
         $this->salesChanged('cancellation');
 
@@ -141,6 +144,7 @@ final readonly class CancellationService
             $order->cancel($now);
             $this->em->flush();
             $this->refund($order, self::PERFORMANCE_REASON, $requestedBy, $now);
+            $this->bus->dispatch(new OrderCancelled($order->id()->toRfc4122(), OrderCancelled::PERFORMANCE_CANCELLED, $order->performance()->cancelReason()));
         }
 
         if ([] !== $orders) {
