@@ -1,6 +1,5 @@
 import type { RouteObject } from 'react-router'
 import { SignInPage, SignUpPage } from '../pages/AuthPages'
-import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { ControlePage } from '../pages/ControlePage'
 import { EventPage } from '../pages/EventPage'
@@ -14,6 +13,14 @@ import { SeatSelectionPage } from '../pages/SeatSelectionPage'
 import { WalletPage } from '../pages/WalletPage'
 import { RequireRole } from './auth/RequireRole'
 import { NightLayout, PublicLayout, StaffLayout } from './layouts/layouts'
+import { StudioLayout } from './layouts/StudioLayout'
+import { StudioEventPage } from '../pages/studio/StudioEventPage'
+import { StudioEventsPage } from '../pages/studio/StudioEventsPage'
+import { StudioLayoutsPage } from '../pages/studio/StudioLayoutsPage'
+import { StudioOverviewPage } from '../pages/studio/StudioOverviewPage'
+import { StudioPricesPage } from '../pages/studio/StudioPricesPage'
+import { StudioSalesPage } from '../pages/studio/StudioSalesPage'
+import { StudioTariffsPage } from '../pages/studio/StudioTariffsPage'
 import { RootProviders } from './RootProviders'
 
 const devRoutes: RouteObject[] = import.meta.env.DEV
@@ -72,7 +79,22 @@ export const routes: RouteObject[] = [
       },
       {
         element: <RequireRole requires="ROLE_ORGANIZER" />,
-        children: [{ path: 'studio/*', element: <ComingSoonPage title="Studio" /> }],
+        children: [
+          {
+            path: 'studio',
+            element: <StudioLayout />,
+            children: [
+              { index: true, element: <StudioOverviewPage /> },
+              { path: 'spectacles', element: <StudioEventsPage /> },
+              { path: 'spectacles/:id', element: <StudioEventPage /> },
+              { path: 'representations/:id/prix', element: <StudioPricesPage /> },
+              { path: 'configurations', element: <StudioLayoutsPage /> },
+              { path: 'tarifs', element: <StudioTariffsPage /> },
+              { path: 'ventes', element: <StudioSalesPage /> },
+              { path: '*', element: <NotFoundPage /> },
+            ],
+          },
+        ],
       },
     ],
   },
