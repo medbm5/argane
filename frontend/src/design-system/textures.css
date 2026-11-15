@@ -35,3 +35,38 @@ body.paper-grain::before {
 .duotone-night {
   filter: url('#argane-duotone-night');
 }
+
+/* Ticket stub notches: two half-circles punched out at the perforation. */
+.ticket-perforation::before,
+.ticket-perforation::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--c-bg);
+}
+
+.ticket-perforation::before {
+  left: -11px;
+  top: -12px;
+}
+
+.ticket-perforation::after {
+  right: -11px;
+  top: -12px;
+}
+
+@media (min-width: 40rem) {
+  .ticket-perforation::before {
+    left: -12px;
+    top: -11px;
+  }
+
+  .ticket-perforation::after {
+    left: -12px;
+    right: auto;
+    top: auto;
+    bottom: -11px;
+  }
+}
