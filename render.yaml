@@ -1,0 +1,87 @@
+# Render Blueprint: the Argane API (Symfony on FrankenPHP + Messenger worker, one container).
+# Dashboard → New → Blueprint → pick this repo. Values marked `sync: false` are asked for
+# on first deploy and live only in Render; nothing secret is committed here.
+# The database is Aiven MySQL (free), the frontend is on Vercel: see INSTALL.md.
+services:
+  - type: web
+    name: argane-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerContext: ./backend
+    dockerfilePath: ./backend/docker/Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      # --- Runtime -------------------------------------------------------------
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        generateValue: true
+      - key: TICKET_QR_SECRET
+        generateValue: true
+      # Render's proxy terminates TLS; trust it so HTTPS (and HSTS) is detected.
+      - key: SYMFONY_TRUSTED_PROXIES
+        value: private_ranges,REMOTE_ADDR
+      - key: RUN_MIGRATIONS
+        value: "1"
+
+      # --- Database (Aiven MySQL, TLS required) --------------------------------
+      # mysql://avnadmin:<password>@<host>:<port>/defaultdb?serverVersion=8.0&charset=utf8mb4
+      - key: DATABASE_URL
+        sync: false
+      # base64 of the Aiven "CA certificate" (ca.pem).
+      - key: DATABASE_SSL_CA_BASE64
+        sync: false
+      - key: MESSENGER_TRANSPORT_DSN
+        value: doctrine://default?auto_setup=0
+      - key: LOCK_DSN
+        value: flock
+
+      # --- Frontend / CORS -----------------------------------------------------
+      # e.g. ^https://argane\.vercel\.app$
+      - key: CORS_ALLOW_ORIGIN
+        sync: false
+      # e.g. https://argane.vercel.app (links in emails)
+      - key: APP_FRONTEND_URL
+        sync: false
+      # e.g. https://argane-api.onrender.com
+      - key: DEFAULT_URI
+        sync: false
+
+      # --- Clerk ---------------------------------------------------------------
+      - key: CLERK_ISSUER
+        sync: false
+      - key: CLERK_JWKS_URL
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_AUTHORIZED_PARTIES
+        sync: false
+      - key: ORGANIZER_EMAILS
+        sync: false
+      - key: BOX_OFFICE_EMAILS
+        sync: false
+
+      # --- Stripe (test mode) --------------------------------------------------
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: APP_CURRENCY
+        value: mad
+
+      # --- Email (optional: null://null disables sending) ----------------------
+      - key: MAILER_DSN
+        sync: false
+      - key: MAILER_FROM
+        value: "Théâtre Argane <billetterie@example.com>"
+
+      # --- Google Sheets (optional) --------------------------------------------
+      - key: GOOGLE_SHEETS_SPREADSHEET_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON_BASE64
+        sync: false
