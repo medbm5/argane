@@ -15,7 +15,7 @@ else
 endif
 NPM_RUN := cd frontend && npm run
 
-.PHONY: help up down restart logs sh install test test-back test-front lint lint-back lint-front fix fixtures db-reset payments stripe-secret
+.PHONY: help up down restart logs sh install test test-back test-front lint lint-back lint-front fix fixtures db-reset payments stripe-secret ai-traces
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-12s\033[0m %s\n", $$1, $$2}'
@@ -76,3 +76,7 @@ db-reset: ## Drop, create and migrate the database
 fixtures: db-reset ## Reset the database and load demo data (deterministic, ~30 s)
 	$(PHP_RUN) php bin/console cache:clear --no-debug -q
 	$(PHP_RUN) php -d memory_limit=1G bin/console doctrine:fixtures:load --no-interaction --no-debug
+
+ai-traces: ## Zip docs/ai-traces (committed files only) for the challenge submission
+	git archive --format=zip --prefix=ai-traces/ -o argane-ai-traces.zip HEAD:docs/ai-traces
+	@echo "argane-ai-traces.zip"

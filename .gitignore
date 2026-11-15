@@ -27,3 +27,6 @@ test-results/
 # Secrets
 *.pem
 service-account*.json
+
+# Submission archive (make ai-traces)
+argane-ai-traces.zip
