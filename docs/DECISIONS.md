@@ -12,6 +12,8 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Alternatives.** Garder TypeScript 7 avec `oxlint` (perte des règles typées et de jsx-a11y) ; utiliser `--legacy-peer-deps` (fragile). À réévaluer quand l'écosystème supportera TS 7 et ESLint 10.
 
+**Note (Slice 9).** `openapi-typescript@7` déclare encore `typescript ^5` en pair. Il n'utilise le compilateur que pour imprimer des types : un `overrides` npm ciblé (`"openapi-typescript": { "typescript": "$typescript" }`) le fait tourner sur TS 6 sans `--legacy-peer-deps` global. Les types générés (`src/lib/api/schema.d.ts`) sont versionnés pour que le frontend compile sans backend démarré.
+
 ---
 
 ## ADR-002 — Polices auto-hébergées (@fontsource)
