@@ -17,7 +17,7 @@ function SkipLink() {
 /** Paper surfaces: landing, programme, event pages, wallet. */
 export function PublicLayout() {
   return (
-    <div className="paper-grain flex min-h-dvh flex-col bg-bg text-fg">
+    <div className="paper-grain wall flex min-h-dvh flex-col bg-bg text-fg">
       <SkipLink />
       <SiteHeader />
       <main id="contenu" className="flex-1">

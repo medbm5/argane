@@ -1,8 +1,9 @@
-/** Shared look for text inputs, selects and date fields. */
+/** Shared look for text inputs, selects and date fields: ink outline, hard shadow on focus. */
 export const fieldClasses = [
-  'h-10 w-full rounded-sm border border-line bg-surface px-3 text-base text-fg',
-  'placeholder:text-muted/70 transition-colors duration-200',
-  'hover:border-sepia-400 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30',
-  'disabled:cursor-not-allowed disabled:opacity-60',
-  'aria-invalid:border-danger aria-invalid:ring-danger/20',
+  'h-11 w-full rounded-sm border-2 border-fg bg-surface px-3 text-base text-fg',
+  'placeholder:text-muted/70 transition-[box-shadow,transform,background-color] duration-200',
+  'hover:shadow-[3px_3px_0_var(--c-text)]',
+  'focus-visible:shadow-[4px_4px_0_var(--pop-blue)] focus-visible:outline-none',
+  'disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none',
+  'aria-invalid:border-danger aria-invalid:shadow-[3px_3px_0_var(--pop-red)]',
 ].join(' ')

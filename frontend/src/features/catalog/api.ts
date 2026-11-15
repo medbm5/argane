@@ -58,10 +58,11 @@ export function useVenue() {
   })
 }
 
-export const CATEGORIES: { value: EventCategory; label: string }[] = [
-  { value: 'THEATRE', label: 'Théâtre' },
-  { value: 'CONCERT', label: 'Concert' },
-  { value: 'DANCE', label: 'Danse' },
-  { value: 'COMEDY', label: 'Humour' },
-  { value: 'CONFERENCE', label: 'Conférence' },
+/** Each category owns a pop colour (CSS custom property) used for blocks and swatches. */
+export const CATEGORIES: { value: EventCategory; label: string; color: string }[] = [
+  { value: 'THEATRE', label: 'Théâtre', color: 'var(--pop-red)' },
+  { value: 'CONCERT', label: 'Concert', color: 'var(--pop-yellow)' },
+  { value: 'DANCE', label: 'Danse', color: 'var(--pop-blue)' },
+  { value: 'COMEDY', label: 'Humour', color: 'var(--pop-pink)' },
+  { value: 'CONFERENCE', label: 'Conférence', color: 'var(--pop-teal)' },
 ]

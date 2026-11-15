@@ -17,14 +17,8 @@ const STRIPS = [
   'bg-pop-red text-paper-50',
 ]
 
-const BLOCKS = [
-  'bg-pop-red text-paper-50',
-  'bg-pop-yellow text-ink-900',
-  'bg-pop-blue text-paper-50',
-  'bg-pop-pink text-ink-900',
-  'bg-pop-teal text-ink-900',
-  'bg-pop-violet text-paper-50',
-]
+/** Categories whose colour needs light text for contrast. */
+const LIGHT_TEXT = new Set(['THEATRE', 'DANCE'])
 
 export function SectionTitle({
   id,
@@ -135,11 +129,12 @@ export function LandingGrid({ events }: { events: EventListItem[] }) {
             Catégories
           </SectionTitle>
           <ul className="mt-8 flex flex-wrap gap-4">
-            {CATEGORIES.map((c, i) => (
+            {CATEGORIES.map((c) => (
               <li key={c.value}>
                 <Link
                   to={`/programme?categorie=${c.value}`}
-                  className={`brutal brutal-press inline-flex items-center gap-2 px-5 py-3 font-display text-2xl uppercase ${BLOCKS[i % BLOCKS.length] ?? ''}`}
+                  style={{ background: c.color }}
+                  className={`brutal brutal-press inline-flex items-center gap-2 px-5 py-3 font-display text-2xl uppercase ${LIGHT_TEXT.has(c.value) ? 'text-paper-50' : 'text-ink-900'}`}
                 >
                   {c.label}
                   <ArrowRight aria-hidden className="size-5" />

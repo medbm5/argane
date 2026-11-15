@@ -62,9 +62,12 @@ describe('HomePage', () => {
       { auth: SIGNED_OUT },
     )
 
-    await screen.findByRole('option', { name: 'décembre 2026' })
-    await user.selectOptions(screen.getByLabelText('Mois'), '2026-12')
-    await user.selectOptions(screen.getByLabelText('Catégorie'), 'THEATRE')
+    await screen.findByRole('link', { name: 'À l’affiche : Le Misanthrope' })
+    await user.click(screen.getByRole('combobox', { name: /Mois/ }))
+    await user.click(await screen.findByRole('option', { name: 'décembre 2026' }))
+    await user.click(screen.getByRole('combobox', { name: /Catégorie/ }))
+    await user.click(await screen.findByRole('option', { name: 'Théâtre' }))
+    expect(screen.getByRole('combobox', { name: /Catégorie/ })).toHaveTextContent('Théâtre')
     await user.click(screen.getByRole('button', { name: 'Voir la programmation' }))
 
     expect(router.state.location.pathname).toBe('/programme')

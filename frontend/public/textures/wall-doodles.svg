@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Spray-paint doodles tiled across the wall. Kept abstract and faint; colours from the pop palette. -->
+  <defs>
+    <filter id="spray" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+    </filter>
+    <pattern id="halftone" width="9" height="9" patternUnits="userSpaceOnUse">
+      <circle cx="4.5" cy="4.5" r="1.8" fill="#15121e"/>
+    </pattern>
+    <radialGradient id="fade">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="dotsMask"><circle cx="0" cy="0" r="70" fill="url(#fade)"/></mask>
+  </defs>
+
+  <g filter="url(#spray)">
+    <!-- yellow star -->
+    <path d="M92 70 l12 26 28 3 -21 19 6 28 -25 -14 -25 14 6 -28 -21 -19 28 -3z" stroke="#ffc21a" stroke-width="6"/>
+    <!-- blue squiggle -->
+    <path d="M300 60 c20 -30 40 30 60 0 s40 30 60 0 s40 30 60 0" stroke="#2f4fe0" stroke-width="7"/>
+    <!-- pink ring with drips -->
+    <circle cx="610" cy="120" r="44" stroke="#ff5fae" stroke-width="9"/>
+    <path d="M598 164 v34 M624 162 v22 M612 166 v48" stroke="#ff5fae" stroke-width="5"/>
+    <!-- red crown -->
+    <path d="M150 300 l14 -42 24 30 22 -40 22 40 24 -30 14 42z" stroke="#e8432e" stroke-width="6"/>
+    <path d="M150 312 h120" stroke="#e8432e" stroke-width="6"/>
+    <!-- orange arrow -->
+    <path d="M420 270 c40 10 80 40 96 92" stroke="#ff7a1a" stroke-width="7"/>
+    <path d="M492 350 l24 14 6 -28" stroke="#ff7a1a" stroke-width="7"/>
+    <!-- teal zigzag -->
+    <path d="M40 470 l30 -26 30 26 30 -26 30 26 30 -26" stroke="#18b3c6" stroke-width="7"/>
+    <!-- violet x marks -->
+    <path d="M330 470 l26 26 M356 470 l-26 26 M380 486 l18 18 M398 486 l-18 18" stroke="#7c4dff" stroke-width="6"/>
+    <!-- yellow sun -->
+    <circle cx="600" cy="470" r="20" stroke="#ffc21a" stroke-width="6"/>
+    <path d="M600 430 v-14 M600 510 v14 M560 470 h-14 M640 470 h14 M572 442 l-10 -10 M628 498 l10 10 M628 442 l10 -10 M572 498 l-10 10" stroke="#ffc21a" stroke-width="5"/>
+    <!-- red eye -->
+    <path d="M200 640 c30 -36 90 -36 120 0 c-30 36 -90 36 -120 0z" stroke="#e8432e" stroke-width="6"/>
+    <circle cx="260" cy="640" r="12" fill="#e8432e"/>
+    <!-- blue lightning -->
+    <path d="M470 580 l-24 50 h30 l-20 56" stroke="#2f4fe0" stroke-width="7"/>
+    <!-- small stars and dots -->
+    <path d="M690 300 l5 10 11 1 -8 8 2 11 -10 -6 -10 6 2 -11 -8 -8 11 -1z" stroke="#ff5fae" stroke-width="4"/>
+    <path d="M40 220 l4 8 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1z" stroke="#18b3c6" stroke-width="4"/>
+    <circle cx="380" cy="170" r="5" fill="#ffc21a"/>
+    <circle cx="660" cy="640" r="6" fill="#18b3c6"/>
+    <circle cx="90" cy="380" r="4" fill="#ff7a1a"/>
+  </g>
+
+  <!-- halftone clusters, like overspray -->
+  <g mask="url(#dotsMask)" transform="translate(500 230)" opacity="0.6"><rect x="-70" y="-70" width="140" height="140" fill="url(#halftone)"/></g>
+  <g mask="url(#dotsMask)" transform="translate(110 580)" opacity="0.6"><rect x="-70" y="-70" width="140" height="140" fill="url(#halftone)"/></g>
+</svg>
