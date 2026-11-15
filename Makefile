@@ -15,13 +15,20 @@ else
 endif
 NPM_RUN := cd frontend && npm run
 
-.PHONY: help up down restart logs sh install test test-back test-front lint lint-back lint-front fix fixtures db-reset
+.PHONY: help up down restart logs sh install test test-back test-front lint lint-back lint-front fix fixtures db-reset payments stripe-secret
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[33m%-12s\033[0m %s\n", $$1, $$2}'
 
 up: ## Start the local stack (mysql, backend, frontend, mailpit)
 	$(COMPOSE) up -d --build
+
+payments: ## Start the Stripe CLI webhook forwarder (needs STRIPE_SECRET_KEY in backend/.env.local)
+	docker compose --profile payments up -d stripe-cli
+	@echo "Webhook secret: run 'make stripe-secret' and put it in backend/.env.local as STRIPE_WEBHOOK_SECRET"
+
+stripe-secret: ## Print the webhook signing secret of the Stripe CLI
+	docker compose --profile payments run --rm stripe-cli 'stripe listen --api-key "$$STRIPE_SECRET_KEY" --print-secret'
 
 down: ## Stop the local stack
 	$(COMPOSE) down

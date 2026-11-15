@@ -52,6 +52,39 @@ services:
     depends_on:
       - backend
 
+  # Runs the scheduler (hold expiry every minute) and async jobs.
+  worker:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+      target: dev
+    command: php bin/console messenger:consume async scheduler_default --time-limit=3600 -vv
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://argane:argane@mysql:3306/argane?serverVersion=8.0&charset=utf8mb4
+      MAILER_DSN: smtp://mailpit:1025
+    volumes:
+      - ./backend:/app
+      - backend-vendor:/app/vendor
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Forwards Stripe test-mode webhooks to the API. Opt-in: `make payments`.
+  # Reads STRIPE_SECRET_KEY from backend/.env.local; copy the whsec_ it prints
+  # (`make stripe-secret`) into STRIPE_WEBHOOK_SECRET there.
+  stripe-cli:
+    image: stripe/stripe-cli:v1.30.0
+    profiles: [payments]
+    env_file:
+      - path: ./backend/.env.local
+        required: false
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - stripe listen --api-key "$$STRIPE_SECRET_KEY" --events payment_intent.succeeded,payment_intent.payment_failed --forward-to http://backend:8080/api/webhooks/stripe
+    depends_on:
+      - backend
+
   mailpit:
     image: axllent/mailpit:v1.27
     ports:
