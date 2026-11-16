@@ -79,7 +79,14 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
  * The same account entries laid out flat for the phone drawer: no pop-over on top of
  * the drawer, and every link is a full-width row.
  */
-export function AccountPanel({ onNavigate }: { onNavigate: () => void }) {
+export function AccountPanel({
+  onNavigate,
+  shown = [],
+}: {
+  onNavigate: () => void
+  /** Pages the drawer already lists above, not repeated here. */
+  shown?: string[]
+}) {
   const { isLoaded, isSignedIn, signOut } = useAuthState()
   const me = useMe()
 
@@ -104,21 +111,23 @@ export function AccountPanel({ onNavigate }: { onNavigate: () => void }) {
         {me.data ? <p className="truncate text-xs text-paper-100/70">{me.data.email}</p> : null}
       </div>
       <nav className="flex flex-col">
-        {accountLinks(me.data).map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            onClick={onNavigate}
-            className={({ isActive }) =>
-              cn(
-                'border-b-2 border-ink-900/10 px-4 py-3 font-display text-lg tracking-[0.06em] uppercase',
-                isActive ? 'bg-pop-yellow text-ink-900' : 'hover:bg-surface-alt',
-              )
-            }
-          >
-            {item.label}
-          </NavLink>
-        ))}
+        {accountLinks(me.data)
+          .filter((item) => !shown.includes(item.to))
+          .map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                cn(
+                  'border-b-2 border-ink-900/10 px-4 py-3 font-display text-lg tracking-[0.06em] uppercase',
+                  isActive ? 'bg-pop-yellow text-ink-900' : 'hover:bg-surface-alt',
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
         <button
           type="button"
           className="flex items-center gap-2 px-4 py-3 text-left font-display text-lg tracking-[0.06em] text-accent uppercase hover:bg-surface-alt"

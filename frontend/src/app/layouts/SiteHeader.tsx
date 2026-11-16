@@ -89,7 +89,7 @@ export function SiteHeader({
                   </NavLink>
                 ))}
               </nav>
-              <AccountPanel onNavigate={close} />
+              <AccountPanel onNavigate={close} shown={nav.map((item) => item.to)} />
             </div>
           </Sheet>
         </div>
