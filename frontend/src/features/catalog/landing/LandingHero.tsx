@@ -1,3 +1,4 @@
+import { mediaUrl } from '../../../lib/api'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '../../../design-system/primitives/Button'
@@ -56,7 +57,7 @@ export function LandingHero({ events = [] }: { events?: EventListItem[] }) {
             className={`brutal absolute w-56 bg-paper-50 p-2 ${OFFSETS[i] ?? ''} ${TILTS[i] ?? ''}`}
           >
             <img
-              src={event.posterUrl ?? ''}
+              src={mediaUrl(event.posterUrl) ?? ''}
               alt=""
               className="aspect-[3/4] w-full border-2 border-ink-900 object-cover"
             />

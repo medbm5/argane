@@ -27,7 +27,10 @@ final class SecurityHeadersListener
         $headers->set('Referrer-Policy', 'no-referrer');
         $headers->set('X-Frame-Options', 'DENY');
         $headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
-        $headers->set('Cross-Origin-Resource-Policy', 'same-origin');
+        if (!$headers->has('Cross-Origin-Resource-Policy')) {
+            // Responses meant for other sites (poster images) set their own.
+            $headers->set('Cross-Origin-Resource-Policy', 'same-origin');
+        }
         if (!str_starts_with($request->getPathInfo(), '/api/doc')) {
             $headers->set('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'");
         }

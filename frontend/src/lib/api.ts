@@ -77,7 +77,9 @@ export async function apiRequest<T>(
   getToken?: TokenGetter,
 ): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...options.headers }
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
+  // A FormData body (file upload) sets its own multipart Content-Type with the boundary.
+  const isForm = options.body instanceof FormData
+  if (options.body !== undefined && !isForm) headers['Content-Type'] = 'application/json'
 
   const token = getToken ? await getToken() : null
   if (token) headers.Authorization = `Bearer ${token}`
@@ -87,7 +89,12 @@ export async function apiRequest<T>(
     response = await fetch(buildUrl(path, options.query), {
       method: options.method ?? 'GET',
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body:
+        options.body === undefined
+          ? undefined
+          : isForm
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
       signal: options.signal,
     })
   } catch (error) {
@@ -102,6 +109,18 @@ export async function apiRequest<T>(
   if (!response.ok) throw new ApiError(await toProblem(response))
   if (response.status === 204) return undefined as T
   return (await response.json()) as T
+}
+
+/**
+ * Where to load a poster from. Posters uploaded in the Studio live on the API
+ * (`/api/posters/…`), which is another origin than the site; the demo posters ship
+ * with the site (`/posters/…`) and stay as they are.
+ */
+export function mediaUrl(path: string): string
+export function mediaUrl(path: string | null | undefined): string | undefined
+export function mediaUrl(path: string | null | undefined): string | undefined {
+  if (!path) return undefined
+  return path.startsWith('/api/') ? API_URL + path.slice('/api'.length) : path
 }
 
 /** Authenticated binary download (PDF tickets): fetches with the session token. */

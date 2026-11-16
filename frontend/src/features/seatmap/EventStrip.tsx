@@ -1,3 +1,4 @@
+import { mediaUrl } from '../../lib/api'
 import { Link } from 'react-router'
 import { Pill } from '../../design-system/primitives/Pill'
 import { formatShortDate, formatTime, venueDay } from '../../lib/format'
@@ -30,7 +31,7 @@ export function EventStrip({
       <Link to={`/spectacles/${performance.eventSlug}`} className="group flex items-center gap-4">
         {performance.posterUrl ? (
           <img
-            src={performance.posterUrl}
+            src={mediaUrl(performance.posterUrl)}
             alt=""
             className="h-24 w-18 shrink-0 border-2 border-paper-100 object-cover"
           />

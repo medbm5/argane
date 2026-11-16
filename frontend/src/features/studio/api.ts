@@ -139,6 +139,18 @@ export function useSaveEvent(id?: string) {
   )
 }
 
+/** Uploads a poster image; resolves to the path to store as the event's poster. */
+export function useUploadPoster() {
+  const api = useApi()
+  return useMutation({
+    mutationFn: (file: File) => {
+      const body = new FormData()
+      body.append('file', file)
+      return api.post<{ path: string }>('/studio/posters', body)
+    },
+  })
+}
+
 export function useEventAction(eventId: string) {
   const api = useApi()
   return useEventMutation((action: 'publish' | 'archive') =>

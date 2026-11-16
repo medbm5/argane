@@ -114,6 +114,16 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Conséquences.** Hors Docker, un PHP local ancien affiche encore UTC+1 : installer `timezonedb` (`pecl install timezonedb`) ou utiliser `make up`. Les données de démonstration chargées avec un PHP ancien ont des horaires décalés d'une heure ; les recharger depuis le conteneur.
 
+## ADR-014 — Affiches téléversées : stockées dans MySQL
+
+**Choix.** Le Studio téléverse une affiche (`POST /api/studio/posters`, organisateur) ; l'image est gardée dans la table `poster` (LONGBLOB) et servie publiquement par `GET /api/posters/{id}`, avec un cache d'un an (`immutable` : une nouvelle image reçoit un nouvel identifiant). L'événement garde seulement le chemin `/api/posters/{id}`, comme pour les affiches SVG livrées avec le site (`/posters/…`). Le frontend charge les premières depuis l'API (`mediaUrl`).
+
+**Raison.** Le disque de Render gratuit est effacé à chaque déploiement et à chaque réveil : un fichier écrit sur le serveur disparaîtrait en moins d'une heure. Un stockage objet (R2, S3, Vercel Blob) serait la bonne réponse en production, mais demande un compte et des clés de plus pour une démo. À cette échelle (quelques affiches de 2 Mo au plus), la base suffit.
+
+**Garde-fous.** JPEG, PNG ou WebP seulement, type lu dans les octets (jamais celui annoncé par le navigateur), 2 Mo et 6000 px au plus ; le SVG est refusé car il peut contenir du script. La réponse porte `nosniff`, une CSP `default-src 'none'` et `Cross-Origin-Resource-Policy: cross-origin` (le site est sur un autre domaine que l'API ; les autres réponses de l'API restent `same-origin`).
+
+**Pour aller plus loin.** Passer à un stockage objet ne change que `PosterLibrary` et l'URL stockée ; les images remplacées ne sont pas encore supprimées.
+
 ---
 
 ## Questions du challenge

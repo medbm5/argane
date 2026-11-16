@@ -1,3 +1,4 @@
+import { mediaUrl } from '../../../lib/api'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '../../../design-system/primitives/Button'
@@ -54,7 +55,7 @@ function PosterCard({ event, strip }: { event: EventListItem; strip: string }) {
       >
         <div className="brutal overflow-hidden bg-paper-50">
           <img
-            src={event.posterUrl ?? ''}
+            src={mediaUrl(event.posterUrl) ?? ''}
             alt=""
             className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-theatre group-hover:scale-105"
           />

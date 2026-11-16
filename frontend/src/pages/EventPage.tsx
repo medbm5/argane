@@ -4,7 +4,7 @@ import { StatePanel } from '../design-system/components/StatePanel'
 import { Button } from '../design-system/primitives/Button'
 import { CATEGORIES, useEvent } from '../features/catalog/api'
 import { PerformanceRow } from '../features/catalog/components/PerformanceRow'
-import { ApiError } from '../lib/api'
+import { ApiError, mediaUrl } from '../lib/api'
 import { formatAgeRating, formatDuration, formatMoney, formatWeekday } from '../lib/format'
 import { NotFoundPage } from './NotFoundPage'
 import { usePageTitle } from '../lib/usePageTitle'
@@ -68,7 +68,7 @@ export function EventPage() {
           <div className="brutal -rotate-1 bg-paper-50 p-2">
             {event.posterUrl ? (
               <img
-                src={event.posterUrl}
+                src={mediaUrl(event.posterUrl)}
                 alt={`Affiche de ${event.title}`}
                 className="aspect-[3/4] w-full border-2 border-ink-900 object-cover"
               />

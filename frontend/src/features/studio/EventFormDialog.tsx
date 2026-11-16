@@ -8,6 +8,7 @@ import { Select } from '../../design-system/primitives/Select'
 import { ApiError } from '../../lib/api'
 import { CATEGORIES } from '../catalog/api'
 import { useSaveEvent, type EventForm, type StudioEvent } from './api'
+import { PosterField } from './PosterField'
 
 const EMPTY: EventForm = {
   title: '',
@@ -124,13 +125,11 @@ export function EventFormDialog({ event, trigger }: { event?: StudioEvent; trigg
             set('ageRating', e.target.value === '' ? null : Number(e.target.value))
           }}
         />
-        <Input
-          label="Affiche"
-          hint="Chemin public, ex. /posters/le-misanthrope.svg"
-          value={form.posterPath ?? ''}
+        <PosterField
+          value={form.posterPath ?? null}
           error={fieldError('posterPath')}
-          onChange={(e) => {
-            set('posterPath', e.target.value || null)
+          onChange={(path) => {
+            set('posterPath', path)
           }}
         />
         <label className="flex flex-col gap-1.5 sm:col-span-2">

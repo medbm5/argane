@@ -1,3 +1,4 @@
+import { mediaUrl } from '../../../lib/api'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
 import { StatusBadge } from '../../../design-system/primitives/Badge'
@@ -19,7 +20,7 @@ export function EventCard({ event }: { event: EventListItem }) {
         <div className="brutal overflow-hidden bg-paper-50">
           {event.posterUrl ? (
             <img
-              src={event.posterUrl}
+              src={mediaUrl(event.posterUrl)}
               alt=""
               className="aspect-[3/4] w-full object-cover transition-transform duration-500 ease-theatre group-hover:scale-105"
             />
