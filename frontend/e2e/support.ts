@@ -15,6 +15,7 @@ export const CUSTOMER = {
   firstName: 'Client',
 }
 export const ORGANIZER = { email: 'organisateur+clerk_test@example.com', firstName: 'Organisateur' }
+export const BOX_OFFICE = { email: 'guichet+clerk_test@example.com', firstName: 'Guichet' }
 
 function clerkSecretKey(): string {
   if (process.env.CLERK_SECRET_KEY) return process.env.CLERK_SECRET_KEY

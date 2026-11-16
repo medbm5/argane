@@ -9,6 +9,7 @@ payments, QR tickets, door check-in and a BI dashboard for the organizer.
 |---|---|
 | Spectator | `client+clerk_test@example.com` |
 | Organizer (Studio, box office, check-in) | `organisateur+clerk_test@example.com` |
+| Box-office staff (box office and check-in only, no Studio) | `guichet+clerk_test@example.com` |
 
 Test card `4242 4242 4242 4242`, any future date, any CVC. The API runs on a free plan
 and sleeps when idle, so the first load can take up to a minute.
