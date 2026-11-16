@@ -84,4 +84,13 @@ class Seat
     {
         return $this->isBlocked;
     }
+
+    /**
+     * Takes the seat out of the plan (broken, technical position…) or puts it back.
+     * Not a structural change, so allowed on a locked configuration.
+     */
+    public function setBlocked(bool $blocked): void
+    {
+        $this->isBlocked = $blocked;
+    }
 }

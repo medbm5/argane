@@ -22,6 +22,8 @@ export type Layout = Omit<Schemas['LayoutView'], 'zones' | 'seats' | 'viewBox' |
     seats: number
   }[]
   seats: {
+    /** Null only in a generator preview (not saved yet). */
+    id: string | null
     zone: string
     row: string
     number: number
@@ -86,11 +88,6 @@ export interface ZoneForm {
   blockedSeats?: string[]
   accessibleSeats?: string[]
   capacity?: number | null
-}
-
-export interface LayoutForm {
-  name: string
-  zones: ZoneForm[]
 }
 
 export const studioKeys = {
@@ -198,35 +195,36 @@ export function useLayouts() {
   })
 }
 
-export function useLayoutPreview(form: LayoutForm | null) {
+/** One plan with all its seats (the Studio's "Salle" page). */
+export function useLayout(id: string | undefined) {
   const api = useApi()
   return useQuery({
-    queryKey: ['studio', 'layout-preview', form],
-    queryFn: ({ signal }) => api.post<Layout>('/studio/layouts/preview', form, { signal }),
-    enabled: form !== null,
-    placeholderData: keepPreviousData,
-    retry: false,
+    queryKey: [...studioKeys.layouts, id],
+    queryFn: ({ signal }) => api.get<Layout>(`/studio/layouts/${id ?? ''}`, { signal }),
+    enabled: id !== undefined,
   })
 }
 
-export function useLayoutMutations() {
+export interface SeatBlockingResult {
+  layout: Layout
+  /** Seats changed across upcoming dates. */
+  seatsUpdated: number
+  /** Seats left as they were because sold or being paid for. */
+  seatsKept: number
+}
+
+/** Switches seats of a plan on or off; upcoming dates follow where the seat is free. */
+export function useSetSeatsBlocked(layoutId: string) {
   const api = useApi()
   const queryClient = useQueryClient()
-  const refresh = () => queryClient.invalidateQueries({ queryKey: studioKeys.layouts })
-  return {
-    create: useMutation({
-      mutationFn: (form: LayoutForm) => api.post<Layout>('/studio/layouts', form),
-      onSuccess: refresh,
-    }),
-    clone: useMutation({
-      mutationFn: (id: string) => api.post<Layout>(`/studio/layouts/${id}/clone`),
-      onSuccess: refresh,
-    }),
-    archive: useMutation({
-      mutationFn: (id: string) => api.post<undefined>(`/studio/layouts/${id}/archive`),
-      onSuccess: refresh,
-    }),
-  }
+  return useMutation({
+    mutationFn: ({ seatIds, blocked }: { seatIds: string[]; blocked: boolean }) =>
+      api.put<SeatBlockingResult>(`/studio/layouts/${layoutId}/seats`, { seatIds, blocked }),
+    onSuccess: (result) => {
+      queryClient.setQueryData([...studioKeys.layouts, layoutId], result.layout)
+      void queryClient.invalidateQueries({ queryKey: studioKeys.layouts, exact: true })
+    },
+  })
 }
 
 export function useTariffs() {

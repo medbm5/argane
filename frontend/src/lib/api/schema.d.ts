@@ -452,6 +452,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/studio/layouts/{id}/seats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["put_api_studio_layout_seats"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -1023,6 +1039,10 @@ export interface components {
             /** @default  */
             layoutId: string;
         };
+        SeatBlockingInput: {
+            seatIds: string[];
+            blocked: boolean;
+        };
         TariffInput: {
             /** @default  */
             code: string;
@@ -1296,6 +1316,28 @@ export interface components {
             revenueCents: number;
             performances: components["schemas"]["StudioPerformanceView"][];
         };
+        LayoutView: {
+            id?: string | null;
+            name: string;
+            isDefault: boolean;
+            locked: boolean;
+            archived: boolean;
+            clonedFromName?: string | null;
+            capacity: number;
+            createdAt?: string | null;
+            viewBox: {
+                [key: string]: number;
+            };
+            stage: {
+                [key: string]: number;
+            };
+            zones: {
+                [key: string]: number | string;
+            }[];
+            seats: {
+                [key: string]: boolean | number | string | (never | null);
+            }[];
+        };
         MeResponse: {
             id: string;
             email: string;
@@ -1374,28 +1416,6 @@ export interface components {
             admitted: number;
             /** @default 0 */
             expected: number;
-        };
-        LayoutView: {
-            id?: string | null;
-            name: string;
-            isDefault: boolean;
-            locked: boolean;
-            archived: boolean;
-            clonedFromName?: string | null;
-            capacity: number;
-            createdAt?: string | null;
-            viewBox: {
-                [key: string]: number;
-            };
-            stage: {
-                [key: string]: number;
-            };
-            zones: {
-                [key: string]: number | string;
-            }[];
-            seats: {
-                [key: string]: boolean | number | string;
-            }[];
         };
         LayoutSummary: {
             id: string;
@@ -2246,6 +2266,45 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["StudioEventView"];
                 };
+            };
+        };
+    };
+    put_api_studio_layout_seats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SeatBlockingInput"];
+            };
+        };
+        responses: {
+            /** @description Plan updated; upcoming dates follow where the seats are free */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        layout: components["schemas"]["LayoutView"];
+                        /** @description Seats changed across upcoming dates */
+                        seatsUpdated: number;
+                        /** @description Seats left as they were because sold or being paid for */
+                        seatsKept: number;
+                    };
+                };
+            };
+            /** @description SEAT_NOT_IN_LAYOUT or NO_SEAT_SELECTED */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

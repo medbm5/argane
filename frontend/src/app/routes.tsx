@@ -1,4 +1,4 @@
-import type { RouteObject } from 'react-router'
+import { Navigate, type RouteObject } from 'react-router'
 import { SignInPage, SignUpPage } from '../pages/AuthPages'
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { ControlePage } from '../pages/ControlePage'
@@ -17,7 +17,7 @@ import { StudioLayout } from './layouts/StudioLayout'
 import { StudioEventPage } from '../pages/studio/StudioEventPage'
 import { StudioEventsPage } from '../pages/studio/StudioEventsPage'
 import { StudioIntegrationsPage } from '../pages/studio/StudioIntegrationsPage'
-import { StudioLayoutsPage } from '../pages/studio/StudioLayoutsPage'
+import { StudioHallPage } from '../pages/studio/StudioHallPage'
 import { StudioDashboardPage } from '../pages/studio/StudioDashboardPage'
 import { StudioPricesPage } from '../pages/studio/StudioPricesPage'
 import { StudioSalesPage } from '../pages/studio/StudioSalesPage'
@@ -89,7 +89,8 @@ export const routes: RouteObject[] = [
               { path: 'spectacles', element: <StudioEventsPage /> },
               { path: 'spectacles/:id', element: <StudioEventPage /> },
               { path: 'representations/:id/prix', element: <StudioPricesPage /> },
-              { path: 'configurations', element: <StudioLayoutsPage /> },
+              { path: 'salle', element: <StudioHallPage /> },
+              { path: 'configurations', element: <Navigate to="/studio/salle" replace /> },
               { path: 'tarifs', element: <StudioTariffsPage /> },
               { path: 'ventes', element: <StudioSalesPage /> },
               { path: 'integrations', element: <StudioIntegrationsPage /> },

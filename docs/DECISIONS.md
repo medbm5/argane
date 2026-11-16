@@ -124,6 +124,14 @@ Choix techniques et réponses aux questions du challenge. Chaque entrée indique
 
 **Pour aller plus loin.** Passer à un stockage objet ne change que `PosterLibrary` et l'URL stockée ; les images remplacées ne sont pas encore supprimées.
 
+## ADR-015 — Une salle, deux dispositions : on active ou désactive des places
+
+**Choix.** Le Studio n'a plus de générateur de configurations ni de copies : la page **Salle** montre les deux dispositions fixes de la salle (Théâtre, Concert avec fosse debout) et l'organisateur y désactive ou réactive des places (une à une ou par rangée). `PUT /api/studio/layouts/{id}/seats` met à jour le plan et, dans la même transaction, toutes les dates **à venir** non annulées : une place libre (ou tenue par une réservation expirée) passe `BLOCKED`, une place bloquée redevient `AVAILABLE`. Une place vendue ou en cours de paiement n'est jamais retirée ; la réponse dit combien ont été conservées.
+
+**Raison.** Théâtre Argane est une seule salle de 400 places : générer des plans arbitraires et verrouiller puis dupliquer une configuration pour retirer un fauteuil cassé était une mécanique de logiciel multi-salles, pas un besoin du lieu. Le verrou protège la géométrie (zones, rangées), pas l'état d'une place : bloquer reste permis sur un plan déjà utilisé.
+
+**Conséquences.** Les dates passées gardent leur état (historique et statistiques intacts). Les points d'API du générateur restent en place mais ne sont plus utilisés par l'interface.
+
 ---
 
 ## Questions du challenge

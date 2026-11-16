@@ -7,7 +7,7 @@ import { Logo } from './SiteHeader'
 const STUDIO_NAV = [
   { to: '/studio', label: 'Vue d’ensemble', icon: BarChart3, end: true },
   { to: '/studio/spectacles', label: 'Spectacles', icon: Theater },
-  { to: '/studio/configurations', label: 'Configurations', icon: LayoutGrid },
+  { to: '/studio/salle', label: 'Salle', icon: LayoutGrid },
   { to: '/studio/tarifs', label: 'Tarifs', icon: Tag },
   { to: '/studio/ventes', label: 'Ventes', icon: ReceiptText },
   { to: '/studio/integrations', label: 'Intégrations', icon: Plug },

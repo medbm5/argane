@@ -165,6 +165,42 @@ final readonly class DbalInventoryRepository implements InventoryRepository
         );
     }
 
+    public function applySeatBlocking(array $seatIds, bool $blocked, DateTimeImmutable $now): array
+    {
+        if ([] === $seatIds) {
+            return ['updated' => 0, 'kept' => 0];
+        }
+        $params = [
+            'ids' => array_map(static fn (Uuid $id): string => $id->toBinary(), $seatIds),
+            'now' => self::sql($now),
+            'cancelled' => 'CANCELLED',
+        ];
+        $types = ['ids' => ArrayParameterType::BINARY];
+        $upcoming = 'ps.seat_id IN (:ids) AND p.starts_at > :now AND p.status <> :cancelled';
+        $free = "(ps.status = 'AVAILABLE' OR (ps.status = 'HELD' AND ps.hold_expires_at <= :now))";
+
+        $updated = (int) $this->connection->executeStatement(
+            $blocked
+                ? "UPDATE performance_seat ps JOIN performance p ON p.id = ps.performance_id
+                      SET ps.status = 'BLOCKED', ps.hold_id = NULL, ps.hold_expires_at = NULL, ps.updated_at = :now
+                    WHERE {$upcoming} AND {$free}"
+                : "UPDATE performance_seat ps JOIN performance p ON p.id = ps.performance_id
+                      SET ps.status = 'AVAILABLE', ps.updated_at = :now
+                    WHERE {$upcoming} AND ps.status = 'BLOCKED'",
+            $params,
+            $types,
+        );
+        // What a block could not take: sold, or held by someone paying right now.
+        $kept = $blocked ? (int) $this->connection->fetchOne(
+            "SELECT COUNT(*) FROM performance_seat ps JOIN performance p ON p.id = ps.performance_id
+              WHERE {$upcoming} AND ps.status IN ('SOLD', 'HELD')",
+            $params,
+            $types,
+        ) : 0;
+
+        return ['updated' => $updated, 'kept' => $kept];
+    }
+
     public function releaseExpiredSeats(DateTimeImmutable $now): int
     {
         return (int) $this->connection->executeStatement(

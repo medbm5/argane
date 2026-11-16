@@ -62,6 +62,17 @@ interface InventoryRepository
     /** A cancelled sale gives standing places back. */
     public function unsellStanding(Uuid $performanceId, Uuid $zoneId, int $quantity): void;
 
+    /**
+     * Applies a change of the plan to every upcoming, not cancelled date: blocks the seats
+     * where they are free (or held by an expired hold), or frees them where blocked.
+     * Sold seats and seats in a live hold are never touched.
+     *
+     * @param list<Uuid> $seatIds plan seat ids
+     *
+     * @return array{updated: int, kept: int} rows changed, and rows left as they were (sold or held)
+     */
+    public function applySeatBlocking(array $seatIds, bool $blocked, DateTimeImmutable $now): array;
+
     /** Frees seats whose hold expired (housekeeping: reads already treat them as free). */
     public function releaseExpiredSeats(DateTimeImmutable $now): int;
 

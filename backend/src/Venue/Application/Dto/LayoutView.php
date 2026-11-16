@@ -11,10 +11,10 @@ use DateTimeInterface;
 final readonly class LayoutView
 {
     /**
-     * @param array{width: int, height: int}                                                                                          $viewBox
-     * @param array{x: int, y: int, width: int, height: int}                                                                          $stage
-     * @param list<array{code: string, name: string, kind: string, colorToken: string, shape: string, capacity: int, seats: int}>     $zones
-     * @param list<array{zone: string, row: string, number: int, label: string, x: float, y: float, accessible: bool, blocked: bool}> $seats
+     * @param array{width: int, height: int}                                                                                                       $viewBox
+     * @param array{x: int, y: int, width: int, height: int}                                                                                       $stage
+     * @param list<array{code: string, name: string, kind: string, colorToken: string, shape: string, capacity: int, seats: int}>                  $zones
+     * @param list<array{id: ?string, zone: string, row: string, number: int, label: string, x: float, y: float, accessible: bool, blocked: bool}> $seats
      */
     public function __construct(
         public ?string $id,
@@ -50,6 +50,7 @@ final readonly class LayoutView
             if ($withSeats) {
                 foreach ($zoneSeats as $seat) {
                     $seats[] = [
+                        'id' => $persisted ? $seat->id()->toRfc4122() : null,
                         'zone' => $zone->code(),
                         'row' => $seat->rowLabel(),
                         'number' => $seat->number(),
