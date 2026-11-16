@@ -1,3 +1,4 @@
+import { DatePicker } from '../../design-system/primitives/DatePicker'
 import { AlertTriangle } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
@@ -5,7 +6,6 @@ import { Link } from 'react-router'
 import { DotSparkline } from '../../design-system/components/DotSparkline'
 import { HalfGauge } from '../../design-system/components/HalfGauge'
 import { KpiTile } from '../../design-system/components/KpiTile'
-import { Input } from '../../design-system/primitives/Input'
 import { Pill } from '../../design-system/primitives/Pill'
 import { Select } from '../../design-system/primitives/Select'
 import {
@@ -95,24 +95,24 @@ export function StudioDashboardPage() {
               {days} jours
             </Pill>
           ))}
-          <Input
+          <DatePicker
             label="Du"
-            type="date"
             value={range.from}
-            className="w-40"
-            onChange={(e) => {
+            max={range.to || undefined}
+            className="w-44"
+            onChange={(from) => {
               setPreset(null)
-              setRange((r) => ({ ...r, from: e.target.value }))
+              setRange((r) => ({ ...r, from }))
             }}
           />
-          <Input
+          <DatePicker
             label="Au"
-            type="date"
             value={range.to}
-            className="w-40"
-            onChange={(e) => {
+            min={range.from || undefined}
+            className="w-44"
+            onChange={(to) => {
               setPreset(null)
-              setRange((r) => ({ ...r, to: e.target.value }))
+              setRange((r) => ({ ...r, to }))
             }}
           />
         </div>

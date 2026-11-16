@@ -1,3 +1,4 @@
+import { DatePicker } from '../../design-system/primitives/DatePicker'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { StatusBadge } from '../../design-system/primitives/Badge'
@@ -94,20 +95,22 @@ export function StudioSalesPage() {
             { value: 'REFUNDED', label: 'Remboursée' },
           ]}
         />
-        <Input
+        <DatePicker
           label="Du"
-          type="date"
           value={filters.from}
-          onChange={(e) => {
-            set('from', e.target.value)
+          max={filters.to || undefined}
+          clearable
+          onChange={(from) => {
+            set('from', from)
           }}
         />
-        <Input
+        <DatePicker
           label="Au"
-          type="date"
           value={filters.to}
-          onChange={(e) => {
-            set('to', e.target.value)
+          min={filters.from || undefined}
+          clearable
+          onChange={(to) => {
+            set('to', to)
           }}
         />
         <Input

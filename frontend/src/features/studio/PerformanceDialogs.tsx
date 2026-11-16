@@ -1,3 +1,4 @@
+import { DateTimePicker } from '../../design-system/primitives/DatePicker'
 import { useState, type ReactNode } from 'react'
 import { Button } from '../../design-system/primitives/Button'
 import { Dialog } from '../../design-system/primitives/Dialog'
@@ -94,12 +95,11 @@ export function ScheduleDialog({
       }
     >
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input
+        <DateTimePicker
           label="Début"
-          type="datetime-local"
           value={form.startsAt}
-          onChange={(e) => {
-            set('startsAt', e.target.value)
+          onChange={(v) => {
+            set('startsAt', v)
           }}
         />
         <Input
@@ -112,21 +112,21 @@ export function ScheduleDialog({
             set('doorsMinutesBefore', Number(e.target.value))
           }}
         />
-        <Input
+        <DateTimePicker
           label="Ouverture des ventes"
-          type="datetime-local"
+          defaultTime="10:00"
           value={form.salesOpenAt}
-          onChange={(e) => {
-            set('salesOpenAt', e.target.value)
+          onChange={(v) => {
+            set('salesOpenAt', v)
           }}
         />
-        <Input
+        <DateTimePicker
           label="Fin des ventes en ligne"
           hint="Vide : jusqu’au lever de rideau"
-          type="datetime-local"
+          clearable
           value={form.salesCloseAt ?? ''}
-          onChange={(e) => {
-            set('salesCloseAt', e.target.value || null)
+          onChange={(v) => {
+            set('salesCloseAt', v || null)
           }}
         />
         <Select
