@@ -58,7 +58,7 @@ Keys and deployment: [INSTALL.md](INSTALL.md).
 
 | Doc | What's in it |
 |---|---|
-| [Architecture](docs/ARCHITECTURE.md) | Diagrams: system, modules, purchase flow, jobs, data model, deployment |
+| [Model](docs/MODELE.md) | Diagrams: system, modules, purchase flow, jobs, data model, deployment |
 | [Decisions](docs/DECISIONS.md) | 15 short records: decision, why, trade-off |
 | [Challenge answers](docs/CHALLENGE.md) | The five business questions of the brief |
 | [Install](INSTALL.md) | Local setup, keys, tests, free-tier deployment |

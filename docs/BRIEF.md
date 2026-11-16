@@ -1,6 +1,6 @@
 # Théâtre Argane — Build brief (archive)
 
-> **Archive.** This is the original build brief that drove the work slice by slice. It is kept as written; the current state is in the [README](../README.md), [Architecture](ARCHITECTURE.md) and [Decisions](DECISIONS.md). Some details changed since (for example the hall configurations, see decision 15).
+> **Archive.** This is the original build brief that drove the work slice by slice. It is kept as written; the current state is in the [README](../README.md), [Model](MODELE.md) and [Decisions](DECISIONS.md). Some details changed since (for example the hall configurations, see decision 15).
 
 > Online and box-office ticketing for a 400-seat performance hall in Agadir.
 > Symfony 7.4 API + MySQL · React (Vite, TypeScript) · Stripe (test mode) · Clerk auth · Google Sheets sync.
