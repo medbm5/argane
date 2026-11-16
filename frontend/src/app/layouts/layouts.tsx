@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, ScrollRestoration } from 'react-router'
 import { SiteFooter } from './SiteFooter'
+import { STAFF_NAV } from './nav'
 import { SiteHeader } from './SiteHeader'
 
 function SkipLink() {
@@ -61,12 +62,7 @@ export function StaffLayout() {
   return (
     <div className="flex min-h-dvh flex-col bg-bg text-fg">
       <SkipLink />
-      <SiteHeader
-        nav={[
-          { to: '/guichet', label: 'Guichet' },
-          { to: '/controle', label: 'Contrôle' },
-        ]}
-      />
+      <SiteHeader nav={STAFF_NAV} />
       <main id="contenu" className="flex-1">
         <Outlet />
       </main>

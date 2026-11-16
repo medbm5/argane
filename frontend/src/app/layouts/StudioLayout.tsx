@@ -27,9 +27,15 @@ export function StudioLayout() {
         data-theme="night"
         className="flex shrink-0 flex-col gap-6 bg-ink-900 p-4 text-paper-100 md:sticky md:top-0 md:h-dvh md:w-60"
       >
-        <div className="flex items-center justify-between md:block">
-          <Logo />
-          <p className="mt-2 hidden font-marker text-lg text-pop-yellow md:block">studio</p>
+        <div className="flex items-center justify-between gap-3 md:block">
+          <div className="flex items-end gap-3 md:block">
+            <Logo />
+            <p className="font-marker text-lg text-pop-yellow md:mt-2">studio</p>
+          </div>
+          {/* On a phone the sidebar is a top bar: keep the account menu reachable there. */}
+          <div className="md:hidden">
+            <UserMenu compact />
+          </div>
         </div>
         <nav aria-label="Studio" className="flex gap-1 overflow-x-auto md:flex-col">
           {STUDIO_NAV.map(({ to, label, icon: Icon, end }) => (

@@ -1,11 +1,11 @@
-import { Menu } from 'lucide-react'
+import { ArrowRight, Menu } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link, NavLink } from 'react-router'
 import { cn } from '../../design-system/cn'
 import { IconButton } from '../../design-system/primitives/IconButton'
 import { Sheet } from '../../design-system/primitives/Sheet'
-import { UserMenu } from '../auth/UserMenu'
-import { PUBLIC_NAV, type NavItem } from './nav'
+import { AccountPanel, UserMenu } from '../auth/UserMenu'
+import { PUBLIC_NAV, useNav, type NavItem } from './nav'
 
 function navClass({ isActive }: { isActive: boolean }) {
   return cn(
@@ -32,13 +32,17 @@ export function Logo({ className }: { className?: string }) {
 }
 
 export function SiteHeader({
-  nav = PUBLIC_NAV,
+  nav: base = PUBLIC_NAV,
   actions = <UserMenu />,
 }: {
   nav?: NavItem[]
   actions?: ReactNode
 }) {
   const [open, setOpen] = useState(false)
+  const nav = useNav(base)
+  const close = () => {
+    setOpen(false)
+  }
 
   return (
     <header
@@ -49,7 +53,7 @@ export function SiteHeader({
         <Logo />
         <nav aria-label="Navigation principale" className="hidden items-center gap-6 md:flex">
           {nav.map((item) => (
-            <NavLink key={item.to} to={item.to} className={navClass}>
+            <NavLink key={item.to} to={item.to} end={item.end} className={navClass}>
               {item.label}
             </NavLink>
           ))}
@@ -62,21 +66,31 @@ export function SiteHeader({
             title="Menu"
             trigger={<IconButton label="Ouvrir le menu" icon={<Menu className="size-5" />} />}
           >
-            <nav aria-label="Navigation mobile" className="flex flex-col gap-4">
-              {nav.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={navClass}
-                  onClick={() => {
-                    setOpen(false)
-                  }}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-              {actions}
-            </nav>
+            <div className="flex flex-col gap-8">
+              <nav
+                aria-label="Navigation mobile"
+                className="flex flex-col border-t-2 border-ink-900"
+              >
+                {nav.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={close}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center justify-between border-b-2 border-ink-900 py-4 font-display text-3xl tracking-[0.04em] uppercase',
+                        isActive ? 'text-accent' : 'text-fg',
+                      )
+                    }
+                  >
+                    {item.label}
+                    <ArrowRight aria-hidden className="size-6" />
+                  </NavLink>
+                ))}
+              </nav>
+              <AccountPanel onNavigate={close} />
+            </div>
           </Sheet>
         </div>
       </div>

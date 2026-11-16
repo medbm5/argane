@@ -32,26 +32,28 @@ export function Sheet({
         <RadixDialog.Overlay className="fixed inset-0 z-40 bg-ink-900/40" />
         <RadixDialog.Content
           className={cn(
-            'fixed z-50 flex flex-col overflow-y-auto border-line bg-surface text-fg shadow-float',
+            'fixed z-50 flex flex-col overflow-y-auto border-ink-900 bg-surface text-fg',
             side === 'right' &&
-              'inset-y-0 right-0 w-[min(28rem,100vw)] border-l data-[state=open]:animate-[slide-in-right_240ms_var(--ease-out)]',
+              'inset-y-0 right-0 w-[min(28rem,100vw)] border-l-2 shadow-[-6px_0_0_var(--pop-yellow)] data-[state=open]:animate-[slide-in-right_240ms_var(--ease-out)]',
             side === 'bottom' &&
-              'inset-x-0 bottom-0 max-h-[85vh] rounded-t-md border-t data-[state=open]:animate-[slide-in-up_240ms_var(--ease-out)]',
+              'inset-x-0 bottom-0 max-h-[85vh] border-t-2 shadow-[0_-6px_0_var(--pop-yellow)] data-[state=open]:animate-[slide-in-up_240ms_var(--ease-out)]',
             className,
           )}
         >
-          <header className="flex items-start justify-between gap-4 border-b border-line px-6 py-4">
+          <header className="flex items-start justify-between gap-4 border-b-2 border-ink-900 px-6 py-4">
             <div>
-              <RadixDialog.Title className="font-display text-2xl">{title}</RadixDialog.Title>
+              <RadixDialog.Title className="font-display text-2xl tracking-[0.06em] uppercase">
+                {title}
+              </RadixDialog.Title>
               <RadixDialog.Description className={description ? 'text-sm text-muted' : 'sr-only'}>
                 {description ?? title}
               </RadixDialog.Description>
             </div>
             <RadixDialog.Close
               aria-label="Fermer"
-              className="grid size-8 place-items-center rounded-pill text-muted hover:bg-surface-alt hover:text-fg"
+              className="grid size-10 place-items-center rounded-sm border-2 border-ink-900 text-fg hover:bg-pop-yellow focus-visible:bg-pop-yellow focus-visible:outline-none"
             >
-              <X aria-hidden className="size-4" />
+              <X aria-hidden className="size-5" />
             </RadixDialog.Close>
           </header>
           <div className="flex-1 px-6 py-5">{children}</div>
