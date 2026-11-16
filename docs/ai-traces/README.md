@@ -8,6 +8,7 @@ session, named `YYYY-MM-DD-<slices>.md`.
 | [2026-11-14-slice-00.md](2026-11-14-slice-00.md) | Repository bootstrap |
 | [2026-11-14-slices-01-02.md](2026-11-14-slices-01-02.md) | Shared kernel, modules, first design system |
 | [2026-11-15-slices-02-22.md](2026-11-15-slices-02-22.md) | Identity to delivery, including the mural redesign |
+| [2026-11-16-after-launch.md](2026-11-16-after-launch.md) | Live testing fixes and owner feedback |
 
 Every commit made with the assistant carries a `Co-Authored-By: Claude` trailer, so
 `git log --grep "Co-Authored-By: Claude"` lists the AI-assisted work exactly.
