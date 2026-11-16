@@ -150,8 +150,11 @@ export function HallEditor({ layoutId, name }: { layoutId: string; name: string 
         </dl>
         <ul aria-label="Légende" className="flex flex-wrap gap-4 text-sm">
           <li className="flex items-center gap-2">
-            <span aria-hidden className="size-4 rounded-full border-2 border-ink-900 bg-pop-teal" />{' '}
-            Active
+            <span
+              aria-hidden
+              className="size-4 rounded-full border-2 border-ink-900 bg-[conic-gradient(var(--pop-red)_0_33%,var(--pop-teal)_0_66%,var(--pop-yellow)_0)]"
+            />
+            Active (couleur de sa zone)
           </li>
           <li className="flex items-center gap-2">
             <span
