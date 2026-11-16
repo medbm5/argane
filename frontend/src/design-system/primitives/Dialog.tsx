@@ -48,7 +48,8 @@ export function Dialog({
                 }
           }
           className={cn(
-            'fixed top-1/2 left-1/2 z-50 w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2',
+            // Never taller than the screen: the body scrolls, title and footer stay put.
+            'fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-4rem)] w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col',
             'border-2 border-fg bg-surface p-6 text-fg shadow-hard',
             'data-[state=open]:animate-[rise-in_240ms_var(--ease-out)]',
             className,
@@ -62,8 +63,15 @@ export function Dialog({
           ) : (
             <RadixDialog.Description className="sr-only">{title}</RadixDialog.Description>
           )}
-          {children ? <div className="mt-5">{children}</div> : null}
-          {footer ? <div className="mt-6 flex flex-wrap justify-end gap-3">{footer}</div> : null}
+          {children ? (
+            // Padding inside the scroll area keeps focus rings and hard shadows unclipped.
+            <div className="-mx-2 mt-3 min-h-0 overflow-y-auto overscroll-contain px-2 pt-2 pb-2">
+              {children}
+            </div>
+          ) : null}
+          {footer ? (
+            <div className="mt-4 flex shrink-0 flex-wrap justify-end gap-3">{footer}</div>
+          ) : null}
           {dismissible ? (
             <RadixDialog.Close
               aria-label="Fermer"
